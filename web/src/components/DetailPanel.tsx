@@ -3,6 +3,7 @@ import type { LinkCheck, MediaItem, MediaLink, ResolveResult } from '../../../se
 import { resolve } from '../api';
 import { formatDuration, linkText } from '../format';
 import { useI18n } from '../i18n';
+import { useDialog } from '../useDialog';
 import { LicenseBadge, SourceBadge } from './Badges';
 import { ListButton } from './ListButton';
 
@@ -79,6 +80,8 @@ export function DetailPanel({
   const { t, lang } = useI18n();
   const [state, setState] = useState<State>({ status: 'loading' });
   const closeRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLElement>(null);
+  useDialog(panelRef, onClose, closeRef);
 
   useEffect(() => {
     setState({ status: 'loading' });
@@ -92,18 +95,6 @@ export function DetailPanel({
     return () => ctrl.abort();
   }, [item.uid, item.kind]);
 
-  useEffect(() => {
-    closeRef.current?.focus();
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
-    window.addEventListener('keydown', onKey);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => {
-      window.removeEventListener('keydown', onKey);
-      document.body.style.overflow = prev;
-    };
-  }, [onClose]);
-
   const data = state.status === 'done' ? state.data : undefined;
   const best = data?.best;
   const license = data?.license ?? item.license;
@@ -116,7 +107,7 @@ export function DetailPanel({
 
   return (
     <div className="overlay" onClick={onClose}>
-      <aside className="panel" role="dialog" aria-modal="true" aria-label={item.title} onClick={(e) => e.stopPropagation()}>
+      <aside ref={panelRef} className="panel" role="dialog" aria-modal="true" aria-label={item.title} onClick={(e) => e.stopPropagation()}>
         <button ref={closeRef} type="button" className="close" onClick={onClose} aria-label={t('detail.close')}>
           ×
         </button>

@@ -52,8 +52,27 @@ npm run build
 npm start            # http://127.0.0.1:8787 sert l'API et l'interface
 ```
 
-Variables : `PORT` (défaut 8787), `HOST` (défaut `127.0.0.1` : l'outil n'a ni authentification ni limitation de débit, ne l'exposez pas sur internet tel quel).
 Derrière un proxy d'entreprise, lancez avec `NODE_USE_ENV_PROXY=1`.
+
+### Installer comme une application
+
+L'interface est une **PWA** : depuis Chrome, Edge ou Safari, « Installer l'application » / « Ajouter à l'écran d'accueil » (PC, téléphone, navigateur de TV). Une fois installée, elle s'ouvre en plein écran et **la coquille de l'interface s'ouvre même hors ligne** ; le catalogue et les vidéos, eux, demandent une connexion (le service worker ne met jamais en cache l'API ni les médias).
+
+### Héberger (téléphone, TV, autres appareils)
+
+```bash
+docker build -t open-media .
+docker run -d -p 8787:8787 --name open-media open-media     # http://localhost:8787
+```
+
+| Variable | Défaut | Rôle |
+|---|---|---|
+| `PORT` | `8787` | port d'écoute |
+| `HOST` | `127.0.0.1` (`0.0.0.0` dans l'image Docker) | adresse d'écoute |
+| `RATE_LIMIT` | `120` | requêtes `/api` par minute et par IP (`/api/resolve` : 40 ; `0` = illimité) |
+| `TRUST_PROXY` | non | `1` derrière un reverse proxy (lit `X-Forwarded-For` pour l'IP réelle) |
+
+L'outil n'a **pas d'authentification** : pour l'ouvrir hors de votre réseau, placez-le derrière un reverse proxy HTTPS avec accès restreint (la PWA et le service worker exigent HTTPS, sauf sur `localhost`).
 
 ### En ligne de commande
 
@@ -91,7 +110,7 @@ web/      React + Vite : accueil, lecture, explorer, ma liste, traductions FR/EN
 ```
 
 ```bash
-npm test             # 112 tests (serveur + interface)
+npm test             # 119 tests (serveur + interface)
 npm run typecheck
 ```
 
@@ -101,13 +120,17 @@ Ajouter une langue : compléter `web/src/messages.ts` (un test vérifie que chaq
 
 Les URL de fichiers viennent de tiers (ex. instances PeerTube). Toute requête sortante du serveur passe par `server/src/http.ts` : http(s) uniquement, ports standards, hôtes publics seulement (adresses privées, loopback et link-local refusées, y compris après résolution DNS et à chaque redirection). Le lecteur intégré d'une source est affiché dans un `iframe` sandboxé.
 
+Côté serveur : limitation de débit par IP, **politique de sécurité du contenu (CSP)** stricte (scripts et styles uniquement depuis l'application, images/vidéos/lecteurs en https), `nosniff`, `frame-ancestors 'none'`, cache longue durée uniquement pour les fichiers à empreinte.
+
+Accessibilité : les fenêtres (détail, lecteur) gardent le focus clavier à l'intérieur, le rendent à la carte d'origine en se fermant, et se ferment avec Échap.
+
 ## Droits d'auteur
 
 Les contenus appartiennent à leurs auteurs et restent hébergés par leurs sources. Une licence « à vérifier » signifie que la source n'en déclare pas : vérifiez les droits avant de réutiliser un contenu. Les jeux « abandonware » restent protégés par le droit d'auteur : seuls les jeux et logiciels que la source déclare libres sont présentés comme tels.
 
 ## Suite prévue
 
-- Application Android / Android TV (navigation à la télécommande ; l'interface est déjà construite avec des éléments focalisables).
+- Navigation à la télécommande (flèches) puis application Android TV : l'interface web installable est la base.
 - Sous-titres, profils, synchronisation de « Ma liste » entre appareils.
 
 ## English summary

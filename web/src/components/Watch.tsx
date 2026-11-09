@@ -4,6 +4,7 @@ import { resolve } from '../api';
 import { formatClock } from '../format';
 import { useI18n } from '../i18n';
 import { clearProgress, getProgress, isResumable, saveProgress } from '../storage';
+import { useDialog } from '../useDialog';
 
 type State =
   | { s: 'loading' }
@@ -27,6 +28,8 @@ export function Watch({ item, onClose }: { item: MediaItem; onClose: () => void 
   const [failed, setFailed] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const backRef = useRef<HTMLButtonElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
+  useDialog(rootRef, onClose, backRef);
 
   // Position de départ (reprise) puis position courante, conservées hors rendu.
   const startRef = useRef(0);
@@ -61,20 +64,14 @@ export function Watch({ item, onClose }: { item: MediaItem; onClose: () => void 
     // eslint-disable-next-line react-hooks/exhaustive-deps -- `t` ne change que si la langue change : on ne relance pas la résolution pour ça
   }, [item.uid, item.kind]);
 
-  useEffect(() => {
-    backRef.current?.focus();
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
-    window.addEventListener('keydown', onKey);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => {
-      window.removeEventListener('keydown', onKey);
-      document.body.style.overflow = prev;
-      // Dernière position, au cas où la fermeture tombe entre deux sauvegardes.
+  // Dernière position à la fermeture, au cas où elle tombe entre deux sauvegardes.
+  useEffect(
+    () => () => {
       const { pos, dur, ended } = posRef.current;
       if (!ended && pos > 0) saveProgress(item, pos, dur);
-    };
-  }, [onClose, item]);
+    },
+    [item],
+  );
 
   const playable = state.s === 'ready' ? state.playable : [];
   const current = playable[idx];
@@ -123,7 +120,7 @@ export function Watch({ item, onClose }: { item: MediaItem; onClose: () => void 
   };
 
   return (
-    <div className="watch" role="dialog" aria-modal="true" aria-label={item.title}>
+    <div ref={rootRef} className="watch" role="dialog" aria-modal="true" aria-label={item.title}>
       <div className="watch-bar">
         <button ref={backRef} type="button" className="back" onClick={onClose}>
           <span aria-hidden="true">‹</span> {t('watch.back')}

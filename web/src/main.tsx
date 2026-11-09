@@ -11,3 +11,10 @@ createRoot(document.getElementById('root') as HTMLElement).render(
     </I18nProvider>
   </StrictMode>,
 );
+
+// Application installable et ouverte hors ligne (coquille seulement) — uniquement en production.
+if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => undefined);
+  });
+}
