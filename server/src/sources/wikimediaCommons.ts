@@ -91,7 +91,6 @@ function linksFor(page: CommonsPage, kind: MediaKind): SourceResolve {
     {
       url: info.descriptionurl ?? `https://commons.wikimedia.org/wiki/${encodeURIComponent(page.title)}`,
       type: 'page',
-      label: 'Page sur Wikimedia Commons',
       score: 1,
       playable: false,
     },

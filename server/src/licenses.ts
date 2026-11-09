@@ -34,10 +34,10 @@ export function classifyLicense(label?: string | null, url?: string | null): Lic
     verified: category === 'public-domain' || category === 'cc' || category === 'cc-nc',
   });
 
-  if (!text) return out('unknown', 'Licence à vérifier');
+  if (!text) return out('unknown', 'Unknown');
 
   if (PUBLIC_DOMAIN.test(text)) {
-    return out('public-domain', /\bcc0\b/i.test(text) ? 'CC0' : 'Domaine public');
+    return out('public-domain', /\bcc0\b/i.test(text) ? 'CC0' : 'Public domain');
   }
 
   const fromUrl = CC_URL.exec(u);
@@ -51,8 +51,8 @@ export function classifyLicense(label?: string | null, url?: string | null): Lic
     return out(nc ? 'cc-nc' : 'cc', lab);
   }
 
-  if (RESTRICTED.test(text)) return out('restricted', 'Droits réservés');
-  return out('unknown', l || 'Licence à vérifier');
+  if (RESTRICTED.test(text)) return out('restricted', 'All rights reserved');
+  return out('unknown', l || 'Unknown');
 }
 
 /** Licence acceptée par le filtre « libres vérifiés seulement ». */

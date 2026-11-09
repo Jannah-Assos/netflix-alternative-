@@ -8,6 +8,7 @@
  */
 import { createHttp } from '../src/http.js';
 import { pickBest } from '../src/linkPicker.js';
+import { describeLink } from '../src/util.js';
 import { ALL_SOURCES } from '../src/sources/index.js';
 import type { MediaKind } from '../src/types.js';
 
@@ -35,7 +36,7 @@ for (const source of ALL_SOURCES) {
     const best = pickBest(resolved.links);
     if (!best) throw new Error(`aucun lien direct pour « ${first.title} »`);
     const check = await http.head(best.url);
-    console.log(`   meilleur lien : ${best.label}\n   ${best.url}\n   vérification : ${JSON.stringify(check)}`);
+    console.log(`   meilleur lien : ${describeLink(best)}\n   ${best.url}\n   vérification : ${JSON.stringify(check)}`);
     if (check.alive !== true) throw new Error('le meilleur lien ne répond pas');
   } catch (err) {
     failures++;

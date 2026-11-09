@@ -65,3 +65,10 @@ export function yearOf(v: unknown): number | undefined {
   const m = String(one(v) ?? '').match(/\b(1[89]\d\d|20\d\d)\b/);
   return m ? Number(m[1]) : undefined;
 }
+
+/** Description courte et neutre d'un lien (CLI, logs) : « MP4 480p 612 Mo ». */
+export function describeLink(l: { format?: string; height?: number; sizeBytes?: number }): string {
+  return [l.format?.toUpperCase(), l.height ? `${l.height}p` : undefined, l.sizeBytes ? formatBytes(l.sizeBytes) : undefined]
+    .filter(Boolean)
+    .join(' ');
+}

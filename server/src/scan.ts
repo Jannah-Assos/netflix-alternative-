@@ -1,7 +1,7 @@
-import type { Http } from './http.js';
+import { HttpError, type Http } from './http.js';
 import { isFreeLicense } from './licenses.js';
 import type { MediaSource } from './sources/types.js';
-import type { MediaItem, ScanResult, SearchParams, SourceId, SourceStatus } from './types.js';
+import type { ErrorCode, MediaItem, ScanResult, SearchParams, SourceId, SourceStatus } from './types.js';
 
 export interface ScanOptions {
   /** Sources à interroger (toutes par défaut). */
@@ -15,7 +15,7 @@ export interface ScanOptions {
 function withTimeout<T>(p: Promise<T>, ms: number, label: string): Promise<T> {
   let timer: NodeJS.Timeout;
   const timeout = new Promise<never>((_, reject) => {
-    timer = setTimeout(() => reject(new Error(`${label} : délai dépassé (${ms} ms)`)), ms);
+    timer = setTimeout(() => reject(new HttpError(`${label}: timed out after ${ms} ms`, undefined, 'timeout')), ms);
   });
   return Promise.race([p, timeout]).finally(() => clearTimeout(timer));
 }
@@ -51,11 +51,11 @@ export async function scan(
       const kinds = params.kinds.filter((k) => source.kinds.includes(k));
       const base = { source: source.id, count: 0, tookMs: 0 } as const;
       if (kinds.length === 0) {
-        statuses.push({ ...base, ok: true, skipped: 'type de contenu non pris en charge' });
+        statuses.push({ ...base, ok: true, skipped: 'unsupported-kind' });
         return;
       }
       if (!params.q.trim() && !source.supportsBrowse) {
-        statuses.push({ ...base, ok: true, skipped: 'mot-clé requis' });
+        statuses.push({ ...base, ok: true, skipped: 'query-required' });
         return;
       }
       const started = Date.now();
@@ -72,6 +72,7 @@ export async function scan(
           count: 0,
           tookMs: Date.now() - started,
           error: err instanceof Error ? err.message : String(err),
+          errorCode: (err instanceof HttpError ? err.code : 'unknown') satisfies ErrorCode,
         });
       }
     }),

@@ -162,7 +162,7 @@ describe('NASA', () => {
       uid: 'nasa:GSFC_1',
       year: 1969,
       thumbnail: 'https://images-assets.nasa.gov/video/GSFC_1/GSFC_1~thumb.jpg',
-      license: { category: 'public-domain', label: 'Domaine public (NASA)' },
+      license: { category: 'public-domain', verified: true },
     });
     expect(new URL(http.calls[0] as string).searchParams.get('media_type')).toBe('video');
   });
@@ -256,5 +256,30 @@ describe('PeerTube (SepiaSearch)', () => {
     const http = fakeHttp({});
     expect((await peertube.resolve('n-importe|quoi', 'video', http)).links).toEqual([]);
     expect(http.calls).toHaveLength(0);
+  });
+});
+
+describe('Internet Archive : filtres de catalogue', () => {
+  it('ajoute collections, langues, sujets et années', () => {
+    expect(
+      buildQuery('', ['video'], {
+        collections: ['feature_films', 'SciFi_Horror'],
+        languages: ['French', 'fre'],
+        subjects: ['documentary'],
+        yearFrom: 1920,
+        yearTo: 1950,
+      }),
+    ).toBe(
+      'mediatype:(movies) AND collection:(feature_films OR SciFi_Horror) AND language:(French OR fre) AND subject:(documentary) AND year:[1920 TO 1950] AND -access-restricted-item:true',
+    );
+  });
+
+  it('écarte les valeurs qui pourraient injecter de la syntaxe Lucene', () => {
+    const q = buildQuery('', ['video'], { collections: ['ok_1', 'x) OR (mediatype:texts', 'a b'], subjects: ['*'] });
+    expect(q).toBe('mediatype:(movies) AND collection:(ok_1) AND -access-restricted-item:true');
+  });
+
+  it('une borne d’année seule suffit', () => {
+    expect(buildQuery('', ['video'], { yearTo: 1930 })).toContain('year:[1850 TO 1930]');
   });
 });

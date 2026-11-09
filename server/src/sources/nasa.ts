@@ -30,7 +30,6 @@ interface NasaAsset {
 /** Le contenu NASA est en règle générale non soumis au droit d'auteur (hors mentions contraires). */
 const NASA_LICENSE: LicenseInfo = {
   ...classifyLicense('Public domain'),
-  label: 'Domaine public (NASA)',
   url: 'https://www.nasa.gov/nasa-brand-center/images-and-media/',
 };
 
@@ -107,7 +106,6 @@ export const nasa: MediaSource = {
       {
         url: `https://images.nasa.gov/details/${encodeURIComponent(id)}`,
         type: 'page',
-        label: 'Page sur images.nasa.gov',
         score: 1,
         playable: false,
       },

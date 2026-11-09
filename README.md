@@ -1,8 +1,22 @@
-# Open Media Scanner
+# Open Media
 
-Un outil qui **scanne les bases de données libres** (Internet Archive et sources du même style), **trouve le meilleur lien direct** de chaque contenu et le présente dans une interface claire.
+**Une alternative gratuite à Netflix** bâtie sur des sources en ligne libres (Internet Archive, Wikimedia Commons, NASA, PeerTube), en **français et en anglais**, avec un outil de scan qui trouve le **meilleur lien direct** de chaque contenu.
 
-> Il ne copie ni n'héberge aucun fichier : il trouve où ils sont, choisit le bon fichier, vérifie que le lien répond, et affiche la licence.
+> A free, Netflix-style streaming front-end built on free online sources, in **French and English**, with a scanner that finds the **best direct link** for each title. (English summary at the bottom.)
+
+Aucun fichier n'est copié ni hébergé : l'application trouve les contenus chez leurs sources, choisit le bon fichier, vérifie que le lien répond et affiche la licence.
+
+## Ce que fait l'application
+
+| Écran | Rôle |
+|---|---|
+| **Accueil** | bannière « À l'affiche », rangées thématiques (cinéma en français ou classiques en anglais, science-fiction, cinéma muet, dessins animés, TV classique, documentaires, NASA, courts métrages libres), « Reprendre la lecture », « Ma liste » |
+| **Lecture** | plein écran, choix de la qualité, **reprise automatique** là où vous vous êtes arrêté, repli sur le lecteur de la source si le fichier n'est pas lisible dans le navigateur |
+| **Explorer** | le scanner : recherche multi-sources, filtres (type, source, « licences libres vérifiées »), état de chaque source, panneau de liens classés avec « Ouvrir » / « Copier » |
+| **Ma liste** | vos titres mis de côté (stockés dans votre navigateur) |
+
+**Langues** : français et anglais, détectées d'après le navigateur, avec un bouton FR / EN. Le catalogue d'accueil s'adapte à la langue.
+**Thèmes** : clair et sombre automatiques. **Mobile** : interface adaptée.
 
 ## Sources
 
@@ -13,16 +27,14 @@ Un outil qui **scanne les bases de données libres** (Internet Archive et source
 | **NASA Image and Video Library** | vidéos, audio | domaine public (NASA) |
 | **PeerTube** (via SepiaSearch) | vidéos | uniquement les vidéos avec une licence CC / CC0 déclarée |
 
-Ajouter une source = un fichier dans `server/src/sources/` qui implémente `search()` et `resolve()` (voir `sources/types.ts`).
+Ajouter une source = un fichier dans `server/src/sources/` qui implémente `search()` et `resolve()` (voir `sources/types.ts`). Les rangées de l'accueil sont dans `server/src/home.ts`.
 
-## Ce que fait le « scan »
+## Comment le meilleur lien est choisi
 
-1. **Recherche** en parallèle sur toutes les sources cochées. Une source en panne ou lente (15 s max) n'empêche pas les autres de répondre, et son erreur est affichée.
-2. **Résolution** d'un item : on lit la liste de ses fichiers et on les classe.
-   - vidéo : MP4/h.264 (lisible partout) > WebM > OGV > MKV/AVI… ; meilleure résolution ; les versions « 512Kb », les fichiers vides, vignettes et métadonnées sont écartés ;
-   - audio : MP3 > M4A/OGG > FLAC > WAV ; logiciels : ZIP en premier ; livres : PDF > EPUB.
-3. **Vérification** du meilleur lien (requête `HEAD`) : « En ligne », « Hors ligne » ou « Non vérifié ».
-4. **Licence** classée en domaine public / Creative Commons / CC non commercial / droits réservés / inconnue. Le filtre « libres vérifiées seulement » ne garde que les licences déclarées libres par la source.
+1. **Recherche** en parallèle sur les sources. Une source en panne ou lente (15 s max) n'empêche pas les autres de répondre.
+2. **Classement des fichiers** d'un item : vidéo MP4/h.264 (lisible partout) > WebM > OGV > MKV… ; meilleure résolution ; versions « 512Kb », fichiers vides, vignettes et métadonnées écartés. Audio : MP3 > M4A/OGG > FLAC > WAV. Logiciels : ZIP. Livres : PDF > EPUB.
+3. **Vérification** du lien (requête `HEAD`) : en ligne / hors ligne / non vérifié.
+4. **Licence** classée : domaine public, Creative Commons, CC non commercial, droits réservés ou inconnue.
 
 ## Démarrage
 
@@ -52,42 +64,54 @@ npm run scan -- "apollo 11" --source nasa --free -n 5
 
 ### Vérifier les sources en réel
 
-Les tests unitaires utilisent des réponses d'API reconstituées d'après leur documentation. Pour confirmer que les formats n'ont pas changé, depuis une machine connectée à internet :
+Les tests utilisent des réponses d'API reconstituées d'après leur documentation, pas des captures réelles. Pour confirmer que les formats n'ont pas changé, depuis une machine connectée à internet :
 
 ```bash
 npm run smoke
 ```
 
-Il interroge chaque source, résout le premier résultat et vérifie son lien.
+Il interroge chaque source, résout le premier résultat et vérifie son lien. L'accueil réel (`/api/home`) montre aussi vite si une collection Internet Archive a changé de nom : sa rangée reste vide, donc masquée.
 
 ## API
 
 | Route | Rôle |
 |---|---|
+| `GET /api/home?lang=fr\|en` | rangées de l'accueil (mises en cache 30 min) |
 | `GET /api/sources` | liste des sources |
 | `GET /api/search?q=&kinds=video,audio&sources=internet-archive,nasa&freeOnly=1&page=1&limit=24` | scan (résultats entrelacés + état de chaque source) |
 | `GET /api/resolve?uid=<source:id>&kind=video[&check=0]` | meilleurs liens d'un item + vérification |
 
+Les erreurs sont renvoyées avec un **code** (`network`, `timeout`, `http`, `blocked`) : l'interface les traduit.
+
 ## Structure
 
 ```
-server/   Fastify + TypeScript : sources, classement des liens, licences, API, CLI
-web/      React + Vite : recherche, filtres, résultats, panneau de liens, lecteur
+server/   Fastify + TypeScript : sources, classement des liens, licences, accueil, API, CLI
+web/      React + Vite : accueil, lecture, explorer, ma liste, traductions FR/EN
 ```
 
 ```bash
-npm test             # tests (serveur)
+npm test             # 112 tests (serveur + interface)
 npm run typecheck
 ```
 
+Ajouter une langue : compléter `web/src/messages.ts` (un test vérifie que chaque langue a exactement les mêmes clés) et `Lang` dans `server/src/types.ts`.
+
 ## Sécurité
 
-Les URL de fichiers viennent de tiers (ex. instances PeerTube). Toute requête sortante passe par `server/src/http.ts` : http(s) uniquement, ports standards, hôtes publics seulement (les adresses privées, loopback et link-local sont refusées, y compris après résolution DNS et à chaque redirection).
+Les URL de fichiers viennent de tiers (ex. instances PeerTube). Toute requête sortante du serveur passe par `server/src/http.ts` : http(s) uniquement, ports standards, hôtes publics seulement (adresses privées, loopback et link-local refusées, y compris après résolution DNS et à chaque redirection). Le lecteur intégré d'une source est affiché dans un `iframe` sandboxé.
 
 ## Droits d'auteur
 
-Les contenus appartiennent à leurs auteurs et restent hébergés par leurs sources. Une licence « à vérifier » signifie que la source n'en déclare pas : vérifiez les droits avant de réutiliser un contenu. Les jeux « abandonware » restent protégés par le droit d'auteur : seuls les jeux et logiciels que la source déclare libres sont affichés comme tels.
+Les contenus appartiennent à leurs auteurs et restent hébergés par leurs sources. Une licence « à vérifier » signifie que la source n'en déclare pas : vérifiez les droits avant de réutiliser un contenu. Les jeux « abandonware » restent protégés par le droit d'auteur : seuls les jeux et logiciels que la source déclare libres sont présentés comme tels.
 
 ## Suite prévue
 
-Application Android / Android TV (navigation à la télécommande), profils et favoris, liens de sous-titres.
+- Application Android / Android TV (navigation à la télécommande ; l'interface est déjà construite avec des éléments focalisables).
+- Sous-titres, profils, synchronisation de « Ma liste » entre appareils.
+
+## English summary
+
+Open Media is a Netflix-style front-end over free online sources (Internet Archive, Wikimedia Commons, NASA, PeerTube). It ships a home page with a hero banner and themed rows (French- or English-language picks depending on your language), a full-screen player with automatic resume, a multi-source "Explore" scanner that ranks files and verifies links, and "My list". The interface is available in French and English (auto-detected, switchable with the FR/EN button). It never hosts files: it only finds them at their sources and shows each title's license.
+
+Quick start: `npm install && npm run dev` (Node.js 20+), then open http://localhost:5173. Run `npm run smoke` from a connected machine to check the live sources.

@@ -1,6 +1,6 @@
 import { classifyLicense } from '../licenses.js';
 import { rankCandidates, type Candidate } from '../linkPicker.js';
-import type { MediaItem, MediaKind, MediaLink, SearchParams, SourceResolve } from '../types.js';
+import type { MediaItem, MediaKind, MediaLink, SearchFilters, SearchParams, SourceResolve } from '../types.js';
 import { num, parseDuration, str, stripHtml, truncate, yearOf } from '../util.js';
 import type { MediaSource } from './types.js';
 
@@ -57,12 +57,24 @@ function sanitizeQuery(q: string): string {
 }
 
 /** Requête Lucene d'advancedsearch : mots-clés, types de média, hors prêt numérique restreint. */
-export function buildQuery(q: string, kinds: MediaKind[]): string {
+const SAFE_TOKEN = /^[A-Za-z0-9_-]+$/;
+const orGroup = (field: string, values: string[] | undefined): string | undefined => {
+  const safe = (values ?? []).filter((v) => SAFE_TOKEN.test(v));
+  return safe.length ? `${field}:(${safe.join(' OR ')})` : undefined;
+};
+
+export function buildQuery(q: string, kinds: MediaKind[], filters: SearchFilters = {}): string {
   const text = sanitizeQuery(q);
   const types = [...new Set(kinds.flatMap((k) => KIND_TO_MEDIATYPE[k]))];
   const clauses: string[] = [];
   if (text) clauses.push(`(${text})`);
   clauses.push(`mediatype:(${types.join(' OR ')})`);
+  for (const c of [orGroup('collection', filters.collections), orGroup('language', filters.languages), orGroup('subject', filters.subjects)]) {
+    if (c) clauses.push(c);
+  }
+  if (filters.yearFrom !== undefined || filters.yearTo !== undefined) {
+    clauses.push(`year:[${Math.trunc(filters.yearFrom ?? 1850)} TO ${Math.trunc(filters.yearTo ?? 2100)}]`);
+  }
   clauses.push('-access-restricted-item:true');
   return clauses.join(' AND ');
 }
@@ -124,7 +136,7 @@ export const internetArchive: MediaSource = {
 
   async search(params: SearchParams, http) {
     const url = new URL(`${BASE}/advancedsearch.php`);
-    url.searchParams.set('q', buildQuery(params.q, params.kinds));
+    url.searchParams.set('q', buildQuery(params.q, params.kinds, params.filters));
     for (const f of ['identifier', 'title', 'description', 'mediatype', 'year', 'date', 'downloads', 'licenseurl', 'creator']) {
       url.searchParams.append('fl[]', f);
     }
@@ -149,7 +161,6 @@ export const internetArchive: MediaSource = {
       links.push({
         url: `${BASE}/embed/${encodeURIComponent(id)}`,
         type: 'embed',
-        label: 'Lecteur intégré archive.org',
         score: 10,
         playable: false,
       });
@@ -157,7 +168,6 @@ export const internetArchive: MediaSource = {
     links.push({
       url: `${BASE}/details/${encodeURIComponent(id)}`,
       type: 'page',
-      label: 'Page sur archive.org',
       score: 1,
       playable: false,
     });

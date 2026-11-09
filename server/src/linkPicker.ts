@@ -1,5 +1,4 @@
 import type { LinkType, MediaKind, MediaLink } from './types.js';
-import { formatBytes } from './util.js';
 
 interface ExtInfo {
   score: number;
@@ -90,14 +89,6 @@ export function scoreCandidate(c: Candidate, kind: MediaKind): { score: number; 
   return { score, playable: info.playable };
 }
 
-function labelFor(c: Candidate, playable: boolean): string {
-  const ext = extensionOf(c.name).toUpperCase();
-  const parts = [ext];
-  if (c.height) parts.push(`${c.height}p`);
-  if (c.sizeBytes) parts.push(formatBytes(c.sizeBytes));
-  return `${playable ? 'Lecture directe' : 'Téléchargement'} · ${parts.join(' · ')}`;
-}
-
 /** Classe les fichiers d'un item : meilleurs liens en premier, doublons retirés. */
 export function rankCandidates(candidates: Candidate[], kind: MediaKind, max = 8): MediaLink[] {
   const seen = new Set<string>();
@@ -111,7 +102,6 @@ export function rankCandidates(candidates: Candidate[], kind: MediaKind, max = 8
     links.push({
       url: c.url,
       type,
-      label: labelFor(c, s.playable),
       format: extensionOf(c.name),
       ...(c.sizeBytes ? { sizeBytes: c.sizeBytes } : {}),
       ...(c.height ? { height: c.height } : {}),

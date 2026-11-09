@@ -1,4 +1,6 @@
 import type {
+  HomeResult,
+  Lang,
   MediaKind,
   ResolveResult,
   ScanResult,
@@ -31,8 +33,13 @@ export function search(args: SearchArgs, signal?: AbortSignal): Promise<ScanResu
   return get<ScanResult>(`/api/search?${p}`, signal);
 }
 
-export function resolve(uid: string, kind: MediaKind, signal?: AbortSignal): Promise<ResolveResult> {
-  return get<ResolveResult>(`/api/resolve?uid=${encodeURIComponent(uid)}&kind=${kind}`, signal);
+/** `check: false` saute la vérification HEAD du lien (plus rapide, pour la lecture). */
+export function resolve(uid: string, kind: MediaKind, signal?: AbortSignal, check = true): Promise<ResolveResult> {
+  return get<ResolveResult>(`/api/resolve?uid=${encodeURIComponent(uid)}&kind=${kind}${check ? '' : '&check=0'}`, signal);
+}
+
+export function home(lang: Lang, signal?: AbortSignal): Promise<HomeResult> {
+  return get<HomeResult>(`/api/home?lang=${lang}`, signal);
 }
 
 export function listSources(signal?: AbortSignal): Promise<SourceInfo[]> {

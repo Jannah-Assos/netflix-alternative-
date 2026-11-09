@@ -1,12 +1,14 @@
 import { useState } from 'react';
-import type { CSSProperties } from 'react';
 import type { MediaItem } from '../../../server/src/types';
-import { KIND_SINGULAR, LICENSE_LABEL, SOURCE_COLOR, SOURCE_NAME, formatDuration } from '../labels';
+import { formatDuration } from '../format';
+import { useI18n } from '../i18n';
+import { LicenseBadge, SourceBadge } from './Badges';
 import { KindIcon } from './icons';
 
 export function ResultCard({ item, onOpen }: { item: MediaItem; onOpen: (item: MediaItem) => void }) {
+  const { t, lang } = useI18n();
   const [imgOk, setImgOk] = useState(true);
-  const meta = [item.year, item.creator, formatDuration(item.durationSec)].filter(Boolean).join(' · ');
+  const meta = [item.year, item.creator, formatDuration(item.durationSec, lang)].filter(Boolean).join(' · ');
 
   return (
     <button type="button" className="card" onClick={() => onOpen(item)}>
@@ -18,18 +20,14 @@ export function ResultCard({ item, onOpen }: { item: MediaItem; onOpen: (item: M
             <KindIcon kind={item.kind} />
           </div>
         )}
-        <span className="kind-chip">{KIND_SINGULAR[item.kind]}</span>
+        <span className="kind-chip">{t(`kind1.${item.kind}`)}</span>
       </div>
       <div className="card-body">
         <h3 title={item.title}>{item.title}</h3>
         {meta && <p className="meta">{meta}</p>}
         <div className="badges">
-          <span className="badge source" style={{ '--c': SOURCE_COLOR[item.source] } as CSSProperties}>
-            {SOURCE_NAME[item.source]}
-          </span>
-          <span className={`badge lic lic-${item.license.category}`} title={item.license.label}>
-            {item.license.verified ? item.license.label : LICENSE_LABEL[item.license.category]}
-          </span>
+          <SourceBadge source={item.source} />
+          <LicenseBadge license={item.license} />
         </div>
       </div>
     </button>

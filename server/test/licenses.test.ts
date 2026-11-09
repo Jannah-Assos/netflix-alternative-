@@ -31,7 +31,7 @@ describe('classifyLicense', () => {
   });
 
   it('ne déclare jamais libre ce qui est inconnu ou réservé', () => {
-    expect(classifyLicense()).toMatchObject({ category: 'unknown', verified: false, label: 'Licence à vérifier' });
+    expect(classifyLicense()).toMatchObject({ category: 'unknown', verified: false, label: 'Unknown' });
     expect(classifyLicense('All rights reserved')).toMatchObject({ category: 'restricted', verified: false });
     expect(classifyLicense('Licence maison').verified).toBe(false);
   });

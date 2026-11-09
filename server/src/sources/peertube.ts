@@ -87,7 +87,7 @@ export function toItem(v: PtVideo): MediaItem | null {
 
 export const peertube: MediaSource = {
   id: 'peertube',
-  name: 'PeerTube (licences libres)',
+  name: 'PeerTube',
   homepage: 'https://sepiasearch.org',
   kinds: ['video'],
   supportsBrowse: false,
@@ -127,7 +127,6 @@ export const peertube: MediaSource = {
       links.push({
         url: playlist,
         type: 'download',
-        label: 'Flux HLS (VLC, mpv…)',
         format: 'm3u8',
         score: 20,
         playable: false,
@@ -137,14 +136,12 @@ export const peertube: MediaSource = {
       {
         url: `${base}/videos/embed/${encodeURIComponent(ref.uuid)}`,
         type: 'embed',
-        label: 'Lecteur intégré PeerTube',
         score: 10,
         playable: false,
       },
       {
         url: `${base}/w/${encodeURIComponent(ref.uuid)}`,
         type: 'page',
-        label: `Page sur ${ref.host}`,
         score: 1,
         playable: false,
       },

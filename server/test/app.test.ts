@@ -5,8 +5,8 @@ import type { MediaSource } from '../src/sources/types.js';
 import type { MediaLink } from '../src/types.js';
 import { fakeHttp } from './helpers.js';
 
-const stream: MediaLink = { url: 'https://x.test/a.mp4', type: 'stream', label: 'MP4', format: 'mp4', score: 100, playable: true };
-const page: MediaLink = { url: 'https://x.test/p', type: 'page', label: 'Page', score: 1, playable: false };
+const stream: MediaLink = { url: 'https://x.test/a.mp4', type: 'stream', format: 'mp4', score: 100, playable: true };
+const page: MediaLink = { url: 'https://x.test/p', type: 'page', score: 1, playable: false };
 
 const demo: MediaSource = {
   id: 'internet-archive',
@@ -100,5 +100,25 @@ describe('API', () => {
     const res = await a.inject('/api/resolve?uid=internet-archive:a');
     expect(res.statusCode).toBe(500);
     expect(res.json()).toEqual({ error: 'HTTP 503' });
+  });
+
+  it('GET /api/home renvoie les rangées de la langue demandée (anglais par défaut)', async () => {
+    const a = buildApp({ http: fakeHttp({}), sources: [demo], staticDir: null });
+    const fr = (await a.inject('/api/home?lang=fr')).json();
+    expect(fr.lang).toBe('fr');
+    expect(fr.rows.map((r: { id: string }) => r.id)).toContain('local-fr');
+    const other = (await a.inject('/api/home?lang=zz')).json();
+    expect(other.lang).toBe('en');
+    expect(other.rows.map((r: { id: string }) => r.id)).toContain('local-en');
+  });
+
+  it('GET /api/home met le résultat en cache', async () => {
+    let calls = 0;
+    const counting: MediaSource = { ...demo, search: async (p) => (calls++, demo.search(p, fakeHttp({}))) };
+    const a = buildApp({ http: fakeHttp({}), sources: [counting], staticDir: null });
+    await a.inject('/api/home?lang=en');
+    const after = calls;
+    await a.inject('/api/home?lang=en');
+    expect(calls).toBe(after);
   });
 });

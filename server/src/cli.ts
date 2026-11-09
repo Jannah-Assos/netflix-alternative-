@@ -4,7 +4,7 @@ import { pickBest } from './linkPicker.js';
 import { scan } from './scan.js';
 import { ALL_SOURCES, findSource } from './sources/index.js';
 import { MEDIA_KINDS, type MediaKind, type SourceId } from './types.js';
-import { formatBytes } from './util.js';
+import { describeLink } from './util.js';
 
 const USAGE = `Usage : npm run scan -- "<recherche>" [options]
 
@@ -64,7 +64,7 @@ async function main(): Promise<void> {
       }
       const check = await http.head(best.url);
       const status = check.alive === true ? 'en ligne' : check.alive === false ? `HORS LIGNE (${check.status})` : 'non vérifié';
-      console.log(`  → ${best.label} [${status}]${best.sizeBytes ? ` ${formatBytes(best.sizeBytes)}` : ''}`);
+      console.log(`  → ${best.type === 'stream' ? 'lecture directe' : 'téléchargement'} ${describeLink(best)} [${status}]`);
       console.log(`    ${best.url}`);
     } catch (err) {
       console.log(`  → résolution impossible : ${err instanceof Error ? err.message : err}`);

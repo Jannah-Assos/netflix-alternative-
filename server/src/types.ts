@@ -7,8 +7,12 @@ export type SourceId = 'internet-archive' | 'wikimedia-commons' | 'nasa' | 'peer
 
 export type LicenseCategory = 'public-domain' | 'cc' | 'cc-nc' | 'restricted' | 'unknown';
 
+export type Lang = 'fr' | 'en';
+export const LANGS: readonly Lang[] = ['fr', 'en'];
+
 export interface LicenseInfo {
   category: LicenseCategory;
+  /** Libellé technique : « CC BY-SA 4.0 » pour les CC, sinon en anglais. L'interface le traduit. */
   label: string;
   url?: string;
   /** true si la licence est explicitement déclarée libre par la source. */
@@ -26,7 +30,6 @@ export type LinkType = 'stream' | 'download' | 'embed' | 'page';
 export interface MediaLink {
   url: string;
   type: LinkType;
-  label: string;
   format?: string;
   sizeBytes?: number;
   height?: number;
@@ -54,11 +57,21 @@ export interface MediaItem {
   durationSec?: number;
 }
 
+/** Filtres de catalogue utilisés par les rangées de l'accueil (jamais exposés par l'API publique). */
+export interface SearchFilters {
+  collections?: string[];
+  languages?: string[];
+  subjects?: string[];
+  yearFrom?: number;
+  yearTo?: number;
+}
+
 export interface SearchParams {
   q: string;
   kinds: MediaKind[];
   page: number;
   limit: number;
+  filters?: SearchFilters;
 }
 
 export interface SourceInfo {
@@ -70,13 +83,18 @@ export interface SourceInfo {
   supportsBrowse: boolean;
 }
 
+export type ErrorCode = 'network' | 'timeout' | 'http' | 'blocked' | 'unknown';
+export type SkipReason = 'unsupported-kind' | 'query-required';
+
 export interface SourceStatus {
   source: SourceId;
   ok: boolean;
   count: number;
   tookMs: number;
+  /** Détail technique (en anglais). L'interface affiche un message traduit d'après `errorCode`. */
   error?: string;
-  skipped?: string;
+  errorCode?: ErrorCode;
+  skipped?: SkipReason;
 }
 
 export interface ScanResult {
@@ -103,4 +121,17 @@ export interface SourceResolve {
 export interface ResolveResult extends SourceResolve {
   best?: MediaLink;
   check?: LinkCheck;
+}
+
+export interface HomeRow {
+  /** Identifiant de rangée ; le titre est traduit par l'interface (`row.<id>`). */
+  id: string;
+  items: MediaItem[];
+}
+
+export interface HomeResult {
+  lang: Lang;
+  rows: HomeRow[];
+  /** Au moins une rangée n'a pas pu être chargée. */
+  partial: boolean;
 }

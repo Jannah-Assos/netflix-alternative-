@@ -58,7 +58,7 @@ describe('scan', () => {
     });
     const r = await scan([ok, ko], http, params);
     expect(r.items).toHaveLength(1);
-    expect(r.sources.find((s) => s.source === 'nasa')).toMatchObject({ ok: false, error: 'HTTP 503' });
+    expect(r.sources.find((s) => s.source === 'nasa')).toMatchObject({ ok: false, error: 'HTTP 503', errorCode: 'unknown' });
   });
 
   it('coupe une source trop lente', async () => {
@@ -66,7 +66,7 @@ describe('scan', () => {
     const fast = source('internet-archive', async () => [item('internet-archive', 1)]);
     const r = await scan([slow, fast], http, params, { timeoutMs: 30 });
     expect(r.items).toHaveLength(1);
-    expect(r.sources.find((s) => s.source === 'peertube')?.error).toMatch(/délai dépassé/);
+    expect(r.sources.find((s) => s.source === 'peertube')).toMatchObject({ ok: false, errorCode: 'timeout' });
   });
 
   it('filtre freeOnly sur les licences vérifiées', async () => {
@@ -86,7 +86,7 @@ describe('scan', () => {
     const needsQuery = source('peertube', async () => (called++, []), { supportsBrowse: false });
     const r = await scan([audioOnly, needsQuery], http, { ...params, q: '' });
     expect(called).toBe(0);
-    expect(r.sources.every((s) => s.ok && s.skipped)).toBe(true);
+    expect(r.sources.map((s) => s.skipped)).toEqual(['unsupported-kind', 'query-required']);
   });
 
   it('respecte la sélection de sources, retire les doublons et signale hasMore', async () => {

@@ -39,7 +39,7 @@ describe('assertPublicUrl', () => {
   });
 
   it('refuse un nom de domaine qui résout vers une adresse privée', async () => {
-    await expect(assertPublicUrl('https://evil.example/x', async () => [{ address: '10.0.0.5' }])).rejects.toThrow(/privée/);
+    await expect(assertPublicUrl('https://evil.example/x', async () => [{ address: '10.0.0.5' }])).rejects.toThrow(/private/);
   });
 });
 

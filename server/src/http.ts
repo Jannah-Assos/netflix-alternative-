@@ -1,11 +1,12 @@
 import { lookup } from 'node:dns/promises';
 import { isIP } from 'node:net';
-import type { LinkCheck } from './types.js';
+import type { ErrorCode, LinkCheck } from './types.js';
 
 export class HttpError extends Error {
   constructor(
     message: string,
     readonly status?: number,
+    readonly code: ErrorCode = 'unknown',
   ) {
     super(message);
     this.name = 'HttpError';
@@ -76,23 +77,23 @@ export async function assertPublicUrl(raw: string, lookupImpl: LookupFn = defaul
   try {
     url = new URL(raw);
   } catch {
-    throw new HttpError('URL invalide');
+    throw new HttpError('Invalid URL', undefined, 'blocked');
   }
-  if (url.protocol !== 'http:' && url.protocol !== 'https:') throw new HttpError('Protocole refusé');
-  if (url.username || url.password) throw new HttpError('Identifiants dans l’URL refusés');
-  if (url.port !== '') throw new HttpError('Port non standard refusé');
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') throw new HttpError('Protocol refused', undefined, 'blocked');
+  if (url.username || url.password) throw new HttpError('Credentials in URL refused', undefined, 'blocked');
+  if (url.port !== '') throw new HttpError('Non-standard port refused', undefined, 'blocked');
 
   const host = url.hostname.replace(/^\[|\]$/g, '');
   if (isIP(host)) {
-    if (isPrivateIp(host)) throw new HttpError('Adresse privée refusée');
+    if (isPrivateIp(host)) throw new HttpError('Private address refused', undefined, 'blocked');
     return url;
   }
   if (!host.includes('.') || /\.(local|localhost|internal|lan|home|corp)$/i.test(host)) {
-    throw new HttpError('Hôte non public refusé');
+    throw new HttpError('Non-public host refused', undefined, 'blocked');
   }
   const addrs = await lookupImpl(host);
   if (addrs.length === 0 || addrs.some((a) => isPrivateIp(a.address))) {
-    throw new HttpError('Hôte résolu vers une adresse privée refusé');
+    throw new HttpError('Host resolves to a private address, refused', undefined, 'blocked');
   }
   return url;
 }
@@ -130,7 +131,7 @@ export function createHttp(options: HttpOptions = {}): Http {
       }
       return res;
     }
-    throw new HttpError('Trop de redirections');
+    throw new HttpError('Too many redirects', undefined, 'http');
   }
 
   async function fetchJson(url: string): Promise<unknown> {
@@ -145,7 +146,7 @@ export function createHttp(options: HttpOptions = {}): Http {
             await new Promise((r) => setTimeout(r, 400 * (attempt + 1)));
             continue;
           }
-          throw new HttpError(`HTTP ${res.status}`, res.status);
+          throw new HttpError(`HTTP ${res.status}`, res.status, 'http');
         }
         return await res.json();
       } catch (err) {
@@ -156,7 +157,7 @@ export function createHttp(options: HttpOptions = {}): Http {
       }
     }
     const reason = lastError instanceof Error ? lastError.message : String(lastError);
-    throw new HttpError(`Réseau indisponible (${reason})`);
+    throw new HttpError(`Network unavailable (${reason})`, undefined, 'network');
   }
 
   return {
