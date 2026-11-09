@@ -1,0 +1,40 @@
+import type {
+  MediaKind,
+  ResolveResult,
+  ScanResult,
+  SourceId,
+  SourceInfo,
+} from '../../server/src/types';
+
+async function get<T>(path: string, signal?: AbortSignal): Promise<T> {
+  const res = await fetch(path, { signal });
+  const data = (await res.json().catch(() => null)) as (T & { error?: string }) | null;
+  if (!res.ok) throw new Error(data?.error ?? `Erreur ${res.status}`);
+  return data as T;
+}
+
+export interface SearchArgs {
+  q: string;
+  kinds: MediaKind[];
+  sources: SourceId[] | null;
+  freeOnly: boolean;
+  page: number;
+}
+
+export function search(args: SearchArgs, signal?: AbortSignal): Promise<ScanResult> {
+  const p = new URLSearchParams();
+  p.set('q', args.q);
+  p.set('kinds', args.kinds.join(','));
+  if (args.sources) p.set('sources', args.sources.join(','));
+  if (args.freeOnly) p.set('freeOnly', '1');
+  p.set('page', String(args.page));
+  return get<ScanResult>(`/api/search?${p}`, signal);
+}
+
+export function resolve(uid: string, kind: MediaKind, signal?: AbortSignal): Promise<ResolveResult> {
+  return get<ResolveResult>(`/api/resolve?uid=${encodeURIComponent(uid)}&kind=${kind}`, signal);
+}
+
+export function listSources(signal?: AbortSignal): Promise<SourceInfo[]> {
+  return get<SourceInfo[]>('/api/sources', signal);
+}
