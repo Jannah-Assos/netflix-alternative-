@@ -34,7 +34,7 @@ Sur un téléphone ou un ordinateur, le navigateur propose alors « Installer l'
 
 ## Direction artistique
 
-Identité « salle de projection » : noir d'encre, lumière ambre de projecteur, titres à empattement, licences en « tampons ». Détails, palette et règles dans [`docs/DESIGN.md`](docs/DESIGN.md). **Le plan pour arriver à une V1 complète est dans [`PLAN-V1.md`](PLAN-V1.md)** ; la vision et les idées dans [`ROADMAP.md`](ROADMAP.md), les idées en attente dans [`BACKLOG.md`](BACKLOG.md).
+Identité « salle de projection » : noir d'encre, lumière ambre de projecteur, titres à empattement, licences en « tampons ». Détails, palette et règles dans [`docs/DESIGN.md`](docs/DESIGN.md). **Le plan pour arriver à une V1 complète est dans [`PLAN-V1.md`](PLAN-V1.md)** (stratégie : découverte, comptes, sécurité, monétisation dans [`docs/STRATEGIE-PRODUIT.md`](docs/STRATEGIE-PRODUIT.md)) ; la vision et les idées dans [`ROADMAP.md`](ROADMAP.md), les idées en attente dans [`BACKLOG.md`](BACKLOG.md).
 
 ## Sources
 

@@ -1,12 +1,12 @@
 # Openflix — plan carré vers la V1
 
-*Rédigé le 10/11/2026. Complète `ROADMAP.md` (vision et idées) : ici, on tranche, on ordonne et on fixe des critères de réussite vérifiables.*
+*Rédigé le 10/11/2026, mis à jour le même jour (comptes, découverte, sécurité, droits). Complète `ROADMAP.md` (vision et idées) et `docs/STRATEGIE-PRODUIT.md` (algorithme de découverte, comptes, cybersécurité, monétisation) : ici, on tranche, on ordonne et on fixe des critères de réussite vérifiables.*
 
 ## 1. Ce que veut dire « V1 100 % fonctionnelle »
 
 > **Une personne qui ne connaît pas le projet ouvre un lien, trouve un film libre de droits, le regarde sans accroc sur son appareil, et peut recommencer demain. Rien de ce que l'application annonce ne ment ni ne plante.**
 
-La V1 est atteinte quand **les 9 critères** ci-dessous sont tous vrais (mesurés, pas ressentis) :
+La V1 est atteinte quand **les 11 critères** ci-dessous sont tous vrais (mesurés, pas ressentis) :
 
 | # | Critère de réussite | Comment on le vérifie |
 |---|---|---|
@@ -14,28 +14,34 @@ La V1 est atteinte quand **les 9 critères** ci-dessous sont tous vrais (mesuré
 | 2 | **Accueil affiché en moins de 2 s** (95 % des cas, cache chaud), même si une source est en panne | mesure automatique |
 | 3 | **Lecture réussie ≥ 95 %** sur un échantillon de 200 titres, sur Chrome, Firefox, Safari (Mac et iPhone), Edge, Chrome Android | campagne de test + relevé |
 | 4 | **Toutes les fonctions annoncées marchent** : recherche, filtres, fiche titre, lecteur (qualité, reprise, sous-titres, épisodes), Ma liste, FR/EN, installation | tests navigateur automatiques en CI |
-| 5 | **100 % des titres affichés ont une licence libre déclarée** ; attribution Creative Commons conforme ; 0 contenu pour adultes sur 1 000 titres tirés au hasard | audit d'échantillon |
+| 5 | **100 % des titres affichés ont une licence libre déclarée** ; attribution Creative Commons conforme ; **statut de droits prudent pour la France/UE** ; 0 contenu pour adultes sur 1 000 titres tirés au hasard | audit d'échantillon + avis juridique |
 | 6 | **Pages légales en ligne** et procédure de signalement/retrait qui fonctionne | test de bout en bout |
 | 7 | **Accessibilité** : contrastes AA, tout utilisable au clavier, aucun défaut bloquant lecteur d'écran | audit + Lighthouse ≥ 95 |
 | 8 | **Performance** : Lighthouse mobile ≥ 85, JavaScript < 100 Ko (gzip) | CI |
 | 9 | **5 à 10 testeurs réels** ont tout parcouru, 0 bug bloquant ouvert | bêta fermée |
+| 10 | **L'accueil montre du bon** : 0 titre illisible, sans affiche ou sans licence ; variété mesurée ; au moins **40 % des visiteurs lancent une lecture depuis l'accueil** *(objectif à calibrer)* | mesure d'audience |
+| 11 | **Les comptes sont sûrs** : règles d'accès (RLS) auditées, export et suppression de compte fonctionnels, aucune donnée d'un utilisateur lisible par un autre | audit + tests |
 
 ## 2. Périmètre : ce qui est dedans, dehors, plus tard
 
 | Dans la V1 | Reporté (V1.1) | Hors périmètre |
 |---|---|---|
-| Accueil, Explorer, filtres, recherche avec suggestions | Comptes et synchronisation entre appareils | Héberger des vidéos |
-| **Page dédiée par titre** (lien partageable) | Profils et contrôle parental par code | Publicité / monétisation |
-| Lecteur : qualité, reprise, **sous-titres**, **épisodes**, plein écran, PiP, raccourcis | Android TV et navigation à la télécommande complète | Contenus dont les droits sont incertains |
-| Ma liste et Reprendre la lecture (**sur l'appareil**) | Publication sur les magasins (Play Store, App Store) | « Quality seals » IA (voir `BACKLOG.md`) |
-| FR / EN, thèmes clair et sombre, **PWA installable** | Chromecast / AirPlay, recommandations | |
-| Sélections éditoriales, filtre « grand public » | | |
-| Pages légales, signalement, mesure d'audience respectueuse | | |
+| Accueil, Explorer, filtres, recherche avec suggestions | Profils et contrôle parental par code | Héberger des vidéos |
+| **Algorithme de découverte v1** (garde-fous, score, variété, sélections éditoriales) | Personnalisation avancée (recommandations avec compte) | Publicité |
+| **Page dédiée par titre** (lien partageable) | **Offre payante « Openflix+ »** | Contenus dont les droits sont incertains |
+| Lecteur : qualité, reprise, **sous-titres**, **épisodes**, plein écran, PiP, raccourcis | Android TV et navigation à la télécommande complète | « Quality seals » IA (voir `BACKLOG.md`) |
+| **Comptes facultatifs (Supabase)** : synchro de Ma liste et de la reprise ; tout marche aussi sans compte | Publication sur les magasins (Play Store, App Store) | |
+| FR / EN, thèmes clair et sombre, **PWA installable** | Chromecast / AirPlay | |
+| **Sceau « droits vérifiés »** sur une première sélection ; filtre « grand public » | Offre B2B éducation et culture | |
+| Pages légales, signalement, mesure d'audience respectueuse | Affiliation, sponsoring de sélections | |
+| **Sécurité renforcée** (voir J4) | | |
 | **Bêtas** : application Android (.apk) et de bureau (Mac, Windows) | | |
+
+> **« Logiciels & jeux » est retiré de la V1** (ou limité au lecteur intégré d'Internet Archive, avec avertissement) : les téléchargements déposés par des internautes exposent les utilisateurs à des logiciels malveillants.
 
 > **Pourquoi pas de monétisation en V1 ?** Une partie du catalogue est en licence Creative Commons **non commerciale**. Tant qu'Openflix n'est pas strictement non commercial ou filtré en conséquence, on ne peut pas y mettre de publicité ni d'abonnement.
 
-## 3. Les 7 décisions à prendre (avec ma recommandation)
+## 3. Les 8 décisions à prendre (avec ma recommandation)
 
 | # | Décision | Ma recommandation |
 |---|---|---|
@@ -43,13 +49,14 @@ La V1 est atteinte quand **les 9 critères** ci-dessous sont tous vrais (mesuré
 | D2 | **Nom** : garder « Openflix » ? (proche de « Netflix ») | **vérifier la disponibilité de la marque AVANT d'acheter un domaine** ; garder 2 noms de secours |
 | D3 | **Hébergement** | Render (déjà préparé, le plus simple) ; payant dès la bêta pour éviter la mise en veille. Hostinger (déjà connecté chez vous) possible |
 | D4 | **Nom de domaine** (ex. openflix.fr / .app) | à acheter une fois D2 validée |
-| D5 | **Comptes en V1 ?** | **Non** : tout reste sur l'appareil, comptes en V1.1 |
+| D5 | **Comptes en V1 ?** | **Oui, facultatifs** (Supabase, région UE) : « local d'abord, compte ensuite », jamais de mur d'inscription |
 | D6 | **Applications natives** | bêtas Android + bureau en V1, **magasins après** la V1 |
-| D7 | **Monétisation** | **aucune** en V1 (voir ci-dessus) |
+| D7 | **Monétisation** | **aucune** en V1 ; on **teste la PVU** en parallèle (`docs/STRATEGIE-PRODUIT.md` §4.5) |
+| D8 | **Droits par territoire** : afficher « domaine public » tel que déclaré, ou rester prudent pour la France/UE ? | **prudent** + sceau « droits vérifiés » sur une première sélection ; avis juridique |
 
-## 4. Le plan en 7 jalons
+## 4. Le plan en 9 jalons
 
-*Effort : S = 1-2 jours · M = 3-5 jours · L = 1-2 semaines (travail effectif, hors attente de décisions). Calendrier réaliste : **8 à 10 semaines** si les décisions arrivent dans la semaine.*
+*Effort : S = 1-2 jours · M = 3-5 jours · L = 1-2 semaines (travail effectif, hors attente de décisions). Calendrier réaliste : **10 à 12 semaines** si les décisions arrivent dans la semaine.*
 
 ### J0 — Décider et mettre en ligne *(semaine 1)*
 **Objectif : un lien public que n'importe qui peut ouvrir.**
@@ -107,29 +114,60 @@ La V1 est atteinte quand **les 9 critères** ci-dessous sont tous vrais (mesuré
 
 **Sortie :** toutes les fonctions du périmètre V1 présentes. *(critère 4, côté développement)*
 
-### J4 — Qualité, accessibilité, performance *(semaines 4-6, en parallèle de J3)*
+### J3b — Découverte : montrer d'abord ce qui est intéressant *(semaines 3-5)*
+Détail et mesures dans `docs/STRATEGIE-PRODUIT.md` §1.
+
+| Tâche | Effort |
+|---|---|
+| **Garde-fous** : ne montrer que des titres lisibles (lien vivant, format compatible), avec affiche et licence vérifiée | S |
+| **Score d'intérêt v1** : popularité (log), complétude de la fiche, durée, qualité de lecture, notoriété | M |
+| **Variété et rythme** : re-classement pour éviter les répétitions, rotation quotidienne, 20 % d'exploration | S |
+| **Sélections éditoriales** dans un fichier modifiable sans code (« À l'affiche », « Il y a 100 ans », thèmes de saison) | S |
+| **Notoriété Wikidata** calculée la nuit et mise en cache | M |
+| **Langue du contenu** : détection d'après titre et description (aujourd'hui seulement 10 % des films sont renseignés) | M |
+| **Filtres nouveaux** : durée (`runtime`, 80 % de couverture), couleur / noir et blanc, muet / parlant | S |
+| Mesure : lancement de lecture depuis l'accueil, temps avant la première lecture, retour à 7 jours | S |
+
+**Sortie :** critère 10. L'accueil est comparé à l'ancien sur les mêmes visiteurs (test A/B).
+
+### J3c — Comptes facultatifs avec Supabase *(semaines 4-6)*
+| Tâche | Qui | Effort |
+|---|---|---|
+| Créer le projet Supabase (région UE), poser les variables d'environnement | **Vous** | S |
+| **Schéma SQL et règles RLS** (profils, liste, reprise, préférences) ; tests | Moi | M |
+| Connexion (lien magique + Google), **fusion des données locales** à la première connexion | Moi | M |
+| Invitation à créer un compte **au bon moment** (pas de mur), écran Compte (export, suppression) | Moi | S |
+| Anti-robots à l'inscription, limites par compte | Moi | S |
+
+**Sortie :** critère 11. Tout continue de marcher sans compte.
+
+### J4 — Qualité, accessibilité, performance, sécurité *(semaines 4-8, en parallèle)*
 | Tâche | Effort |
 |---|---|
 | **Tests navigateur en CI** (Playwright) : mes parcours actuels (lecteur sur 5 tailles, détail, PWA, hors ligne, focus) + les nouveautés | M |
 | Audit accessibilité : contrastes AA, navigation aux flèches dans les rangées, lecteur d'écran | M |
 | Budgets de performance en CI (Lighthouse, poids JavaScript) | S |
+| **Sécurité renforcée** (`docs/STRATEGIE-PRODUIT.md` §3) : Dependabot, `npm audit`, CodeQL, analyse de l'image Docker, Cloudflare + HSTS, liste d'instances autorisées pour les lecteurs intégrés, suivi d'erreurs, sauvegardes avec test de restauration, `security.txt` | M |
+| **Retrait de « Logiciels & jeux »** (ou lecteur intégré seul + avertissement) | S |
+| **Test d'intrusion** avant l'ouverture publique | **Vous** (prestataire), moi je corrige | M |
 | Revue du filtre « grand public » sur 1 000 titres tirés au hasard ; liste évolutive + signalement | S |
 | **Test utilisateur** à 5 personnes (parent, ado, cinéphile, senior, utilisateur de TV) | **Vous** recrutez, moi j'analyse | S |
 
 **Sortie :** CI verte avec tests navigateur ; Lighthouse atteint ; 0 contenu inapproprié sur l'échantillon. *(critères 4, 5, 7, 8)*
 
-### J5 — Légal et confiance *(semaines 3-6, en parallèle ; surtout vous)*
+### J5 — Légal, droits et confiance *(semaines 3-8, en parallèle ; surtout vous)*
 | Tâche | Qui | Effort |
 |---|---|---|
 | Mentions légales, conditions d'utilisation, politique de confidentialité | **Vous** + relecture juridique conseillée ; moi je rédige le brouillon technique | M |
 | **Procédure de signalement / retrait** (formulaire + adresse dédiée) et son traitement | Moi (formulaire), **vous** (traitement) | S |
 | **Attribution Creative Commons** correcte sur chaque fiche (auteur, source, licence, lien) | Moi | S |
+| **Droits par territoire** : « domaine public aux États-Unis » ≠ « domaine public en France/UE » ; libellé prudent, sceau **« droits vérifiés »** sur une première sélection (règles de vérification à fixer avec un juriste) | **Vous** + juriste, moi l'outillage | M |
 | Lecture des conditions d'usage de chaque source (Internet Archive, Wikimedia, NASA, PeerTube) et mise en conformité | Moi, validation **vous** | S |
 | Mesure d'audience respectueuse (sans cookies), formulaire de retour utilisateur | Moi | S |
 
 **Sortie :** pages légales en ligne, signalement testé de bout en bout. *(critère 6)*
 
-### J6 — Bêta fermée puis lancement *(semaines 6-8)*
+### J6 — Bêta fermée puis lancement *(semaines 8-10)*
 | Tâche | Qui |
 |---|---|
 | Bêta à **5-10 testeurs** : parcours guidé, formulaire de retour | **Vous** (recrutement) |
@@ -139,7 +177,7 @@ La V1 est atteinte quand **les 9 critères** ci-dessous sont tous vrais (mesuré
 
 **Sortie :** les 9 critères sont vrais → **V1.0**.
 
-### J7 — Applications natives en bêta *(semaines 8-10, après le lancement web)*
+### J7 — Applications natives en bêta *(semaines 10-12, après le lancement web)*
 | Version | Ce que je prépare | Ce que vous fournissez | Effort |
 |---|---|---|---|
 | **Android (.apk)** | application Android autour du site, construite automatiquement par GitHub | rien pour l'APK ; **25 $ une fois** pour Google Play plus tard | M |
@@ -151,7 +189,7 @@ Limite honnête : je ne peux pas lancer le Mac ni Windows depuis mon environneme
 **Sortie :** applications téléchargeables, installables, qui affichent le site et lisent une vidéo.
 
 ## 5. Après la V1 (V1.1 et suivantes)
-Comptes et synchronisation · profils et contrôle parental · Android TV (navigation à la télécommande complète) · publication sur Play Store / App Store · Chromecast / AirPlay · nouvelles sources (voir `ROADMAP.md` §4.4) · éventuelle plateforme de vidéos IA avec « quality seals » (`BACKLOG.md`).
+Profils et contrôle parental · offre « Openflix+ » et autres modèles (`docs/STRATEGIE-PRODUIT.md` §4) · personnalisation avancée · Android TV (navigation à la télécommande complète) · publication sur Play Store / App Store · Chromecast / AirPlay · nouvelles sources (voir `ROADMAP.md` §4.4) · éventuelle plateforme de vidéos IA avec « quality seals » (`BACKLOG.md`).
 
 ## 6. Budget indicatif *(à vérifier, les tarifs changent)*
 
@@ -159,7 +197,9 @@ Comptes et synchronisation · profils et contrôle parental · Android TV (navig
 |---|---|
 | Hébergement (offre payante d'entrée de gamme) | ≈ 7 $/mois |
 | Nom de domaine | ≈ 10-15 €/an |
-| Mesure d'audience, surveillance, suivi d'erreurs | offres gratuites suffisantes au départ |
+| Mesure d'audience, surveillance, suivi d'erreurs, Cloudflare | offres gratuites suffisantes au départ |
+| Base de comptes (Supabase, offre de production) | ≈ 25 $/mois *(l'offre gratuite suffit pour la bêta ; à vérifier)* |
+| Test d'intrusion avant l'ouverture publique | quelques centaines à quelques milliers d'euros selon le prestataire |
 | Relecture juridique des pages légales *(recommandée)* | quelques centaines d'euros |
 | Dépôt de marque *(recommandé avant communication publique)* | selon le pays et les classes |
 | Google Play *(V1.1)* | 25 $, une fois |
@@ -172,6 +212,9 @@ Comptes et synchronisation · profils et contrôle parental · Android TV (navig
 | **Lecture qui échoue sur Safari/iPhone** (formats) | 🔴 | J1 en priorité, test sur vrais appareils |
 | **Une licence mal déclarée** par la personne qui a déposé le fichier | 🔴 | filtre conservateur, bouton de signalement, retrait rapide, mentions claires |
 | **Nom proche de « Netflix »** | 🔴 | vérification de marque avant domaine et communication |
+| **« Domaine public » aux États-Unis mais protégé en France/UE** | 🔴 | libellé prudent, sceau « droits vérifiés », avis juridique, retrait rapide |
+| **Logiciels malveillants** via les téléchargements de « Logiciels & jeux » | 🔴 | retrait de la catégorie en V1 |
+| **Fuite de données de comptes** | 🔴 | RLS auditée, clé secrète jamais dans l'application, test d'intrusion |
 | Les API des sources changent ou limitent (429) | 🟠 | cache persistant, alertes, dernière version connue |
 | Contenu inapproprié qui passe le filtre | 🟠 | échantillonnage régulier, signalement, liste évolutive |
 | Mise en veille de l'hébergement gratuit (premier chargement lent) | 🟡 | offre payante dès la bêta |
@@ -180,7 +223,9 @@ Comptes et synchronisation · profils et contrôle parental · Android TV (navig
 
 ## 7 bis. Prochaine action concrète
 
-1. Vous répondez aux **7 décisions** (même « je prends vos recommandations »).
+1. Vous répondez aux **8 décisions** (même « je prends vos recommandations »).
 2. Vous dites **« oui, fusionne »** pour que j'intègre le travail actuel dans `main`.
 3. Vous créez le compte Render ; je vous guide pour les 3 clics.
-4. Je démarre **J1 (lecture fiable)** et **J2 (catalogue fiable)**, qui sont le cœur de la V1.
+4. Je démarre **J1 (lecture fiable)**, **J2 (catalogue fiable)** et **J3b (découverte)**, qui sont le cœur de la V1.
+5. En parallèle, **vous** lancez la validation de la PVU (`docs/STRATEGIE-PRODUIT.md` §4.5), la vérification de la marque et la prise de contact avec un juriste (droits par territoire).
+6. Quand vous êtes prêt pour les comptes : vous créez le projet Supabase (région UE) ; **ne m'envoyez jamais les clés dans la conversation**, on les place ensemble dans les variables d'environnement.
