@@ -20,6 +20,8 @@ Openflix est une application web de streaming **sans hébergement de vidéos** :
 
 ### D'où viennent les vidéos aujourd'hui
 
+> **Mise à jour :** seule **Internet Archive** est active en V1, limitée aux **films et à l'animation** (liste blanche de collections). Les trois autres sources ci-dessous sont développées mais désactivées tant que leur contenu n'est pas du film ou de la série avec assez d'informations. Voir `PLAN-V1.md`.
+
 | Source | Ce qu'on y prend | Volume exploitable (licence libre déclarée ; chiffres mesurés le 10/11/2026 pour Internet Archive uniquement) |
 |---|---|---|
 | **Internet Archive** | films, séries TV, animation, documentaires, audio, livres, logiciels | ~9 100 longs métrages ; 2 500 séries/TV ; 1 900 courts ; 1 300 animations ; 700 films muets ; 600 comédies ; 400 sci-fi/horreur ; 300 films noirs |
@@ -79,7 +81,8 @@ Ensuite :
 - **Durée** (court / moyen / long) : Internet Archive ne la donne pas toujours, à vérifier source par source.
 - **Qualité** (HD seulement), **lisible dans le navigateur** seulement.
 - **Genres multiples** et **pays/réalisateur** (métadonnées IA et Wikidata).
-- **Recherche** : suggestions pendant la frappe, tolérance aux fautes, recherche dans les sous-titres, historique.
+- **Recherche : pertinence** (mesuré le 10/11/2026). Le moteur d'Internet Archive est bruité : chercher « Night of the Living Dead » renvoie d'abord un film sur les camps nazis, et des tentatives de pondération du titre n'améliorent pas le classement. La vraie solution est **notre propre moteur de recherche** (titres, réalisateurs, années, tolérance aux fautes) bâti sur le cache persistant du jalon J2.
+- **Recherche** : suggestions pendant la frappe, recherche dans les sous-titres, historique.
 - **Mémoriser les préférences** de filtres.
 
 ### 4.4 Catalogue et qualité des contenus

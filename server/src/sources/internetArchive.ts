@@ -2,6 +2,7 @@ import { classifyLicense } from '../licenses.js';
 import { rankCandidates, type Candidate } from '../linkPicker.js';
 import type { MediaItem, MediaKind, MediaLink, SearchFilters, SearchParams, SortKey, SourceResolve } from '../types.js';
 import { BLOCKED_COLLECTIONS, isFamilySafe, safeSearchEnabled } from '../safety.js';
+import { EXCLUDED_COLLECTIONS, SCOPE_COLLECTIONS } from '../scope.js';
 import { num, parseDuration, str, stripHtml, truncate, yearOf } from '../util.js';
 import type { MediaSource } from './types.js';
 
@@ -73,7 +74,13 @@ const orGroup = (field: string, values: string[] | undefined): string | undefine
   return safe.length ? `${field}:(${safe.join(' OR ')})` : undefined;
 };
 
-export function buildQuery(q: string, kinds: MediaKind[], filters: SearchFilters = {}, safe = safeSearchEnabled()): string {
+export function buildQuery(
+  q: string,
+  kinds: MediaKind[],
+  filters: SearchFilters = {},
+  safe = safeSearchEnabled(),
+  scoped = true,
+): string {
   const text = sanitizeQuery(q);
   const types = [...new Set(kinds.flatMap((k) => KIND_TO_MEDIATYPE[k]))];
   const clauses: string[] = [];
@@ -87,6 +94,11 @@ export function buildQuery(q: string, kinds: MediaKind[], filters: SearchFilters
     clauses.push(`year:[${Math.trunc(filters.yearFrom ?? 1850)} TO ${Math.trunc(filters.yearTo ?? 2100)}]`);
   }
   clauses.push('-access-restricted-item:true');
+  // Liste blanche : seuls les films et l'animation des collections retenues (voir scope.ts).
+  if (scoped) {
+    clauses.push(`collection:(${SCOPE_COLLECTIONS.join(' OR ')})`);
+    clauses.push(`-collection:(${EXCLUDED_COLLECTIONS.join(' OR ')})`);
+  }
   if (safe) clauses.push(`-collection:(${BLOCKED_COLLECTIONS.join(' OR ')})`);
   return clauses.join(' AND ');
 }

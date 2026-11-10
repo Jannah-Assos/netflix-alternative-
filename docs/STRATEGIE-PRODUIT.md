@@ -35,6 +35,9 @@ Aujourd'hui l'accueil montre « ce que la source renvoie par popularité ». C'e
 
 ⚠️ **Découverte importante :** la langue n'est renseignée que pour ~10 % des films. Notre filtre « Langue » et la rangée « Cinéma en français » ne voient donc **qu'une minorité** du catalogue. À corriger : détection de la langue d'après le titre et la description, et pour les films connus d'après Wikidata.
 
+### Mise à jour : le périmètre du catalogue
+Le catalogue est limité aux **films et à l'animation**, depuis une liste blanche de collections (voir `PLAN-V1.md`, « Le catalogue de la V1 »). Les séries (fiches trop pauvres) et l'anime (licences non fiables) sont reportés. Conséquence pour l'algorithme : le score d'intérêt s'applique aux films et à l'animation, là où la durée (77 %), l'année (91 %) et la description (93 %) sont bien renseignées.
+
 ### Comment on sait que ça marche
 Mesures à suivre dès la mise en ligne : **part des visiteurs qui lancent une lecture depuis l'accueil**, **temps avant la première lecture**, **part des lectures de plus de 5 minutes**, **retour à 7 jours**, **diversité** des titres montrés. Chaque changement d'algorithme est comparé à l'ancien (test A/B).
 

@@ -54,10 +54,10 @@ describe('API', () => {
     expect(body.sources[0]).toMatchObject({ source: 'internet-archive', ok: true, count: 1 });
   });
 
-  it('GET /api/search : type inconnu → tous les types, recherche vide acceptée', async () => {
+  it('GET /api/search : type inconnu → vidéo (le périmètre), recherche vide acceptée', async () => {
     const res = await app().inject('/api/search?kinds=zzz');
-    // La source de démo ne gère que video+audio : le serveur transmet l'intersection.
-    expect(res.json().items[0].title).toBe('résultat pour «  » p1 l24 video+audio');
+    // Le périmètre V1 est la vidéo : les autres types ne sont jamais transmis aux sources.
+    expect(res.json().items[0].title).toBe('résultat pour «  » p1 l24 video');
   });
 
   it('GET /api/search refuse une requête trop longue', async () => {

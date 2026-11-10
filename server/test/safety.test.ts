@@ -65,10 +65,10 @@ describe('Internet Archive : filtre grand public', () => {
   });
 
   it('la requête exclut les collections signalées', () => {
-    const q = buildQuery('', ['video'], {}, true);
+    const q = buildQuery('', ['video'], {}, true, false);
     expect(q).toContain('-collection:(adultvhs OR adultcomics OR no-preview OR deemphasize OR nsfw)');
     expect(BLOCKED_COLLECTIONS).toContain('adultvhs');
-    expect(buildQuery('', ['video'], {}, false)).not.toContain('-collection:');
+    expect(buildQuery('', ['video'], {}, false, false)).not.toContain('-collection:');
   });
 
   it('toItem écarte un résultat dont les mots-clés sont inappropriés', () => {

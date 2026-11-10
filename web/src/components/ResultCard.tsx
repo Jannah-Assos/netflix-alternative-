@@ -20,7 +20,6 @@ export function ResultCard({ item, onOpen }: { item: MediaItem; onOpen: (item: M
             <KindIcon kind={item.kind} />
           </div>
         )}
-        <span className="kind-chip">{t(`kind1.${item.kind}`)}</span>
       </div>
       <div className="card-body">
         <h3 title={item.title}>{item.title}</h3>

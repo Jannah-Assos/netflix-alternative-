@@ -9,7 +9,8 @@ import { buildHome } from './home.js';
 import { HttpError, createHttp, type Http } from './http.js';
 import { pickBest } from './linkPicker.js';
 import { scan } from './scan.js';
-import { ALL_SOURCES, findSource, type MediaSource } from './sources/index.js';
+import { ENABLED_KINDS } from './scope.js';
+import { enabledSources, findSource, type MediaSource } from './sources/index.js';
 import {
   MEDIA_KINDS,
   type HomeResult,
@@ -52,10 +53,15 @@ const CSP = [
 const MAX_Q = 200;
 const HOME_TTL_MS = 30 * 60_000;
 
+function splitKinds(raw: unknown): MediaKind[] {
+  if (typeof raw !== 'string' || !raw) return [];
+  return [...new Set(raw.split(',').filter((k): k is MediaKind => (MEDIA_KINDS as readonly string[]).includes(k)))];
+}
+
+/** Recherche : uniquement les types du périmètre (films et animation = vidéo). */
 function parseKinds(raw: unknown): MediaKind[] {
-  if (typeof raw !== 'string' || !raw) return [...MEDIA_KINDS];
-  const kinds = raw.split(',').filter((k): k is MediaKind => (MEDIA_KINDS as readonly string[]).includes(k));
-  return kinds.length ? [...new Set(kinds)] : [...MEDIA_KINDS];
+  const allowed = splitKinds(raw).filter((k) => ENABLED_KINDS.includes(k));
+  return allowed.length ? allowed : [...ENABLED_KINDS];
 }
 
 function clampInt(raw: unknown, def: number, min: number, max: number): number {
@@ -65,7 +71,7 @@ function clampInt(raw: unknown, def: number, min: number, max: number): number {
 
 export function buildApp(deps: AppDeps = {}): FastifyInstance {
   const http = deps.http ?? createHttp();
-  const sources = deps.sources ?? ALL_SOURCES;
+  const sources = deps.sources ?? enabledSources();
   const limit = deps.rateLimitMax ?? 120;
   const app = Fastify({ logger: false, trustProxy: deps.trustProxy ?? false });
   const homeCache = new Map<Lang, { at: number; ttl: number; value: HomeResult }>();
@@ -144,7 +150,8 @@ export function buildApp(deps: AppDeps = {}): FastifyInstance {
         void reply.code(400).send({ error: 'invalid uid' });
         return undefined;
       }
-      const kind = parseKinds(query.kind)[0] ?? 'video';
+      // Pas de restriction ici : un titre déjà dans « Ma liste » doit rester lisible.
+      const kind = splitKinds(query.kind)[0] ?? 'video';
 
       const resolved = await source.resolve(sourceId, kind, http);
       const best = pickBest(resolved.links);

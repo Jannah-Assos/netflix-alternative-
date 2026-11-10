@@ -18,7 +18,6 @@ async function get<T>(path: string, signal?: AbortSignal): Promise<T> {
 
 export interface SearchArgs {
   q: string;
-  kinds: MediaKind[];
   sources: SourceId[] | null;
   freeOnly: boolean;
   page: number;
@@ -31,7 +30,7 @@ export interface SearchArgs {
 export function search(args: SearchArgs, signal?: AbortSignal): Promise<ScanResult> {
   const p = new URLSearchParams();
   p.set('q', args.q);
-  p.set('kinds', args.kinds.join(','));
+  p.set('kinds', 'video');
   if (args.sources) p.set('sources', args.sources.join(','));
   if (args.freeOnly) p.set('freeOnly', '1');
   if (args.genre) p.set('genre', args.genre);

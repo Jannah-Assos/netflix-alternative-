@@ -1,10 +1,9 @@
 import type { CSSProperties } from 'react';
-import type { MediaKind, SourceId, SourceInfo, SourceStatus } from '../../../server/src/types';
+import type { SourceId, SourceInfo, SourceStatus } from '../../../server/src/types';
 import { useI18n } from '../i18n';
 import {
   CONTENT_LANGS,
   GENRES,
-  KINDS,
   PERIODS,
   SORTS,
   SOURCE_COLOR,
@@ -17,8 +16,6 @@ import {
 import type { MessageKey } from '../messages';
 
 interface Props {
-  kinds: MediaKind[];
-  onKinds: (k: MediaKind[]) => void;
   sources: SourceInfo[];
   /** null = toutes les sources. */
   enabled: SourceId[] | null;
@@ -41,12 +38,7 @@ interface Props {
 
 export function Filters(p: Props) {
   const { t } = useI18n();
-  const { kinds, sources, enabled, statuses } = p;
-
-  const toggleKind = (k: MediaKind) => {
-    const next = kinds.includes(k) ? kinds.filter((x) => x !== k) : [...kinds, k];
-    if (next.length > 0) p.onKinds(KINDS.filter((x) => next.includes(x)));
-  };
+  const { sources, enabled, statuses } = p;
 
   const active = (id: SourceId) => enabled === null || enabled.includes(id);
   const toggleSource = (id: SourceId) => {
@@ -60,33 +52,16 @@ export function Filters(p: Props) {
 
   return (
     <div className="filters">
-      <div className="filters-top">
-        <div className="chip-row" role="group" aria-label={t('filters.kinds')}>
-          {KINDS.map((k) => (
-            <button key={k} type="button" className={`chip ${kinds.includes(k) ? 'on' : ''}`} aria-pressed={kinds.includes(k)} onClick={() => toggleKind(k)}>
-              {t(`kind.${k}`)}
-            </button>
-          ))}
-        </div>
-        {p.dirty && (
-          <button type="button" className="reset" onClick={p.onReset}>
-            {t('filters.reset')}
+      <div className="genres" role="group" aria-label={t('filters.genre')}>
+        <button type="button" className={`chip ${p.genre === null ? 'on' : ''}`} aria-pressed={p.genre === null} onClick={() => p.onGenre(null)}>
+          {t('genre.all')}
+        </button>
+        {GENRES.map((g) => (
+          <button key={g} type="button" className={`chip ${p.genre === g ? 'on' : ''}`} aria-pressed={p.genre === g} onClick={() => p.onGenre(p.genre === g ? null : g)}>
+            {t(`genre.${g}` as MessageKey)}
           </button>
-        )}
+        ))}
       </div>
-
-      {kinds.includes('video') && (
-        <div className="genres" role="group" aria-label={t('filters.genre')}>
-          <button type="button" className={`chip ${p.genre === null ? 'on' : ''}`} aria-pressed={p.genre === null} onClick={() => p.onGenre(null)}>
-            {t('genre.all')}
-          </button>
-          {GENRES.map((g) => (
-            <button key={g} type="button" className={`chip ${p.genre === g ? 'on' : ''}`} aria-pressed={p.genre === g} onClick={() => p.onGenre(p.genre === g ? null : g)}>
-              {t(`genre.${g}` as MessageKey)}
-            </button>
-          ))}
-        </div>
-      )}
 
       <div className="field-row">
         <label className="field">
@@ -127,36 +102,44 @@ export function Filters(p: Props) {
           <span className="track" aria-hidden="true" />
           <span>{t('filters.freeOnly')}</span>
         </label>
+
+        {p.dirty && (
+          <button type="button" className="reset" onClick={p.onReset}>
+            {t('filters.reset')}
+          </button>
+        )}
       </div>
 
-      {(p.genre || p.lang) && <p className="filters-note">{t('filters.note')}</p>}
+      {(p.genre || p.lang) && sources.length > 1 && <p className="filters-note">{t('filters.note')}</p>}
 
-      <details className="sources">
-        <summary>{t('filters.sourcesSummary', { n: activeCount, total: sources.length })}</summary>
-        <div className="chip-row" role="group" aria-label={t('filters.sources')}>
-          {sources.map((s) => {
-            const st = statuses.find((x) => x.source === s.id);
-            const state = !active(s.id) ? 'off' : st && !st.ok ? 'error' : st?.skipped ? 'idle' : st ? 'ok' : 'idle';
-            const title = st?.errorCode ? t(`err.${st.errorCode}`) : st?.skipped ? t(`skip.${st.skipped}`) : SOURCE_NAME[s.id];
-            return (
-              <button
-                key={s.id}
-                type="button"
-                className={`chip source-chip ${active(s.id) ? 'on' : ''}`}
-                style={{ '--c': SOURCE_COLOR[s.id] } as CSSProperties}
-                aria-pressed={active(s.id)}
-                title={title}
-                onClick={() => toggleSource(s.id)}
-              >
-                <span className={`dot ${state}`} />
-                {SOURCE_NAME[s.id]}
-                {st && active(s.id) && st.ok && !st.skipped && <span className="count">{st.count}</span>}
-                {st?.skipped === 'filter-unsupported' && active(s.id) && <span className="count" title={title}>—</span>}
-              </button>
-            );
-          })}
-        </div>
-      </details>
+      {/* Avec une seule source active, ce choix n'aurait aucun sens : on ne l'affiche pas. */}
+      {sources.length > 1 && (
+        <details className="sources">
+          <summary>{t('filters.sourcesSummary', { n: activeCount, total: sources.length })}</summary>
+          <div className="chip-row" role="group" aria-label={t('filters.sources')}>
+            {sources.map((s) => {
+              const st = statuses.find((x) => x.source === s.id);
+              const state = !active(s.id) ? 'off' : st && !st.ok ? 'error' : st?.skipped ? 'idle' : st ? 'ok' : 'idle';
+              const title = st?.errorCode ? t(`err.${st.errorCode}`) : st?.skipped ? t(`skip.${st.skipped}`) : SOURCE_NAME[s.id];
+              return (
+                <button
+                  key={s.id}
+                  type="button"
+                  className={`chip source-chip ${active(s.id) ? 'on' : ''}`}
+                  style={{ '--c': SOURCE_COLOR[s.id] } as CSSProperties}
+                  aria-pressed={active(s.id)}
+                  title={title}
+                  onClick={() => toggleSource(s.id)}
+                >
+                  <span className={`dot ${state}`} />
+                  {SOURCE_NAME[s.id]}
+                  {st && active(s.id) && st.ok && !st.skipped && <span className="count">{st.count}</span>}
+                </button>
+              );
+            })}
+          </div>
+        </details>
+      )}
     </div>
   );
 }

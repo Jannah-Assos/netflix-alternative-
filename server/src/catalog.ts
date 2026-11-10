@@ -3,9 +3,7 @@ import { GENRE_IDS, PERIOD_IDS, SORT_KEYS, type GenreId, type Lang, type PeriodI
 /** Genres → filtres Internet Archive (noms de collections vérifiés sur la vraie API le 10/11/2026). */
 export const GENRES: Record<GenreId, SearchFilters> = {
   film: { collections: ['feature_films'] },
-  tv: { collections: ['classic_tv'] },
   animation: { collections: ['animationandcartoons'] },
-  docs: { subjects: ['documentary'] },
   scifi: { collections: ['SciFi_Horror'] },
   comedy: { collections: ['Comedy_Films'] },
   noir: { collections: ['Film_Noir'] },

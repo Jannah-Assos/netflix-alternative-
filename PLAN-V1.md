@@ -28,7 +28,7 @@ La V1 est atteinte quand **les 11 critères** ci-dessous sont tous vrais (mesur�
 |---|---|---|
 | Accueil, Explorer, filtres, recherche avec suggestions | Profils et contrôle parental par code | Héberger des vidéos |
 | **Algorithme de découverte v1** (garde-fous, score, variété, sélections éditoriales) | Personnalisation avancée (recommandations avec compte) | Publicité |
-| **Page dédiée par titre** (lien partageable) | **Offre payante « Openflix+ »** | Contenus dont les droits sont incertains |
+| **Page dédiée par titre** (lien partageable) | **Offre payante « Openflix+ »** ; **séries** et **anime** si les critères ci-dessous sont remplis | Contenus dont les droits sont incertains |
 | Lecteur : qualité, reprise, **sous-titres**, **épisodes**, plein écran, PiP, raccourcis | Android TV et navigation à la télécommande complète | « Quality seals » IA (voir `BACKLOG.md`) |
 | **Comptes facultatifs (Supabase)** : synchro de Ma liste et de la reprise ; tout marche aussi sans compte | Publication sur les magasins (Play Store, App Store) | |
 | FR / EN, thèmes clair et sombre, **PWA installable** | Chromecast / AirPlay | |
@@ -36,6 +36,29 @@ La V1 est atteinte quand **les 11 critères** ci-dessous sont tous vrais (mesur�
 | Pages légales, signalement, mesure d'audience respectueuse | Affiliation, sponsoring de sélections | |
 | **Sécurité renforcée** (voir J4) | | |
 | **Bêtas** : application Android (.apk) et de bureau (Mac, Windows) | | |
+
+### Le catalogue de la V1 : films et animation (mesures du 10/11/2026)
+
+Vous avez demandé de rester sur ce dont on est sûr d'avoir assez d'informations. Voici ce que montrent les mesures sur les 80 titres les plus vus de chaque catégorie :
+
+| Catégorie | Année | Description | Durée | Auteur | Lisible en MP4 | Décision |
+|---|---|---|---|---|---|---|
+| **Films** (≈ 9 100 titres libres) | 91 % | 93 % | 77 % | 78 % | 29/30 | ✅ **dans la V1** |
+| **Animation** (≈ 1 300) | 78 % | 78 % | 56 % | 83 % | 30/30 | ✅ **dans la V1** |
+| **Séries TV** (≈ 2 500) | **33 %** | **41 %** | **28 %** | **17 %** | 30/30 | ⏸ **hors V1** : fiches trop pauvres et aucune structure saison/épisode |
+| **Anime** (≈ 1 700 déclarés libres) | — | — | — | — | — | ⛔ **exclu** : voir ci-dessous |
+
+⛔ **Pourquoi l'anime est exclu.** Dans la collection « anime », **45 des 60 titres les plus vus se déclarent en CC0 ou « domaine public »**, alors que ce sont *Pokémon*, *Digimon*, *Beastars*, *Black Clover*… des œuvres évidemment protégées. La licence déclarée n'y est donc **pas fiable**. Le catalogue est désormais limité à une **liste blanche de collections** (films, film noir, sci-fi et horreur, comédies, courts métrages, films muets, animation) : chercher « pokemon » ne renvoie plus rien.
+
+Hors périmètre aussi, pour l'instant : musique, livres, logiciels, documentaires, archives NASA, vidéos Wikimedia et PeerTube (le code reste, ces sources sont désactivées ; `OPENFLIX_SOURCES` les réactive).
+
+**Critères pour ajouter une catégorie plus tard** (c'est la règle du jeu) :
+1. fiches renseignées à **≥ 85 %** (année, description, durée) ;
+2. lecture réussie **≥ 95 %** ;
+3. **droits vérifiables** (licence fiable, ou liste blanche) ;
+4. une **structure adaptée** (épisodes et saisons pour les séries).
+
+Pistes pour les **séries** : enrichir les fiches (Wikidata) et regrouper les épisodes ; pour l'**anime** : une liste blanche manuelle de quelques œuvres réellement libres (premiers dessins animés japonais, films Blender…).
 
 > **« Logiciels & jeux » est retiré de la V1** (ou limité au lecteur intégré d'Internet Archive, avec avertissement) : les téléchargements déposés par des internautes exposent les utilisateurs à des logiciels malveillants.
 
@@ -106,7 +129,7 @@ La V1 est atteinte quand **les 11 critères** ci-dessous sont tous vrais (mesur�
 | **Sous-titres** | NASA (WebVTT), PeerTube, Internet Archive ; choix de la langue ; réglage de taille | M |
 | **Épisodes et saisons** | une série (un item Internet Archive) devient une liste d'épisodes ; « épisode suivant » | M |
 | **Page titre dédiée** | lien partageable `/titre/…`, synopsis, licence détaillée avec attribution, titres proches | M |
-| **Recherche** | suggestions pendant la frappe, tolérance aux fautes | S |
+| **Recherche** | **moteur de recherche à nous** sur le cache du jalon J2 (le classement d'Internet Archive est bruité : « Night of the Living Dead » renvoie d'abord un film sur les camps nazis) ; suggestions pendant la frappe ; tolérance aux fautes | M |
 | **« Voir tout »** par rangée + chargement continu | | S |
 | Préférences mémorisées (filtres, qualité, langue des sous-titres) | | S |
 | Lecteur : vitesse, picture-in-picture, mémoire du volume | | S |
@@ -212,6 +235,7 @@ Profils et contrôle parental · offre « Openflix+ » et autres modèles (`docs
 | **Lecture qui échoue sur Safari/iPhone** (formats) | 🔴 | J1 en priorité, test sur vrais appareils |
 | **Une licence mal déclarée** par la personne qui a déposé le fichier | 🔴 | filtre conservateur, bouton de signalement, retrait rapide, mentions claires |
 | **Nom proche de « Netflix »** | 🔴 | vérification de marque avant domaine et communication |
+| **Licence déclarée non fiable** : des déposants attribuent CC0 à des œuvres protégées (45 titres sur 60 dans la collection anime) | 🔴 | liste blanche de collections (faite), sceau « droits vérifiés », signalement, revue d'échantillons |
 | **« Domaine public » aux États-Unis mais protégé en France/UE** | 🔴 | libellé prudent, sceau « droits vérifiés », avis juridique, retrait rapide |
 | **Logiciels malveillants** via les téléchargements de « Logiciels & jeux » | 🔴 | retrait de la catégorie en V1 |
 | **Fuite de données de comptes** | 🔴 | RLS auditée, clé secrète jamais dans l'application, test d'intrusion |

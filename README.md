@@ -36,6 +36,10 @@ Sur un téléphone ou un ordinateur, le navigateur propose alors « Installer l'
 
 Identité « salle de projection » : noir d'encre, lumière ambre de projecteur, titres à empattement, licences en « tampons ». Détails, palette et règles dans [`docs/DESIGN.md`](docs/DESIGN.md). **Le plan pour arriver à une V1 complète est dans [`PLAN-V1.md`](PLAN-V1.md)** (stratégie : découverte, comptes, sécurité, monétisation dans [`docs/STRATEGIE-PRODUIT.md`](docs/STRATEGIE-PRODUIT.md)) ; la vision et les idées dans [`ROADMAP.md`](ROADMAP.md), les idées en attente dans [`BACKLOG.md`](BACKLOG.md).
 
+## Catalogue : films et animation
+
+La V1 est volontairement limitée aux **films et à l'animation**, depuis une **liste blanche de collections** d'Internet Archive (longs métrages, film noir, sci-fi et horreur, comédies, courts métrages, films muets, animation). Les séries (fiches trop pauvres) et l'anime (licences déclarées non fiables) sont exclus pour l'instant ; les critères pour ajouter une catégorie sont dans [`PLAN-V1.md`](PLAN-V1.md). Ce qu'on héberge (ni vidéo, ni catalogue) est expliqué dans [`docs/HEBERGEMENT.md`](docs/HEBERGEMENT.md).
+
 ## Sources
 
 | Source | Contenu | Licence affichée |
@@ -45,7 +49,7 @@ Identité « salle de projection » : noir d'encre, lumière ambre de projecteur
 | **NASA Image and Video Library** | vidéos, audio | domaine public (NASA) |
 | **PeerTube** (via SepiaSearch) | vidéos | uniquement les vidéos avec une licence CC / CC0 déclarée |
 
-Ajouter une source = un fichier dans `server/src/sources/` qui implémente `search()` et `resolve()` (voir `sources/types.ts`). Les rangées de l'accueil sont dans `server/src/home.ts`.
+**Seule Internet Archive est active par défaut** (`OPENFLIX_SOURCES=internet-archive,nasa` active d'autres sources ; leur code est conservé). Ajouter une source = un fichier dans `server/src/sources/` qui implémente `search()` et `resolve()` (voir `sources/types.ts`). Les rangées de l'accueil sont dans `server/src/home.ts`.
 
 ## Contenu et licences
 
@@ -96,6 +100,7 @@ docker run -d -p 8787:8787 --name openflix openflix     # http://localhost:8787
 | `RATE_LIMIT` | `120` | requêtes `/api` par minute et par IP (`/api/resolve` : 40 ; `0` = illimité) |
 | `TRUST_PROXY` | non | `1` derrière un reverse proxy (lit `X-Forwarded-For` pour l'IP réelle) |
 | `SAFE_SEARCH` | `on` | filtre « grand public » (voir ci-dessous) ; `off` pour le désactiver |
+| `OPENFLIX_SOURCES` | `internet-archive` | sources actives, séparées par des virgules (`internet-archive`, `wikimedia-commons`, `nasa`, `peertube`) |
 
 L'outil n'a **pas d'authentification** : pour l'ouvrir hors de votre réseau, placez-le derrière un reverse proxy HTTPS avec accès restreint (la PWA et le service worker exigent HTTPS, sauf sur `localhost`).
 
@@ -135,7 +140,7 @@ web/      React + Vite : accueil, lecture, explorer, ma liste, traductions FR/EN
 ```
 
 ```bash
-npm test             # 198 tests (serveur + interface), dont des tests sur de vraies réponses d'API
+npm test             # 207 tests (serveur + interface), dont des tests sur de vraies réponses d'API
 npm run typecheck
 ```
 

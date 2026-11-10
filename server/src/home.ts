@@ -24,13 +24,12 @@ export const ROWS: RowDef[] = [
   { id: 'local-fr', source: 'internet-archive', langs: ['fr'], filters: { languages: ['French', 'fre', 'fra'], collections: ['feature_films'] } },
   { id: 'local-en', source: 'internet-archive', langs: ['en'], filters: { languages: ['English', 'eng'], collections: ['feature_films'], yearTo: 1965 } },
   { id: 'featured', source: 'internet-archive', filters: { collections: ['feature_films'] } },
+  { id: 'comedy', source: 'internet-archive', filters: { collections: ['Comedy_Films'] } },
+  { id: 'noir', source: 'internet-archive', filters: { collections: ['Film_Noir'] } },
   { id: 'scifi', source: 'internet-archive', filters: { collections: ['SciFi_Horror'] } },
-  { id: 'silent', source: 'internet-archive', filters: { collections: ['feature_films'], yearTo: 1930 } },
+  { id: 'silent', source: 'internet-archive', filters: { collections: ['silent_films'] } },
   { id: 'animation', source: 'internet-archive', filters: { collections: ['animationandcartoons'] } },
-  { id: 'tv', source: 'internet-archive', filters: { collections: ['classic_tv'] } },
-  { id: 'docs', source: 'internet-archive', filters: { subjects: ['documentary'] } },
-  { id: 'space', source: 'nasa', q: 'apollo' },
-  { id: 'shorts', source: 'peertube', q: { fr: 'court métrage', en: 'short film' } },
+  { id: 'shorts', source: 'internet-archive', filters: { collections: ['short_films'] } },
 ];
 
 const ROW_LIMIT = 20;

@@ -1,21 +1,19 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
-import type { MediaItem, MediaKind, SourceId, SourceInfo, SourceStatus } from '../../../server/src/types';
+import type { MediaItem, SourceId, SourceInfo, SourceStatus } from '../../../server/src/types';
 import { listSources, search } from '../api';
 import { Filters } from '../components/Filters';
 import { SearchIcon } from '../components/icons';
 import { ResultCard, SkeletonCard } from '../components/ResultCard';
 import { StatusBar } from '../components/StatusBar';
 import { useI18n } from '../i18n';
-import { CONTENT_LANGS, GENRES, KINDS, PERIODS, SORTS, type ContentLang, type Genre, type Period, type Sort } from '../labels';
+import { CONTENT_LANGS, GENRES, PERIODS, SORTS, type ContentLang, type Genre, type Period, type Sort } from '../labels';
 import { SUGGESTIONS } from '../messages';
 
 function readQuery(p: URLSearchParams) {
-  const kinds = (p.get('kinds')?.split(',') ?? []).filter((k): k is MediaKind => (KINDS as string[]).includes(k));
   const sources = p.get('sources')?.split(',').filter(Boolean) as SourceId[] | undefined;
   return {
     q: p.get('q') ?? '',
-    kinds: kinds.length ? kinds : [...KINDS],
     sources: sources?.length ? sources : null,
     // Par défaut : seulement les licences libres déclarées (free=0 pour tout voir).
     freeOnly: p.get('free') !== '0',
@@ -32,7 +30,6 @@ export function Explore({ query, onInfo }: { query: URLSearchParams; onInfo: (it
   const initial = useRef(readQuery(query)).current;
   const [input, setInput] = useState(initial.q);
   const [q, setQ] = useState(initial.q);
-  const [kinds, setKinds] = useState<MediaKind[]>(initial.kinds);
   const [enabled, setEnabled] = useState<SourceId[] | null>(initial.sources);
   const [freeOnly, setFreeOnly] = useState(initial.freeOnly);
   const [genre, setGenre] = useState<Genre | null>(initial.genre);
@@ -72,7 +69,6 @@ export function Explore({ query, onInfo }: { query: URLSearchParams; onInfo: (it
   useEffect(() => {
     const p = new URLSearchParams();
     if (q) p.set('q', q);
-    if (kinds.length !== KINDS.length) p.set('kinds', kinds.join(','));
     if (enabled) p.set('sources', enabled.join(','));
     if (!freeOnly) p.set('free', '0');
     if (genre) p.set('genre', genre);
@@ -81,7 +77,7 @@ export function Explore({ query, onInfo }: { query: URLSearchParams; onInfo: (it
     if (sort !== 'popular') p.set('sort', sort);
     const qs = p.toString();
     window.history.replaceState(null, '', `#/explore${qs ? `?${qs}` : ''}`);
-  }, [q, kinds, enabled, freeOnly, genre, period, contentLang, sort]);
+  }, [q, enabled, freeOnly, genre, period, contentLang, sort]);
 
   const run = useCallback(
     async (nextPage: number) => {
@@ -91,7 +87,7 @@ export function Explore({ query, onInfo }: { query: URLSearchParams; onInfo: (it
       setLoading(true);
       setError(null);
       try {
-        const res = await search({ q, kinds, sources: enabled, freeOnly, page: nextPage, genre, period, lang: contentLang, sort }, ctrl.signal);
+        const res = await search({ q, sources: enabled, freeOnly, page: nextPage, genre, period, lang: contentLang, sort }, ctrl.signal);
         setItems((prev) => (nextPage === 1 ? res.items : [...prev, ...res.items.filter((i) => !prev.some((p) => p.uid === i.uid))]));
         setStatuses(res.sources);
         setPage(res.page);
@@ -104,7 +100,7 @@ export function Explore({ query, onInfo }: { query: URLSearchParams; onInfo: (it
         if (!ctrl.signal.aborted) setLoading(false);
       }
     },
-    [q, kinds, enabled, freeOnly, genre, period, contentLang, sort],
+    [q, enabled, freeOnly, genre, period, contentLang, sort],
   );
 
   useEffect(() => {
@@ -121,14 +117,13 @@ export function Explore({ query, onInfo }: { query: URLSearchParams; onInfo: (it
     setQ(s);
   };
 
-  const dirty = genre !== null || period !== null || contentLang !== null || sort !== 'popular' || !freeOnly || kinds.length !== KINDS.length || enabled !== null;
+  const dirty = genre !== null || period !== null || contentLang !== null || sort !== 'popular' || !freeOnly || enabled !== null;
   const reset = () => {
     setGenre(null);
     setPeriod(null);
     setContentLang(null);
     setSort('popular');
     setFreeOnly(true);
-    setKinds([...KINDS]);
     setEnabled(null);
   };
 
@@ -163,8 +158,6 @@ export function Explore({ query, onInfo }: { query: URLSearchParams; onInfo: (it
       </div>
 
       <Filters
-        kinds={kinds}
-        onKinds={setKinds}
         sources={sources}
         enabled={enabled}
         onEnabled={setEnabled}

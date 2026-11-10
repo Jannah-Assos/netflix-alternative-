@@ -76,7 +76,7 @@ export type SortKey = 'popular' | 'recent' | 'oldest' | 'title';
 export const SORT_KEYS: readonly SortKey[] = ['popular', 'recent', 'oldest', 'title'];
 
 /** Genres proposés dans Explorer (liste blanche : jamais de valeur libre dans les requêtes vers les sources). */
-export const GENRE_IDS = ['film', 'tv', 'animation', 'docs', 'scifi', 'comedy', 'noir', 'silent', 'shorts'] as const;
+export const GENRE_IDS = ['film', 'animation', 'comedy', 'noir', 'scifi', 'silent', 'shorts'] as const;
 export type GenreId = (typeof GENRE_IDS)[number];
 
 export const PERIOD_IDS = ['before1930', 'y1930', 'y1950', 'y1970', 'y2000'] as const;
