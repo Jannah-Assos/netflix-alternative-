@@ -2,6 +2,8 @@
 
 *Document de travail, à discuter. Rédigé le 10/11/2026 d'après les tests réels de l'application.*
 
+> **Pour le plan d'exécution vers la V1** (critères de réussite, jalons, décisions, budget, risques), voir [`PLAN-V1.md`](PLAN-V1.md). Ce document-ci reste la vision d'ensemble et le catalogue d'idées.
+
 ## 1. Où on en est
 
 Openflix est une application web de streaming **sans hébergement de vidéos** : elle retrouve des films, séries, documentaires et courts métrages dans des bases libres, choisit le meilleur fichier, vérifie que le lien répond et affiche la licence.
