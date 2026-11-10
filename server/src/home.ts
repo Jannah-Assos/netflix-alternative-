@@ -52,7 +52,8 @@ export async function buildHome(
         sources,
         http,
         { q, kinds: ['video'], page: 1, limit: def.limit ?? ROW_LIMIT, ...(def.filters ? { filters: def.filters } : {}) },
-        { sources: [def.source], timeoutMs: ROW_TIMEOUT_MS },
+        // L'accueil ne montre que des titres dont la licence libre est déclarée par la source.
+        { sources: [def.source], timeoutMs: ROW_TIMEOUT_MS, freeOnly: true },
       );
       if (result.sources.some((s) => !s.ok)) partial = true;
       return result.items.length > 0 ? { id: def.id, items: result.items } : null;

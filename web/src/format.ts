@@ -1,6 +1,6 @@
 import type { LicenseInfo, MediaLink } from '../../server/src/types';
 import type { Lang } from '../../server/src/types';
-import type { MessageKey } from './messages';
+import { messages, type MessageKey } from './messages';
 
 const UNITS: Record<Lang, string[]> = {
   fr: ['o', 'Ko', 'Mo', 'Go', 'To'],
@@ -44,6 +44,14 @@ export function licenseText(license: LicenseInfo, t: T): string {
   return t(license.category === 'restricted' ? 'lic.restricted' : 'lic.unknown');
 }
 
+/** « 1080p », ou la déclinaison nommée par la source (« petite », « originale »…) quand la hauteur est inconnue. */
+export function qualityText(link: Pick<MediaLink, 'height' | 'variant'>, t: T): string | undefined {
+  if (link.height) return `${link.height}p`;
+  if (!link.variant) return undefined;
+  const key = `variant.${link.variant}`;
+  return key in messages.fr ? t(key as MessageKey) : link.variant;
+}
+
 /** Libellé d'un lien, construit côté interface pour être traduit : « Lecture directe · MP4 · 480p · 612 Mo ». */
 export function linkText(link: MediaLink, t: T, lang: Lang): string {
   if (link.format === 'm3u8') return t('link.hls');
@@ -57,6 +65,6 @@ export function linkText(link: MediaLink, t: T, lang: Lang): string {
     }
     return t('link.page', { host });
   }
-  const details = [link.format?.toUpperCase(), link.height ? `${link.height}p` : undefined, formatBytes(link.sizeBytes, lang)].filter(Boolean);
+  const details = [link.format?.toUpperCase(), qualityText(link, t), formatBytes(link.sizeBytes, lang)].filter(Boolean);
   return [t(link.type === 'stream' ? 'link.stream' : 'link.download'), ...details].join(' · ');
 }

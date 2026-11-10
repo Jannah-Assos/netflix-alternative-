@@ -1,0 +1,161 @@
+{
+ "batchcomplete": true,
+ "query": {
+  "normalized": [
+   {
+    "fromencoded": false,
+    "from": "File:Big_Buck_Bunny_4K.webm",
+    "to": "File:Big Buck Bunny 4K.webm"
+   }
+  ],
+  "pages": [
+   {
+    "pageid": 40108642,
+    "ns": 6,
+    "title": "File:Big Buck Bunny 4K.webm",
+    "imagerepository": "local",
+    "videoinfo": [
+     {
+      "size": 2964839055,
+      "width": 4000,
+      "height": 2250,
+      "duration": 634.553,
+      "thumburl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c0/Big_Buck_Bunny_4K.webm/500px--Big_Buck_Bunny_4K.webm.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo",
+      "thumbwidth": 480,
+      "thumbheight": 270,
+      "responsiveUrls": {
+       "2": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c0/Big_Buck_Bunny_4K.webm/960px--Big_Buck_Bunny_4K.webm.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo"
+      },
+      "thumbattribs": [],
+      "url": "https://upload.wikimedia.org/wikipedia/commons/c/c0/Big_Buck_Bunny_4K.webm?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "descriptionurl": "https://commons.wikimedia.org/wiki/File:Big_Buck_Bunny_4K.webm",
+      "descriptionshorturl": "https://commons.wikimedia.org/w/index.php?curid=40108642",
+      "extmetadata": {
+       "DateTime": {
+        "value": "2015-05-10 18:23:36",
+        "source": "mediawiki-metadata",
+        "hidden": ""
+       },
+       "ObjectName": {
+        "value": "Big Buck Bunny 4K",
+        "source": "mediawiki-metadata"
+       },
+       "CommonsMetadataExtension": {
+        "value": 1.2,
+        "source": "extension",
+        "hidden": ""
+       },
+       "Categories": {
+        "value": "WebM videos|Anthropomorphic animals|Featured media|Featured pictures by others nominated by Yann Forget|Featured pictures on Wikipedia, English|Media of the day|Big Buck Bunny multimedia|Videos of 2008 from the Netherlands|Video display resolution 4000 x 2250|Blender movies|Videos of short films from 2008|Featured media of animated videos|Featured media uploaded by Matanya|Vorbis videos|VP8 videos",
+        "source": "commons-categories",
+        "hidden": ""
+       },
+       "Assessments": {
+        "value": "featured",
+        "source": "commons-categories",
+        "hidden": ""
+       },
+       "ImageDescription": {
+        "value": "<i><a href=\"//commons.wikimedia.org/wiki/Big_Buck_Bunny\" title=\"Big Buck Bunny\">Big Buck Bunny</a></i> short film by the Blender Foundation.",
+        "source": "commons-desc-page"
+       },
+       "DateTimeOriginal": {
+        "value": "2008-03",
+        "source": "commons-desc-page"
+       },
+       "Credit": {
+        "value": "<a rel=\"nofollow\" class=\"external text\" href=\"http://bbb3d.renderfarming.net/download.html\">Big Buck Bunny</a>",
+        "source": "commons-desc-page"
+       },
+       "Artist": {
+        "value": "Blender Foundation",
+        "source": "commons-desc-page"
+       },
+       "LicenseShortName": {
+        "value": "CC BY 3.0",
+        "source": "commons-desc-page",
+        "hidden": ""
+       },
+       "UsageTerms": {
+        "value": "Creative Commons Attribution 3.0",
+        "source": "commons-desc-page"
+       },
+       "AttributionRequired": {
+        "value": "true",
+        "source": "commons-desc-page",
+        "hidden": ""
+       },
+       "Attribution": {
+        "value": "(c) copyright Blender Foundation | www.bigbuckbunny.org",
+        "source": "commons-desc-page",
+        "hidden": ""
+       },
+       "LicenseUrl": {
+        "value": "https://creativecommons.org/licenses/by/3.0",
+        "source": "commons-desc-page"
+       },
+       "Copyrighted": {
+        "value": "True",
+        "source": "commons-desc-page",
+        "hidden": ""
+       },
+       "Restrictions": {
+        "value": "",
+        "source": "commons-desc-page",
+        "hidden": ""
+       },
+       "License": {
+        "value": "cc-by-3.0",
+        "source": "commons-templates",
+        "hidden": ""
+       }
+      },
+      "mime": "video/webm",
+      "derivatives": [
+       {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/c/c0/Big_Buck_Bunny_4K.webm/Big_Buck_Bunny_4K.webm.3x1080p.vp9.mpd",
+        "type": "application/dash+xml",
+        "transcodekey": "3x1080p.vp9.mpd",
+        "width": 1920,
+        "height": 1080,
+        "bandwidth": -1
+       },
+       {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/c/c0/Big_Buck_Bunny_4K.webm/Big_Buck_Bunny_4K.webm.240p.vp9.webm",
+        "type": "video/webm; codecs=\"vp9, opus\"",
+        "transcodekey": "240p.vp9.webm",
+        "width": 426,
+        "height": 240,
+        "bandwidth": 383864
+       },
+       {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/c/c0/Big_Buck_Bunny_4K.webm/Big_Buck_Bunny_4K.webm.360p.mpeg4.mov",
+        "type": "video/quicktime; codecs=\"mp4v\"",
+        "transcodekey": "360p.mpeg4.mov",
+        "width": 640,
+        "height": 360,
+        "bandwidth": 1636936
+       },
+       {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/c/c0/Big_Buck_Bunny_4K.webm/Big_Buck_Bunny_4K.webm.480p.vp9.webm",
+        "type": "video/webm; codecs=\"vp9, opus\"",
+        "transcodekey": "480p.vp9.webm",
+        "width": 854,
+        "height": 480,
+        "bandwidth": 1218440
+       },
+       {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/c/c0/Big_Buck_Bunny_4K.webm/Big_Buck_Bunny_4K.webm.1080p.vp9.webm",
+        "type": "video/webm; codecs=\"vp9, opus\"",
+        "transcodekey": "1080p.vp9.webm",
+        "width": 1920,
+        "height": 1080,
+        "bandwidth": 3788064
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ }
+}

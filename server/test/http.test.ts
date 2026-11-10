@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { HttpError, assertPublicUrl, createHttp, isPrivateIp } from '../src/http.js';
+import { HttpError, assertPublicUrl, createHttp, detectProxied, isPrivateIp } from '../src/http.js';
 
 const publicLookup = async () => [{ address: '93.184.216.34' }];
 
@@ -115,5 +115,45 @@ describe('createHttp', () => {
       lookupImpl: publicLookup,
     });
     expect(await offline.head('https://archive.org/z')).toEqual({ alive: null });
+  });
+});
+
+describe('derrière un proxy', () => {
+  const noDns = async () => {
+    throw Object.assign(new Error('getaddrinfo ENOTFOUND archive.org'), { code: 'ENOTFOUND' });
+  };
+
+  it('sans proxy, un échec DNS est une erreur réseau', async () => {
+    await expect(assertPublicUrl('https://archive.org/x', noDns, false)).rejects.toMatchObject({ code: 'network' });
+  });
+
+  it('avec un proxy, un nom que le DNS local ne connaît pas est accepté (le proxy le résout)', async () => {
+    await expect(assertPublicUrl('https://archive.org/x', noDns, true)).resolves.toBeInstanceOf(URL);
+  });
+
+  it('avec un proxy, les autres protections restent actives', async () => {
+    for (const u of ['http://127.0.0.1/x', 'http://169.254.169.254/x', 'http://localhost/x', 'http://intranet/x', 'file:///etc/passwd', 'https://archive.org:8443/x']) {
+      await expect(assertPublicUrl(u, noDns, true), u).rejects.toBeInstanceOf(HttpError);
+    }
+  });
+
+  it('avec un proxy, un nom qui résout vers une adresse privée reste refusé', async () => {
+    await expect(assertPublicUrl('https://evil.example/x', async () => [{ address: '10.0.0.5' }], true)).rejects.toThrow(/private/);
+  });
+
+  it('createHttp utilise l’option proxied', async () => {
+    const fetchImpl = async () => new Response('{"ok":true}');
+    const proxied = createHttp({ fetchImpl: fetchImpl as unknown as typeof fetch, lookupImpl: noDns, proxied: true });
+    expect(await proxied.json('https://archive.org/p')).toEqual({ ok: true });
+    const direct = createHttp({ fetchImpl: fetchImpl as unknown as typeof fetch, lookupImpl: noDns, proxied: false, retries: 0 });
+    await expect(direct.json('https://archive.org/q')).rejects.toMatchObject({ code: 'network' });
+  });
+
+  it('detectProxied exige NODE_USE_ENV_PROXY=1 et une variable de proxy', () => {
+    expect(detectProxied({ NODE_USE_ENV_PROXY: '1', HTTPS_PROXY: 'http://p:1' })).toBe(true);
+    expect(detectProxied({ NODE_USE_ENV_PROXY: '1', http_proxy: 'http://p:1' })).toBe(true);
+    expect(detectProxied({ NODE_USE_ENV_PROXY: '1' })).toBe(false);
+    expect(detectProxied({ HTTPS_PROXY: 'http://p:1' })).toBe(false);
+    expect(detectProxied({})).toBe(false);
   });
 });

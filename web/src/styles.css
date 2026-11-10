@@ -342,11 +342,14 @@ button.card:hover {
   overflow: hidden;
 }
 
+/* L'image remplit son cadre sans jamais en dicter la taille (les vraies miniatures ont des tailles très variées). */
 .thumb img {
+  position: absolute;
+  inset: 0;
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  display: block;
 }
 
 .thumb-fallback {
@@ -1015,6 +1018,7 @@ button.card:hover {
 
 .row-scroller {
   display: flex;
+  align-items: flex-start;
   gap: 14px;
   padding: 4px 20px 14px;
   overflow-x: auto;
@@ -1058,6 +1062,7 @@ button.card:hover {
 
 .poster {
   flex: 0 0 clamp(190px, 21vw, 252px);
+  min-width: 0;
   scroll-snap-align: start;
 }
 
@@ -1079,6 +1084,8 @@ button.card:hover {
 }
 
 .poster-thumb img {
+  position: absolute;
+  inset: 0;
   display: block;
   width: 100%;
   height: 100%;

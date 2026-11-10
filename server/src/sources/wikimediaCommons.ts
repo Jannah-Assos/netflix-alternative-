@@ -1,5 +1,5 @@
 import { classifyLicense } from '../licenses.js';
-import { rankCandidates } from '../linkPicker.js';
+import { rankCandidates, type Candidate } from '../linkPicker.js';
 import type { MediaItem, MediaKind, MediaLink, SearchParams, SourceResolve } from '../types.js';
 import { num, stripHtml, toHttps, truncate, yearOf } from '../util.js';
 import type { MediaSource } from './types.js';
@@ -10,21 +10,38 @@ interface ExtValue {
   value?: string;
 }
 
+/** Version transcodée par Wikimedia (module TimedMediaHandler) : bien plus légère que l'original. */
+interface Derivative {
+  src?: string;
+  type?: string;
+  width?: number;
+  height?: number;
+}
+
 interface ImageInfo {
   url?: string;
   descriptionurl?: string;
   thumburl?: string;
   size?: number;
+  height?: number;
   duration?: number;
   mime?: string;
+  derivatives?: Derivative[];
   extmetadata?: Record<string, ExtValue | undefined>;
 }
 
 interface CommonsPage {
   title?: string;
   index?: number;
+  /** Fourni par `prop=videoinfo` (vidéo et audio) ; `imageinfo` sert de repli. */
+  videoinfo?: ImageInfo[];
   imageinfo?: ImageInfo[];
 }
+
+const infoOf = (page: CommonsPage): ImageInfo | undefined => page.videoinfo?.[0] ?? page.imageinfo?.[0];
+
+/** Dérivés lisibles dans un navigateur : WebM/Ogg. On écarte le DASH (.mpd) et le MPEG-4 en .mov. */
+const PLAYABLE_DERIVATIVE = /^(video\/(webm|ogg)|audio\/)/i;
 
 interface CommonsResponse {
   query?: { pages?: CommonsPage[] };
@@ -37,10 +54,10 @@ function baseParams(): URLSearchParams {
   p.set('action', 'query');
   p.set('format', 'json');
   p.set('formatversion', '2');
-  p.set('prop', 'imageinfo');
-  p.set('iiprop', 'url|size|mime|extmetadata');
-  p.set('iiextmetadatafilter', 'LicenseShortName|LicenseUrl|ImageDescription|Artist|DateTimeOriginal|DateTime');
-  p.set('iiurlwidth', '480');
+  p.set('prop', 'videoinfo');
+  p.set('viprop', 'url|size|mime|extmetadata|derivatives');
+  p.set('viextmetadatafilter', 'LicenseShortName|LicenseUrl|ImageDescription|Artist|DateTimeOriginal|DateTime');
+  p.set('viurlwidth', '480');
   return p;
 }
 
@@ -53,7 +70,7 @@ export function cleanTitle(fileTitle: string): string {
 }
 
 export function toItem(page: CommonsPage, kind: MediaKind): MediaItem | null {
-  const info = page.imageinfo?.[0];
+  const info = infoOf(page);
   if (!page.title || !info?.url) return null;
   const ext = info.extmetadata ?? {};
   const license = classifyLicense(ext.LicenseShortName?.value, ext.LicenseUrl?.value);
@@ -78,14 +95,25 @@ export function toItem(page: CommonsPage, kind: MediaKind): MediaItem | null {
   };
 }
 
-function linksFor(page: CommonsPage, kind: MediaKind): SourceResolve {
-  const info = page.imageinfo?.[0];
+export function linksFor(page: CommonsPage, kind: MediaKind): SourceResolve {
+  const info = infoOf(page);
   if (!info?.url || !page.title) return { links: [] };
   const name = info.url.split('/').pop() ?? page.title;
-  const ranked = rankCandidates(
-    [{ url: info.url, name, ...(info.size ? { sizeBytes: info.size } : {}), ...(info.duration ? { durationSec: info.duration } : {}) }],
-    kind,
-  );
+  const candidates: Candidate[] = [
+    {
+      url: info.url,
+      name,
+      ...(info.size ? { sizeBytes: info.size } : {}),
+      ...(info.height ? { height: info.height } : {}),
+      ...(info.duration ? { durationSec: info.duration } : {}),
+    },
+  ];
+  for (const d of info.derivatives ?? []) {
+    const src = toHttps(d.src?.startsWith('//') ? `https:${d.src}` : d.src);
+    if (!src || !d.type || !PLAYABLE_DERIVATIVE.test(d.type)) continue;
+    candidates.push({ url: src, name: src, derivative: true, ...(d.height ? { height: d.height } : {}), ...(info.duration ? { durationSec: info.duration } : {}) });
+  }
+  const ranked = rankCandidates(candidates, kind);
   const links: MediaLink[] = [
     ...ranked,
     {

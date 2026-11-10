@@ -1,6 +1,7 @@
 import { classifyLicense } from '../licenses.js';
 import { rankCandidates, type Candidate } from '../linkPicker.js';
 import type { MediaItem, MediaKind, MediaLink, SearchFilters, SearchParams, SourceResolve } from '../types.js';
+import { BLOCKED_COLLECTIONS, isFamilySafe, safeSearchEnabled } from '../safety.js';
 import { num, parseDuration, str, stripHtml, truncate, yearOf } from '../util.js';
 import type { MediaSource } from './types.js';
 
@@ -31,6 +32,7 @@ interface IaDoc {
   downloads?: unknown;
   licenseurl?: unknown;
   creator?: unknown;
+  subject?: unknown;
 }
 
 interface IaFile {
@@ -63,7 +65,7 @@ const orGroup = (field: string, values: string[] | undefined): string | undefine
   return safe.length ? `${field}:(${safe.join(' OR ')})` : undefined;
 };
 
-export function buildQuery(q: string, kinds: MediaKind[], filters: SearchFilters = {}): string {
+export function buildQuery(q: string, kinds: MediaKind[], filters: SearchFilters = {}, safe = safeSearchEnabled()): string {
   const text = sanitizeQuery(q);
   const types = [...new Set(kinds.flatMap((k) => KIND_TO_MEDIATYPE[k]))];
   const clauses: string[] = [];
@@ -72,18 +74,26 @@ export function buildQuery(q: string, kinds: MediaKind[], filters: SearchFilters
   for (const c of [orGroup('collection', filters.collections), orGroup('language', filters.languages), orGroup('subject', filters.subjects)]) {
     if (c) clauses.push(c);
   }
+  if (filters.licensed) clauses.push('licenseurl:*');
   if (filters.yearFrom !== undefined || filters.yearTo !== undefined) {
     clauses.push(`year:[${Math.trunc(filters.yearFrom ?? 1850)} TO ${Math.trunc(filters.yearTo ?? 2100)}]`);
   }
   clauses.push('-access-restricted-item:true');
+  if (safe) clauses.push(`-collection:(${BLOCKED_COLLECTIONS.join(' OR ')})`);
   return clauses.join(' AND ');
 }
 
-export function toItem(doc: IaDoc): MediaItem | null {
+export function toItem(doc: IaDoc, safe = safeSearchEnabled()): MediaItem | null {
   const id = doc.identifier;
   const mediatype = str(doc.mediatype);
   const kind = mediatype ? MEDIATYPE_TO_KIND[mediatype] : undefined;
   if (!id || !kind) return null;
+  if (safe) {
+    const subjects = (Array.isArray(doc.subject) ? doc.subject : [doc.subject]).filter((s): s is string => typeof s === 'string');
+    const title = str(doc.title);
+    const description = str(doc.description);
+    if (!isFamilySafe({ ...(title ? { title } : {}), ...(description ? { description } : {}), subjects })) return null;
+  }
   const creator = str(doc.creator);
   const year = yearOf(doc.year ?? doc.date);
   const downloads = num(doc.downloads);
@@ -137,7 +147,7 @@ export const internetArchive: MediaSource = {
   async search(params: SearchParams, http) {
     const url = new URL(`${BASE}/advancedsearch.php`);
     url.searchParams.set('q', buildQuery(params.q, params.kinds, params.filters));
-    for (const f of ['identifier', 'title', 'description', 'mediatype', 'year', 'date', 'downloads', 'licenseurl', 'creator']) {
+    for (const f of ['identifier', 'title', 'description', 'mediatype', 'year', 'date', 'downloads', 'licenseurl', 'creator', 'subject']) {
       url.searchParams.append('fl[]', f);
     }
     url.searchParams.append('sort[]', 'downloads desc');
@@ -146,7 +156,7 @@ export const internetArchive: MediaSource = {
     url.searchParams.set('output', 'json');
 
     const data = await http.json<{ response?: { docs?: IaDoc[] } }>(url.href);
-    return (data.response?.docs ?? []).map(toItem).filter((i): i is MediaItem => i !== null);
+    return (data.response?.docs ?? []).map((d) => toItem(d)).filter((i): i is MediaItem => i !== null);
   },
 
   async resolve(id, kind, http): Promise<SourceResolve> {

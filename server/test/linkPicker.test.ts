@@ -42,6 +42,32 @@ describe('rankCandidates (vidéo)', () => {
   });
 });
 
+describe('rankCandidates (taille)', () => {
+  it('un original de plusieurs Go passe après une version plus légère de même format', () => {
+    const links = rankCandidates(
+      [
+        c('original.webm', { sizeBytes: 2.9e9, height: 2160 }),
+        c('transcode.webm', { derivative: true, height: 1080 }),
+      ],
+      'video',
+    );
+    expect(links[0]?.url).toContain('transcode.webm');
+  });
+
+  it('pénalité plus forte au-delà de 4 Go', () => {
+    const [a] = rankCandidates([c('a.mp4', { sizeBytes: 2e9 })], 'video');
+    const [b] = rankCandidates([c('b.mp4', { sizeBytes: 5e9 })], 'video');
+    const [small] = rankCandidates([c('c.mp4', { sizeBytes: 5e8 })], 'video');
+    expect(small!.score).toBeGreaterThan(a!.score);
+    expect(a!.score).toBeGreaterThan(b!.score);
+  });
+
+  it('conserve la variante nommée par la source', () => {
+    const [l] = rankCandidates([c('x~small.mp4', { variant: 'small' })], 'video');
+    expect(l?.variant).toBe('small');
+  });
+});
+
 describe('rankCandidates (autres types)', () => {
   it('audio : mp3 avant flac et wav', () => {
     const links = rankCandidates([c('a.wav'), c('a.flac'), c('a.mp3')], 'audio');

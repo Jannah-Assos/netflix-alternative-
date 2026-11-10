@@ -29,10 +29,16 @@ Aucun fichier n'est copié ni hébergé : l'application trouve les contenus chez
 
 Ajouter une source = un fichier dans `server/src/sources/` qui implémente `search()` et `resolve()` (voir `sources/types.ts`). Les rangées de l'accueil sont dans `server/src/home.ts`.
 
+## Contenu et licences
+
+- **Accueil : licences libres déclarées uniquement.** Internet Archive héberge aussi des œuvres protégées déposées par des internautes (leur licence est « inconnue »). L'accueil ne montre que les titres dont la source déclare une licence libre : domaine public, Creative Commons. Dans **Explorer**, « Licences libres vérifiées » est activé par défaut ; le désactiver ajoute des résultats sans licence déclarée, signalés « Licence à vérifier ».
+- **La licence est celle que la personne ayant déposé le fichier a déclarée** : ce n'est pas une garantie juridique. Vérifiez les droits avant toute réutilisation.
+- **Filtre « grand public » (activé par défaut).** Internet Archive contient aussi du contenu pour adultes, y compris dans des collections générales comme `feature_films`. Le serveur exclut les collections signalées (`adultvhs`, `no-preview`…) et les titres, descriptions et mots-clés inappropriés (accents ignorés, mots entiers : « Essex » n'est pas bloqué). Il est volontairement strict ; `SAFE_SEARCH=off` le désactive pour un usage personnel.
+
 ## Comment le meilleur lien est choisi
 
 1. **Recherche** en parallèle sur les sources. Une source en panne ou lente (15 s max) n'empêche pas les autres de répondre.
-2. **Classement des fichiers** d'un item : vidéo MP4/h.264 (lisible partout) > WebM > OGV > MKV… ; meilleure résolution ; versions « 512Kb », fichiers vides, vignettes et métadonnées écartés. Audio : MP3 > M4A/OGG > FLAC > WAV. Logiciels : ZIP. Livres : PDF > EPUB.
+2. **Classement des fichiers** d'un item : vidéo MP4/h.264 (lisible partout) > WebM > OGV > MKV… ; meilleure résolution ; versions « 512Kb », fichiers vides, vignettes et métadonnées écartés ; un original de plusieurs Go passe après une version plus légère (Wikimedia propose des WebM transcodés en 240p à 1080p, NASA des déclinaisons large / petite / mobile). Audio : MP3 > M4A/OGG > FLAC > WAV. Logiciels : ZIP. Livres : PDF > EPUB.
 3. **Vérification** du lien (requête `HEAD`) : en ligne / hors ligne / non vérifié.
 4. **Licence** classée : domaine public, Creative Commons, CC non commercial, droits réservés ou inconnue.
 
@@ -52,7 +58,7 @@ npm run build
 npm start            # http://127.0.0.1:8787 sert l'API et l'interface
 ```
 
-Derrière un proxy d'entreprise, lancez avec `NODE_USE_ENV_PROXY=1`.
+Derrière un proxy d'entreprise, lancez avec `NODE_USE_ENV_PROXY=1` : le proxy résout alors lui-même les noms de domaine, et la vérification DNS locale du serveur (protection contre les adresses privées) est remplacée par la politique de sortie de votre proxy.
 
 ### Installer comme une application
 
@@ -71,6 +77,7 @@ docker run -d -p 8787:8787 --name open-media open-media     # http://localhost:8
 | `HOST` | `127.0.0.1` (`0.0.0.0` dans l'image Docker) | adresse d'écoute |
 | `RATE_LIMIT` | `120` | requêtes `/api` par minute et par IP (`/api/resolve` : 40 ; `0` = illimité) |
 | `TRUST_PROXY` | non | `1` derrière un reverse proxy (lit `X-Forwarded-For` pour l'IP réelle) |
+| `SAFE_SEARCH` | `on` | filtre « grand public » (voir ci-dessous) ; `off` pour le désactiver |
 
 L'outil n'a **pas d'authentification** : pour l'ouvrir hors de votre réseau, placez-le derrière un reverse proxy HTTPS avec accès restreint (la PWA et le service worker exigent HTTPS, sauf sur `localhost`).
 
@@ -83,13 +90,13 @@ npm run scan -- "apollo 11" --source nasa --free -n 5
 
 ### Vérifier les sources en réel
 
-Les tests utilisent des réponses d'API reconstituées d'après leur documentation, pas des captures réelles. Pour confirmer que les formats n'ont pas changé, depuis une machine connectée à internet :
+Les tests s'appuient sur de **vraies réponses** des quatre API (`server/test/fixtures/`, capturées le 10/11/2026). Pour confirmer que les formats n'ont pas changé, depuis une machine connectée à internet :
 
 ```bash
 npm run smoke
 ```
 
-Il interroge chaque source, résout le premier résultat et vérifie son lien. L'accueil réel (`/api/home`) montre aussi vite si une collection Internet Archive a changé de nom : sa rangée reste vide, donc masquée.
+Il interroge chaque source, résout le premier résultat et vérifie son lien. L'accueil réel (`/api/home`) montre aussi vite si une collection Internet Archive a changé de nom : sa rangée reste vide, donc masquée. Wikimedia limite les requêtes par adresse IP : un « 429 » passager est normal, et un lien ainsi limité s'affiche « Non vérifié » (pas « Hors ligne »).
 
 ## API
 
@@ -110,7 +117,7 @@ web/      React + Vite : accueil, lecture, explorer, ma liste, traductions FR/EN
 ```
 
 ```bash
-npm test             # 119 tests (serveur + interface)
+npm test             # 180 tests (serveur + interface), dont des tests sur de vraies réponses d'API
 npm run typecheck
 ```
 

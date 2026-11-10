@@ -17,7 +17,8 @@ function readQuery(p: URLSearchParams) {
     q: p.get('q') ?? '',
     kinds: kinds.length ? kinds : [...KINDS],
     sources: sources?.length ? sources : null,
-    freeOnly: p.get('free') === '1',
+    // Par défaut : seulement les licences libres déclarées (free=0 pour tout voir).
+    freeOnly: p.get('free') !== '0',
   };
 }
 
@@ -65,7 +66,7 @@ export function Explore({ query, onInfo }: { query: URLSearchParams; onInfo: (it
     if (q) p.set('q', q);
     if (kinds.length !== KINDS.length) p.set('kinds', kinds.join(','));
     if (enabled) p.set('sources', enabled.join(','));
-    if (freeOnly) p.set('free', '1');
+    if (!freeOnly) p.set('free', '0');
     const qs = p.toString();
     window.history.replaceState(null, '', `#/explore${qs ? `?${qs}` : ''}`);
   }, [q, kinds, enabled, freeOnly]);

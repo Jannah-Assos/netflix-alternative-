@@ -60,4 +60,11 @@ describe('buildHome', () => {
     expect(ROWS.filter((r) => !r.langs).length).toBeGreaterThan(4);
     for (const r of ROWS.filter((r) => r.langs)) expect(r.id.startsWith('local-')).toBe(true);
   });
+
+  it('ne demande que des titres à licence libre déclarée', async () => {
+    const asked: SearchParams[] = [];
+    const spy = source('internet-archive', async (p) => (asked.push(p), [item('internet-archive', 1)]));
+    await buildHome('en', [spy], fakeHttp({}), [{ id: 'featured', source: 'internet-archive', filters: { collections: ['feature_films'] } }]);
+    expect(asked[0]?.filters).toMatchObject({ collections: ['feature_films'], licensed: true });
+  });
 });

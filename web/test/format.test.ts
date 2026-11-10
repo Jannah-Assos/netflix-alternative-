@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { LicenseInfo, MediaLink } from '../../server/src/types';
-import { formatBytes, formatClock, formatDuration, licenseText, linkText } from '../src/format';
+import { formatBytes, formatClock, formatDuration, licenseText, linkText, qualityText } from '../src/format';
 import { interpolate, messages, type MessageKey } from '../src/messages';
 
 const tFor = (lang: 'fr' | 'en') => (key: MessageKey, vars?: Record<string, string | number>) => interpolate(messages[lang][key], vars);
@@ -60,5 +60,23 @@ describe('linkText', () => {
     expect(linkText({ ...base, url: 'https://archive.org/embed/x', type: 'embed' }, tFor('en'), 'en')).toBe('Source’s embedded player');
     expect(linkText({ ...base, url: 'https://www.archive.org/details/x', type: 'page' }, tFor('fr'), 'fr')).toBe('Page sur archive.org');
     expect(linkText({ ...base, url: 'pas une url', type: 'page' }, tFor('en'), 'en')).toBe('Page on ');
+  });
+});
+
+describe('qualityText', () => {
+  it('hauteur si connue, sinon déclinaison traduite, sinon rien', () => {
+    expect(qualityText({ height: 1080 }, tFor('fr'))).toBe('1080p');
+    expect(qualityText({ variant: 'small' }, tFor('fr'))).toBe('petite');
+    expect(qualityText({ variant: 'small' }, tFor('en'))).toBe('small');
+    expect(qualityText({ variant: 'original' }, tFor('fr'))).toBe('originale');
+    expect(qualityText({ variant: 'inconnue' }, tFor('fr'))).toBe('inconnue');
+    expect(qualityText({}, tFor('fr'))).toBeUndefined();
+    expect(qualityText({ height: 480, variant: 'small' }, tFor('en'))).toBe('480p');
+  });
+
+  it('apparaît dans le libellé des liens NASA', () => {
+    const link = { url: 'https://images-assets.nasa.gov/x~small.mp4', type: 'stream' as const, format: 'mp4', variant: 'small', score: 104, playable: true };
+    expect(linkText(link, tFor('fr'), 'fr')).toBe('Lecture directe · MP4 · petite');
+    expect(linkText(link, tFor('en'), 'en')).toBe('Direct playback · MP4 · small');
   });
 });

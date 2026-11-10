@@ -11,10 +11,10 @@ import { fakeHttp } from './helpers.js';
 
 describe('Internet Archive', () => {
   it('construit la requête : mots-clés nettoyés, types de média, hors prêt restreint', () => {
-    expect(buildQuery('nosferatu: (1922)', ['video'])).toBe(
+    expect(buildQuery('nosferatu: (1922)', ['video'], {}, false)).toBe(
       '(nosferatu 1922) AND mediatype:(movies) AND -access-restricted-item:true',
     );
-    expect(buildQuery('', ['video', 'audio'])).toBe('mediatype:(movies OR audio OR etree) AND -access-restricted-item:true');
+    expect(buildQuery('', ['video', 'audio'], {}, false)).toBe('mediatype:(movies OR audio OR etree) AND -access-restricted-item:true');
   });
 
   it('transforme un résultat de recherche (champs parfois en tableau)', () => {
@@ -268,18 +268,27 @@ describe('Internet Archive : filtres de catalogue', () => {
         subjects: ['documentary'],
         yearFrom: 1920,
         yearTo: 1950,
-      }),
+      }, false),
     ).toBe(
       'mediatype:(movies) AND collection:(feature_films OR SciFi_Horror) AND language:(French OR fre) AND subject:(documentary) AND year:[1920 TO 1950] AND -access-restricted-item:true',
     );
   });
 
   it('écarte les valeurs qui pourraient injecter de la syntaxe Lucene', () => {
-    const q = buildQuery('', ['video'], { collections: ['ok_1', 'x) OR (mediatype:texts', 'a b'], subjects: ['*'] });
+    const q = buildQuery('', ['video'], { collections: ['ok_1', 'x) OR (mediatype:texts', 'a b'], subjects: ['*'] }, false);
     expect(q).toBe('mediatype:(movies) AND collection:(ok_1) AND -access-restricted-item:true');
   });
 
   it('une borne d’année seule suffit', () => {
-    expect(buildQuery('', ['video'], { yearTo: 1930 })).toContain('year:[1850 TO 1930]');
+    expect(buildQuery('', ['video'], { yearTo: 1930 }, false)).toContain('year:[1850 TO 1930]');
+  });
+});
+
+describe('Internet Archive : licence déclarée', () => {
+  it('« licensed » ajoute licenseurl:* à la requête (syntaxe validée sur la vraie API)', () => {
+    expect(buildQuery('', ['video'], { collections: ['feature_films'], licensed: true }, false)).toBe(
+      'mediatype:(movies) AND collection:(feature_films) AND licenseurl:* AND -access-restricted-item:true',
+    );
+    expect(buildQuery('', ['video'], {}, false)).not.toContain('licenseurl');
   });
 });

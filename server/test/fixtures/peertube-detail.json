@@ -1,0 +1,166 @@
+{
+ "id": 23488,
+ "uuid": "3d95fb3d-c866-42c8-9db1-fe82f48ccb95",
+ "shortUUID": "8B5QmoLSS3mWJ4fmZZu3Ye",
+ "url": "https://video.blender.org/videos/watch/3d95fb3d-c866-42c8-9db1-fe82f48ccb95",
+ "name": "Spring - Blender Open Movie",
+ "category": {
+  "id": 10,
+  "label": "Entertainment"
+ },
+ "licence": {
+  "id": 2,
+  "label": "Attribution - Share Alike"
+ },
+ "language": {
+  "id": null,
+  "label": "Unknown"
+ },
+ "privacy": {
+  "id": 1,
+  "label": "Public"
+ },
+ "nsfw": false,
+ "nsfwFlags": 0,
+ "nsfwSummary": null,
+ "truncatedDescription": "Spring is the latest short film produced by Blender Animation Studio. Made in Blender 2.8.\r\nGet the production files, assets and exclusive making-of videos by joining Blender Cloud at https://cloud.blender.org\r\n\r\n--\r\n\r\nSpring is the story of a she...",
+ "isLocal": true,
+ "duration": 464,
+ "aspectRatio": null,
+ "views": 7350,
+ "viewers": 0,
+ "downloads": 10611,
+ "likes": 34,
+ "dislikes": 0,
+ "thumbnailPath": "/lazy-static/thumbnails/3d95fb3d-c866-42c8-9db1-fe82f48ccb95.jpg",
+ "previewPath": "/lazy-static/thumbnails/3d95fb3d-c866-42c8-9db1-fe82f48ccb95.jpg",
+ "thumbnails": [
+  {
+   "height": 110,
+   "width": 200,
+   "aspectRatio": "16:9",
+   "fileUrl": "https://video.blender.org/lazy-static/thumbnails/3d95fb3d-c866-42c8-9db1-fe82f48ccb95.jpg"
+  }
+ ],
+ "embedPath": "/videos/embed/8B5QmoLSS3mWJ4fmZZu3Ye",
+ "createdAt": "2019-06-26T14:22:29.146Z",
+ "updatedAt": "2026-11-10T13:32:18.637Z",
+ "publishedAt": "2019-06-26T14:54:03.643Z",
+ "originallyPublishedAt": null,
+ "isLive": false,
+ "comments": 14,
+ "blacklisted": false,
+ "streamingPlaylists": [],
+ "files": [
+  {
+   "id": 418369,
+   "resolution": {
+    "id": 804,
+    "label": "1080p"
+   },
+   "width": 1920,
+   "height": 804,
+   "size": 110388897,
+   "fps": 24,
+   "torrentUrl": "https://video.blender.org/lazy-static/torrents/c9ebb3db-62dd-421e-b88c-d267f80a10e1-804.torrent",
+   "torrentDownloadUrl": "https://video.blender.org/download/torrents/c9ebb3db-62dd-421e-b88c-d267f80a10e1-804.torrent",
+   "fileUrl": "https://video.blender.org/object-storage/web_videos/3d95fb3d-c866-42c8-9db1-fe82f48ccb95-804.mp4",
+   "fileDownloadUrl": "https://video.blender.org/download/web-videos/3d95fb3d-c866-42c8-9db1-fe82f48ccb95-804.mp4",
+   "metadataUrl": "https://video.blender.org/api/v1/videos/3d95fb3d-c866-42c8-9db1-fe82f48ccb95/metadata/418369",
+   "hasAudio": true,
+   "hasVideo": true,
+   "storage": 1
+  },
+  {
+   "id": 418451,
+   "resolution": {
+    "id": 720,
+    "label": "720p"
+   },
+   "width": 1718,
+   "height": 720,
+   "size": 97446257,
+   "fps": 24,
+   "torrentUrl": "https://video.blender.org/lazy-static/torrents/cb80b05a-fb55-48b8-919e-6d02dbe242e2-720.torrent",
+   "torrentDownloadUrl": "https://video.blender.org/download/torrents/cb80b05a-fb55-48b8-919e-6d02dbe242e2-720.torrent",
+   "fileUrl": "https://video.blender.org/object-storage/web_videos/3d95fb3d-c866-42c8-9db1-fe82f48ccb95-720.mp4",
+   "fileDownloadUrl": "https://video.blender.org/download/web-videos/3d95fb3d-c866-42c8-9db1-fe82f48ccb95-720.mp4",
+   "metadataUrl": "https://video.blender.org/api/v1/videos/3d95fb3d-c866-42c8-9db1-fe82f48ccb95/metadata/418451",
+   "hasAudio": true,
+   "hasVideo": true,
+   "storage": 1
+  },
+  {
+   "id": 418370,
+   "resolution": {
+    "id": 480,
+    "label": "480p"
+   },
+   "width": 1146,
+   "height": 480,
+   "size": 54198090,
+   "fps": 24,
+   "torrentUrl": "https://video.blender.org/lazy-static/torrents/ea7b21cc-70b1-4098-a8e4-a2a852943969-480.torrent",
+   "torrentDownloadUrl": "https://video.blender.org/download/torrents/ea7b21cc-70b1-4098-a8e4-a2a852943969-480.torrent",
+   "fileUrl": "https://video.blender.org/object-storage/web_videos/3d95fb3d-c866-42c8-9db1-fe82f48ccb95-480.mp4",
+   "fileDownloadUrl": "https://video.blender.org/download/web-videos/3d95fb3d-c866-42c8-9db1-fe82f48ccb95-480.mp4",
+   "metadataUrl": "https://video.blender.org/api/v1/videos/3d95fb3d-c866-42c8-9db1-fe82f48ccb95/metadata/418370",
+   "hasAudio": true,
+   "hasVideo": true,
+   "storage": 1
+  },
+  {
+   "id": 418371,
+   "resolution": {
+    "id": 360,
+    "label": "360p"
+   },
+   "width": 858,
+   "height": 360,
+   "size": 38025811,
+   "fps": 24,
+   "torrentUrl": "https://video.blender.org/lazy-static/torrents/3313695f-e0da-40a5-9475-0e24278515d5-360.torrent",
+   "torrentDownloadUrl": "https://video.blender.org/download/torrents/3313695f-e0da-40a5-9475-0e24278515d5-360.torrent",
+   "fileUrl": "https://video.blender.org/object-storage/web_videos/3d95fb3d-c866-42c8-9db1-fe82f48ccb95-360.mp4",
+   "fileDownloadUrl": "https://video.blender.org/download/web-videos/3d95fb3d-c866-42c8-9db1-fe82f48ccb95-360.mp4",
+   "metadataUrl": "https://video.blender.org/api/v1/videos/3d95fb3d-c866-42c8-9db1-fe82f48ccb95/metadata/418371",
+   "hasAudio": true,
+   "hasVideo": true,
+   "storage": 1
+  },
+  {
+   "id": 418452,
+   "resolution": {
+    "id": 240,
+    "label": "240p"
+   },
+   "width": 572,
+   "height": 240,
+   "size": 22813737,
+   "fps": 24,
+   "torrentUrl": "https://video.blender.org/lazy-static/torrents/e5fe7efa-d718-4c34-b81b-8c47f77c4728-240.torrent",
+   "torrentDownloadUrl": "https://video.blender.org/download/torrents/e5fe7efa-d718-4c34-b81b-8c47f77c4728-240.torrent",
+   "fileUrl": "https://video.blender.org/object-storage/web_videos/3d95fb3d-c866-42c8-9db1-fe82f48ccb95-240.mp4",
+   "fileDownloadUrl": "https://video.blender.org/download/web-videos/3d95fb3d-c866-42c8-9db1-fe82f48ccb95-240.mp4",
+   "metadataUrl": "https://video.blender.org/api/v1/videos/3d95fb3d-c866-42c8-9db1-fe82f48ccb95/metadata/418452",
+   "hasAudio": true,
+   "hasVideo": true,
+   "storage": 1
+  }
+ ],
+ "liveSchedules": [],
+ "commentsPolicy": {
+  "id": 1,
+  "label": "Enabled"
+ },
+ "waitTranscoding": false,
+ "inputFileUpdatedAt": null,
+ "state": {
+  "id": 1,
+  "label": "Published"
+ },
+ "embedPrivacyPolicy": {
+  "id": 1,
+  "label": "All allowed"
+ }
+}

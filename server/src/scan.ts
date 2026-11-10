@@ -1,5 +1,6 @@
 import { HttpError, type Http } from './http.js';
 import { isFreeLicense } from './licenses.js';
+import { isFamilySafe, safeSearchEnabled } from './safety.js';
 import type { MediaSource } from './sources/types.js';
 import type { ErrorCode, MediaItem, ScanResult, SearchParams, SourceId, SourceStatus } from './types.js';
 
@@ -60,9 +61,13 @@ export async function scan(
       }
       const started = Date.now();
       try {
-        const found = await withTimeout(source.search({ ...params, kinds }, http), timeoutMs, source.name);
+        // « Libres vérifiées » est aussi poussé dans la requête quand la source sait le faire : la pagination reste juste.
+        const filters = opts.freeOnly ? { ...params.filters, licensed: true } : params.filters;
+        const found = await withTimeout(source.search({ ...params, kinds, ...(filters ? { filters } : {}) }, http), timeoutMs, source.name);
         if (found.length >= params.limit) hasMore = true;
-        const items = opts.freeOnly ? found.filter((i) => isFreeLicense(i.license)) : found;
+        // Défense en profondeur : toutes les sources passent le filtre « grand public » sur titre et description.
+        const safe = safeSearchEnabled() ? found.filter((i) => isFamilySafe({ title: i.title, ...(i.description ? { description: i.description } : {}) })) : found;
+        const items = opts.freeOnly ? safe.filter((i) => isFreeLicense(i.license)) : safe;
         statuses.push({ source: source.id, ok: true, count: items.length, tookMs: Date.now() - started });
         lists[selected.indexOf(source)] = items;
       } catch (err) {

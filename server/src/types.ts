@@ -33,6 +33,8 @@ export interface MediaLink {
   format?: string;
   sizeBytes?: number;
   height?: number;
+  /** Déclinaison nommée par la source quand la hauteur est inconnue (NASA : large, small, mobile…). */
+  variant?: string;
   durationSec?: number;
   /** Plus haut = meilleur. */
   score: number;
@@ -64,6 +66,8 @@ export interface SearchFilters {
   subjects?: string[];
   yearFrom?: number;
   yearTo?: number;
+  /** Ne garder que les items dont la source déclare une licence (Internet Archive : `licenseurl`). */
+  licensed?: boolean;
 }
 
 export interface SearchParams {

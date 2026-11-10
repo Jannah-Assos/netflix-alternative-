@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { interleave, scan } from '../src/scan.js';
 import type { MediaSource } from '../src/sources/types.js';
-import type { MediaItem, SourceId } from '../src/types.js';
+import type { MediaItem, SearchParams, SourceId } from '../src/types.js';
 import { classifyLicense } from '../src/licenses.js';
 import { fakeHttp } from './helpers.js';
 
@@ -15,7 +15,7 @@ const item = (source: SourceId, n: number, licenseUrl?: string): MediaItem => ({
   license: classifyLicense(null, licenseUrl),
 });
 
-function source(id: SourceId, impl: () => Promise<MediaItem[]>, extra: Partial<MediaSource> = {}): MediaSource {
+function source(id: SourceId, impl: (p: SearchParams) => Promise<MediaItem[]>, extra: Partial<MediaSource> = {}): MediaSource {
   return {
     id,
     name: id,
@@ -98,5 +98,14 @@ describe('scan', () => {
     expect(r.items.map((i) => i.sourceId)).toEqual(['1', '2']);
     expect(r.sources).toHaveLength(1);
     expect(r.hasMore).toBe(true); // 3 résultats bruts = limite
+  });
+
+  it('transmet « licensed » aux sources quand freeOnly est demandé, sans toucher aux autres filtres', async () => {
+    const seen: (SearchParams['filters'] | undefined)[] = [];
+    const spy = source('internet-archive', async (p) => (seen.push(p.filters), []));
+    await scan([spy], http, { ...params, filters: { collections: ['feature_films'] } }, { freeOnly: true });
+    await scan([spy], http, { ...params, filters: { collections: ['feature_films'] } });
+    expect(seen[0]).toEqual({ collections: ['feature_films'], licensed: true });
+    expect(seen[1]).toEqual({ collections: ['feature_films'] });
   });
 });

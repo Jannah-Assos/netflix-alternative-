@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { MediaItem, MediaLink } from '../../../server/src/types';
 import { resolve } from '../api';
-import { formatClock } from '../format';
+import { formatClock, qualityText } from '../format';
 import { useI18n } from '../i18n';
 import { clearProgress, getProgress, isResumable, saveProgress } from '../storage';
 import { useDialog } from '../useDialog';
@@ -132,7 +132,7 @@ export function Watch({ item, onClose }: { item: MediaItem; onClose: () => void 
             <select value={idx} onChange={(e) => changeQuality(Number(e.target.value))}>
               {playable.map((l, i) => (
                 <option key={l.url} value={i}>
-                  {[l.height ? `${l.height}p` : undefined, l.format?.toUpperCase()].filter(Boolean).join(' · ') || `#${i + 1}`}
+                  {[qualityText(l, t), l.format?.toUpperCase()].filter(Boolean).join(' · ') || `#${i + 1}`}
                 </option>
               ))}
             </select>

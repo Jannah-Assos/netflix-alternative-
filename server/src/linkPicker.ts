@@ -66,6 +66,7 @@ export interface Candidate {
   derivative?: boolean;
   /** Ajustement propre à la source. */
   bonus?: number;
+  variant?: string;
 }
 
 export function extensionOf(name: string): string {
@@ -84,7 +85,9 @@ export function scoreCandidate(c: Candidate, kind: MediaKind): { score: number; 
   const fmt = (c.format ?? '').toLowerCase();
   if (kind === 'video' && c.derivative && fmt.includes('h.264')) score += 15;
   if (fmt.includes('512kb')) score -= 15;
-  if (c.sizeBytes && c.sizeBytes > 4e9) score -= 10;
+  // Un original de plusieurs Go est un mauvais choix pour regarder : on préfère une version plus légère.
+  if (c.sizeBytes && c.sizeBytes > 4e9) score -= 20;
+  else if (c.sizeBytes && c.sizeBytes > 1.5e9) score -= 10;
   score += c.bonus ?? 0;
   return { score, playable: info.playable };
 }
@@ -105,6 +108,7 @@ export function rankCandidates(candidates: Candidate[], kind: MediaKind, max = 8
       format: extensionOf(c.name),
       ...(c.sizeBytes ? { sizeBytes: c.sizeBytes } : {}),
       ...(c.height ? { height: c.height } : {}),
+      ...(c.variant ? { variant: c.variant } : {}),
       ...(c.durationSec ? { durationSec: c.durationSec } : {}),
       score: Math.round(s.score * 10) / 10,
       playable: s.playable,

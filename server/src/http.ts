@@ -29,6 +29,19 @@ export interface HttpOptions {
   retries?: number;
   cacheTtlMs?: number;
   maxCacheEntries?: number;
+  /**
+   * Requêtes envoyées via un proxy (NODE_USE_ENV_PROXY=1) : c'est le proxy qui résout les noms de
+   * domaine, la résolution locale n'est donc pas fiable (souvent impossible) et n'est plus exigée.
+   * Les autres protections restent actives ; la politique de sortie du proxy fait foi pour le reste.
+   * Détecté automatiquement d'après l'environnement.
+   */
+  proxied?: boolean;
+}
+
+/** Vrai si Node envoie ses requêtes via le proxy de l'environnement. */
+export function detectProxied(env: NodeJS.ProcessEnv = process.env): boolean {
+  const hasProxy = !!(env.HTTPS_PROXY || env.https_proxy || env.HTTP_PROXY || env.http_proxy);
+  return env.NODE_USE_ENV_PROXY === '1' && hasProxy;
 }
 
 const DEFAULT_UA = 'OpenMediaScanner/0.1 (+https://github.com/Jannah-Assos/netflix-alternative-)';
@@ -72,7 +85,11 @@ export function isPrivateIp(ip: string): boolean {
 }
 
 /** Refuse tout ce qui n'est pas une URL http(s) publique sur un port standard. */
-export async function assertPublicUrl(raw: string, lookupImpl: LookupFn = defaultLookup): Promise<URL> {
+export async function assertPublicUrl(
+  raw: string,
+  lookupImpl: LookupFn = defaultLookup,
+  proxied = false,
+): Promise<URL> {
   let url: URL;
   try {
     url = new URL(raw);
@@ -91,7 +108,15 @@ export async function assertPublicUrl(raw: string, lookupImpl: LookupFn = defaul
   if (!host.includes('.') || /\.(local|localhost|internal|lan|home|corp)$/i.test(host)) {
     throw new HttpError('Non-public host refused', undefined, 'blocked');
   }
-  const addrs = await lookupImpl(host);
+  let addrs: { address: string }[];
+  try {
+    addrs = await lookupImpl(host);
+  } catch (err) {
+    // Derrière un proxy, un nom que le DNS local ne connaît pas peut être parfaitement valide.
+    if (proxied) return url;
+    const reason = err instanceof Error ? err.message : String(err);
+    throw new HttpError(`DNS lookup failed (${reason})`, undefined, 'network');
+  }
   if (addrs.length === 0 || addrs.some((a) => isPrivateIp(a.address))) {
     throw new HttpError('Host resolves to a private address, refused', undefined, 'blocked');
   }
@@ -109,6 +134,7 @@ export function createHttp(options: HttpOptions = {}): Http {
   const retries = options.retries ?? 1;
   const cacheTtl = options.cacheTtlMs ?? 5 * 60_000;
   const maxEntries = options.maxCacheEntries ?? 500;
+  const proxied = options.proxied ?? detectProxied();
 
   const cache = new Map<string, { at: number; ttl: number; value: unknown }>();
   const inflight = new Map<string, Promise<unknown>>();
@@ -116,7 +142,7 @@ export function createHttp(options: HttpOptions = {}): Http {
   async function safeFetch(rawUrl: string, init: RequestInit, timeout: number): Promise<Response> {
     let current = rawUrl;
     for (let hop = 0; hop <= MAX_REDIRECTS; hop++) {
-      const url = await assertPublicUrl(current, lookupImpl);
+      const url = await assertPublicUrl(current, lookupImpl, proxied);
       const res = await fetchImpl(url.href, {
         ...init,
         redirect: 'manual',
@@ -141,9 +167,12 @@ export function createHttp(options: HttpOptions = {}): Http {
         const res = await safeFetch(url, { headers: { accept: 'application/json' } }, timeoutMs);
         if (!res.ok) {
           const retryable = res.status === 429 || res.status >= 500;
+          // Retry-After (en secondes) : on respecte la demande de la source, dans la limite de 4 s.
+          const wait = Number(res.headers.get('retry-after'));
           await res.body?.cancel().catch(() => undefined);
           if (retryable && attempt < retries) {
-            await new Promise((r) => setTimeout(r, 400 * (attempt + 1)));
+            const delay = Number.isFinite(wait) && wait > 0 ? Math.min(wait * 1000, 4000) : 400 * (attempt + 1);
+            await new Promise((r) => setTimeout(r, delay));
             continue;
           }
           throw new HttpError(`HTTP ${res.status}`, res.status, 'http');
@@ -191,8 +220,9 @@ export function createHttp(options: HttpOptions = {}): Http {
         const len = Number(res.headers.get('content-length'));
         const sizeBytes = range?.[1] ? Number(range[1]) : Number.isFinite(len) && len > 1 ? len : undefined;
         await res.body?.cancel().catch(() => undefined);
+        // 429 = « trop de requêtes » : le fichier n'est pas hors ligne, on ne sait simplement pas.
         return {
-          alive: res.ok || res.status === 206,
+          alive: res.ok || res.status === 206 ? true : res.status === 429 ? null : false,
           status: res.status,
           ...(contentType ? { contentType } : {}),
           ...(sizeBytes ? { sizeBytes } : {}),

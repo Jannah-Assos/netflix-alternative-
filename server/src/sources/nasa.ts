@@ -33,13 +33,13 @@ const NASA_LICENSE: LicenseInfo = {
   url: 'https://www.nasa.gov/nasa-brand-center/images-and-media/',
 };
 
-/** Les déclinaisons NASA : `~large.mp4`, `~medium.mp4`… On préfère large/medium à l'original, souvent énorme. */
-const VARIANT_BONUS: [RegExp, number][] = [
-  [/~large\./i, 12],
-  [/~medium\./i, 8],
-  [/~orig\./i, 4],
-  [/~small\./i, 0],
-  [/~mobile\./i, -8],
+/** Les déclinaisons NASA : `~large.mp4`, `~medium.mp4`… Pour regarder, on préfère large/medium/small à l'original (souvent plus d'1 Go). */
+const VARIANT_BONUS: [RegExp, string, number][] = [
+  [/~large\./i, 'large', 12],
+  [/~medium\./i, 'medium', 8],
+  [/~small\./i, 'small', 4],
+  [/~orig\./i, 'original', 0],
+  [/~mobile\./i, 'mobile', -8],
 ];
 
 export function assetCandidates(urls: string[]): Candidate[] {
@@ -48,8 +48,8 @@ export function assetCandidates(urls: string[]): Candidate[] {
     .filter((u) => !/~(preview|thumb)\./i.test(u))
     .map((url) => {
       const name = decodeURIComponent(url.split('/').pop() ?? url);
-      const bonus = VARIANT_BONUS.find(([re]) => re.test(name))?.[1] ?? 0;
-      return { url, name, bonus } satisfies Candidate;
+      const found = VARIANT_BONUS.find(([re]) => re.test(name));
+      return { url, name, bonus: found?.[2] ?? 0, ...(found ? { variant: found[1] } : {}) } satisfies Candidate;
     })
     .filter((c) => extensionOf(c.name) !== '');
 }
