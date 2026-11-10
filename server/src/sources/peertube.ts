@@ -91,6 +91,7 @@ export const peertube: MediaSource = {
   homepage: 'https://sepiasearch.org',
   kinds: ['video'],
   supportsBrowse: false,
+  supports: { lang: true },
 
   async search(params: SearchParams, http) {
     if (!params.kinds.includes('video') || !params.q.trim()) return [];
@@ -98,7 +99,9 @@ export const peertube: MediaSource = {
     url.searchParams.set('search', params.q);
     url.searchParams.set('start', String((params.page - 1) * params.limit));
     url.searchParams.set('count', String(params.limit));
-    url.searchParams.set('sort', '-match');
+    // Tri et langue vérifiés sur la vraie API SepiaSearch (`-publishedAt`, `publishedAt`, `languageOneOf`).
+    url.searchParams.set('sort', params.sort === 'recent' ? '-publishedAt' : params.sort === 'oldest' ? 'publishedAt' : '-match');
+    if (params.filters?.langCode) url.searchParams.set('languageOneOf', params.filters.langCode);
     url.searchParams.set('nsfw', 'false');
     for (const id of Object.keys(LICENCES)) url.searchParams.append('licenceOneOf', id);
     const data = await http.json<{ data?: PtVideo[] }>(url.href);

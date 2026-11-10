@@ -2,7 +2,7 @@ import { HttpError, type Http } from './http.js';
 import { isFreeLicense } from './licenses.js';
 import { isFamilySafe, safeSearchEnabled } from './safety.js';
 import type { MediaSource } from './sources/types.js';
-import type { ErrorCode, MediaItem, ScanResult, SearchParams, SourceId, SourceStatus } from './types.js';
+import type { ErrorCode, MediaItem, ScanResult, SearchParams, SortKey, SourceId, SourceStatus } from './types.js';
 
 export interface ScanOptions {
   /** Sources à interroger (toutes par défaut). */
@@ -19,6 +19,23 @@ function withTimeout<T>(p: Promise<T>, ms: number, label: string): Promise<T> {
     timer = setTimeout(() => reject(new HttpError(`${label}: timed out after ${ms} ms`, undefined, 'timeout')), ms);
   });
   return Promise.race([p, timeout]).finally(() => clearTimeout(timer));
+}
+
+const byYear = (dir: 1 | -1) => (a: MediaItem, b: MediaItem) => {
+  // Les titres sans année passent toujours après les autres.
+  if (a.year === undefined && b.year === undefined) return 0;
+  if (a.year === undefined) return 1;
+  if (b.year === undefined) return -1;
+  return (a.year - b.year) * dir;
+};
+
+/** Ordre final d'une page : les sources déjà triées sont entrelacées ; sinon on trie l'ensemble. */
+export function order(lists: MediaItem[][], sort: SortKey = 'popular'): MediaItem[] {
+  if (sort === 'popular') return interleave(lists);
+  const all = lists.flat();
+  if (sort === 'recent') return all.sort(byYear(-1));
+  if (sort === 'oldest') return all.sort(byYear(1));
+  return all.sort((a, b) => a.title.localeCompare(b.title, undefined, { sensitivity: 'base', numeric: true }));
 }
 
 /** Entrelace les listes pour mélanger les sources (a1, b1, c1, a2, b2…). */
@@ -59,6 +76,14 @@ export async function scan(
         statuses.push({ ...base, ok: true, skipped: 'query-required' });
         return;
       }
+      // Un filtre que la source ne sait pas appliquer ne doit pas ramener des résultats non filtrés.
+      const f = params.filters;
+      const needsGenre = !!(f?.collections?.length || f?.subjects?.length);
+      const needsLang = !!(f?.languages?.length || f?.langCode);
+      if ((needsGenre && !source.supports?.genre) || (needsLang && !source.supports?.lang)) {
+        statuses.push({ ...base, ok: true, skipped: 'filter-unsupported' });
+        return;
+      }
       const started = Date.now();
       try {
         // « Libres vérifiées » est aussi poussé dans la requête quand la source sait le faire : la pagination reste juste.
@@ -67,7 +92,13 @@ export async function scan(
         if (found.length >= params.limit) hasMore = true;
         // Défense en profondeur : toutes les sources passent le filtre « grand public » sur titre et description.
         const safe = safeSearchEnabled() ? found.filter((i) => isFamilySafe({ title: i.title, ...(i.description ? { description: i.description } : {}) })) : found;
-        const items = opts.freeOnly ? safe.filter((i) => isFreeLicense(i.license)) : safe;
+        const licensed = opts.freeOnly ? safe.filter((i) => isFreeLicense(i.license)) : safe;
+        // Période : appliquée aussi ici, car toutes les sources ne la gèrent pas dans leur requête.
+        const { yearFrom, yearTo } = params.filters ?? {};
+        const items =
+          yearFrom === undefined && yearTo === undefined
+            ? licensed
+            : licensed.filter((i) => i.year !== undefined && i.year >= (yearFrom ?? -Infinity) && i.year <= (yearTo ?? Infinity));
         statuses.push({ source: source.id, ok: true, count: items.length, tookMs: Date.now() - started });
         lists[selected.indexOf(source)] = items;
       } catch (err) {
@@ -84,7 +115,7 @@ export async function scan(
   );
 
   const seen = new Set<string>();
-  const items = interleave(lists.filter(Boolean)).filter((i) => !seen.has(i.uid) && !!seen.add(i.uid));
+  const items = order(lists.filter(Boolean), params.sort).filter((i) => !seen.has(i.uid) && !!seen.add(i.uid));
   statuses.sort((a, b) => selected.findIndex((s) => s.id === a.source) - selected.findIndex((s) => s.id === b.source));
   return { items, sources: statuses, page: params.page, hasMore };
 }

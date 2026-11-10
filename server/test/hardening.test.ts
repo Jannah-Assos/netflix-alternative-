@@ -32,7 +32,7 @@ function siteDir(): string {
   mkdirSync(path.join(dir, 'assets'));
   writeFileSync(path.join(dir, 'index.html'), '<!doctype html><title>app</title>');
   writeFileSync(path.join(dir, 'sw.js'), '// sw');
-  writeFileSync(path.join(dir, 'manifest.webmanifest'), '{"name":"Open Media"}');
+  writeFileSync(path.join(dir, 'manifest.webmanifest'), '{"name":"Openflix"}');
   writeFileSync(path.join(dir, 'assets', 'index-abc123.js'), 'console.log(1)');
   return dir;
 }

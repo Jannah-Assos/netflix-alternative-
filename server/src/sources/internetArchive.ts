@@ -1,11 +1,19 @@
 import { classifyLicense } from '../licenses.js';
 import { rankCandidates, type Candidate } from '../linkPicker.js';
-import type { MediaItem, MediaKind, MediaLink, SearchFilters, SearchParams, SourceResolve } from '../types.js';
+import type { MediaItem, MediaKind, MediaLink, SearchFilters, SearchParams, SortKey, SourceResolve } from '../types.js';
 import { BLOCKED_COLLECTIONS, isFamilySafe, safeSearchEnabled } from '../safety.js';
 import { num, parseDuration, str, stripHtml, truncate, yearOf } from '../util.js';
 import type { MediaSource } from './types.js';
 
 const BASE = 'https://archive.org';
+
+/** Valeurs de `sort[]` d'advancedsearch (vérifiées sur la vraie API). */
+const SORT: Record<SortKey, string> = {
+  popular: 'downloads desc',
+  recent: 'date desc',
+  oldest: 'date asc',
+  title: 'titleSorter asc',
+};
 
 const KIND_TO_MEDIATYPE: Record<MediaKind, string[]> = {
   video: ['movies'],
@@ -143,6 +151,7 @@ export const internetArchive: MediaSource = {
   homepage: 'https://archive.org',
   kinds: ['video', 'audio', 'software', 'text'],
   supportsBrowse: true,
+  supports: { genre: true, lang: true },
 
   async search(params: SearchParams, http) {
     const url = new URL(`${BASE}/advancedsearch.php`);
@@ -150,7 +159,7 @@ export const internetArchive: MediaSource = {
     for (const f of ['identifier', 'title', 'description', 'mediatype', 'year', 'date', 'downloads', 'licenseurl', 'creator', 'subject']) {
       url.searchParams.append('fl[]', f);
     }
-    url.searchParams.append('sort[]', 'downloads desc');
+    url.searchParams.append('sort[]', SORT[params.sort ?? 'popular']);
     url.searchParams.set('rows', String(params.limit));
     url.searchParams.set('page', String(params.page));
     url.searchParams.set('output', 'json');

@@ -68,7 +68,19 @@ export interface SearchFilters {
   yearTo?: number;
   /** Ne garder que les items dont la source déclare une licence (Internet Archive : `licenseurl`). */
   licensed?: boolean;
+  /** Langue du contenu en code ISO (PeerTube) ; `languages` porte les libellés équivalents d'Internet Archive. */
+  langCode?: Lang;
 }
+
+export type SortKey = 'popular' | 'recent' | 'oldest' | 'title';
+export const SORT_KEYS: readonly SortKey[] = ['popular', 'recent', 'oldest', 'title'];
+
+/** Genres proposés dans Explorer (liste blanche : jamais de valeur libre dans les requêtes vers les sources). */
+export const GENRE_IDS = ['film', 'tv', 'animation', 'docs', 'scifi', 'comedy', 'noir', 'silent', 'shorts'] as const;
+export type GenreId = (typeof GENRE_IDS)[number];
+
+export const PERIOD_IDS = ['before1930', 'y1930', 'y1950', 'y1970', 'y2000'] as const;
+export type PeriodId = (typeof PERIOD_IDS)[number];
 
 export interface SearchParams {
   q: string;
@@ -76,6 +88,7 @@ export interface SearchParams {
   page: number;
   limit: number;
   filters?: SearchFilters;
+  sort?: SortKey;
 }
 
 export interface SourceInfo {
@@ -88,7 +101,7 @@ export interface SourceInfo {
 }
 
 export type ErrorCode = 'network' | 'timeout' | 'http' | 'blocked' | 'unknown';
-export type SkipReason = 'unsupported-kind' | 'query-required';
+export type SkipReason = 'unsupported-kind' | 'query-required' | 'filter-unsupported';
 
 export interface SourceStatus {
   source: SourceId;

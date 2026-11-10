@@ -1,4 +1,4 @@
-# Open Media
+# Openflix
 
 **Une alternative gratuite à Netflix** bâtie sur des sources en ligne libres (Internet Archive, Wikimedia Commons, NASA, PeerTube), en **français et en anglais**, avec un outil de scan qui trouve le **meilleur lien direct** de chaque contenu.
 
@@ -11,12 +11,16 @@ Aucun fichier n'est copié ni hébergé : l'application trouve les contenus chez
 | Écran | Rôle |
 |---|---|
 | **Accueil** | bannière « À l'affiche », rangées thématiques (cinéma en français ou classiques en anglais, science-fiction, cinéma muet, dessins animés, TV classique, documentaires, NASA, courts métrages libres), « Reprendre la lecture », « Ma liste » |
-| **Lecture** | plein écran, choix de la qualité, **reprise automatique** là où vous vous êtes arrêté, repli sur le lecteur de la source si le fichier n'est pas lisible dans le navigateur |
-| **Explorer** | le scanner : recherche multi-sources, filtres (type, source, « licences libres vérifiées »), état de chaque source, panneau de liens classés avec « Ouvrir » / « Copier » |
+| **Lecture** | plein écran, choix de la qualité, **reprise automatique**, barre qui s'efface pendant la lecture, raccourcis clavier (**Espace** pause, **←/→** ±10 s, **F** plein écran, **M** muet, **Échap** fermer), repli sur le lecteur de la source |
+| **Explorer** | le scanner : recherche multi-sources, filtres (type, **genre, période, langue du contenu, tri**, « licences libres vérifiées », sources), état de chaque source, panneau de liens classés avec « Ouvrir » / « Copier » |
 | **Ma liste** | vos titres mis de côté (stockés dans votre navigateur) |
 
 **Langues** : français et anglais, détectées d'après le navigateur, avec un bouton FR / EN. Le catalogue d'accueil s'adapte à la langue.
 **Thèmes** : clair et sombre automatiques. **Mobile** : interface adaptée.
+
+## Direction artistique
+
+Identité « salle de projection » : noir d'encre, lumière ambre de projecteur, titres à empattement, licences en « tampons ». Détails, palette et règles dans [`docs/DESIGN.md`](docs/DESIGN.md). La feuille de route proposée est dans [`ROADMAP.md`](ROADMAP.md), les idées en attente dans [`BACKLOG.md`](BACKLOG.md).
 
 ## Sources
 
@@ -67,8 +71,8 @@ L'interface est une **PWA** : depuis Chrome, Edge ou Safari, « Installer l'appl
 ### Héberger (téléphone, TV, autres appareils)
 
 ```bash
-docker build -t open-media .
-docker run -d -p 8787:8787 --name open-media open-media     # http://localhost:8787
+docker build -t openflix .
+docker run -d -p 8787:8787 --name openflix openflix     # http://localhost:8787
 ```
 
 | Variable | Défaut | Rôle |
@@ -104,7 +108,7 @@ Il interroge chaque source, résout le premier résultat et vérifie son lien. L
 |---|---|
 | `GET /api/home?lang=fr\|en` | rangées de l'accueil (mises en cache 30 min) |
 | `GET /api/sources` | liste des sources |
-| `GET /api/search?q=&kinds=video,audio&sources=internet-archive,nasa&freeOnly=1&page=1&limit=24` | scan (résultats entrelacés + état de chaque source) |
+| `GET /api/search?q=&kinds=video,audio&sources=…&freeOnly=1&genre=noir&period=y1950&lang=fr&sort=recent&page=1&limit=24` | scan (résultats entrelacés + état de chaque source) |
 | `GET /api/resolve?uid=<source:id>&kind=video[&check=0]` | meilleurs liens d'un item + vérification |
 
 Les erreurs sont renvoyées avec un **code** (`network`, `timeout`, `http`, `blocked`) : l'interface les traduit.
@@ -117,7 +121,7 @@ web/      React + Vite : accueil, lecture, explorer, ma liste, traductions FR/EN
 ```
 
 ```bash
-npm test             # 180 tests (serveur + interface), dont des tests sur de vraies réponses d'API
+npm test             # 198 tests (serveur + interface), dont des tests sur de vraies réponses d'API
 npm run typecheck
 ```
 
@@ -142,6 +146,6 @@ Les contenus appartiennent à leurs auteurs et restent hébergés par leurs sour
 
 ## English summary
 
-Open Media is a Netflix-style front-end over free online sources (Internet Archive, Wikimedia Commons, NASA, PeerTube). It ships a home page with a hero banner and themed rows (French- or English-language picks depending on your language), a full-screen player with automatic resume, a multi-source "Explore" scanner that ranks files and verifies links, and "My list". The interface is available in French and English (auto-detected, switchable with the FR/EN button). It never hosts files: it only finds them at their sources and shows each title's license.
+Openflix is a Netflix-style front-end over free online sources (Internet Archive, Wikimedia Commons, NASA, PeerTube). It ships a home page with a hero banner and themed rows (French- or English-language picks depending on your language), a full-screen player with automatic resume, a multi-source "Explore" scanner that ranks files and verifies links, and "My list". The interface is available in French and English (auto-detected, switchable with the FR/EN button). It never hosts files: it only finds them at their sources and shows each title's license.
 
 Quick start: `npm install && npm run dev` (Node.js 20+), then open http://localhost:5173. Run `npm run smoke` from a connected machine to check the live sources.

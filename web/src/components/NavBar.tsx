@@ -4,6 +4,7 @@ import { navigate, type View } from '../hooks';
 import { useI18n } from '../i18n';
 import { LANGS } from '../messages';
 import { SearchIcon } from './icons';
+import { LogoMark, Wordmark } from './Logo';
 
 const LINKS: { view: View; href: string; label: 'nav.home' | 'nav.explore' | 'nav.list' }[] = [
   { view: 'home', href: '#/', label: 'nav.home' },
@@ -33,12 +34,8 @@ export function NavBar({ view }: { view: View }) {
     <header className={`nav ${solid ? 'solid' : ''}`}>
       <div className="nav-inner">
         <a className="brand" href="#/" aria-label={t('app.name')}>
-          <span className="logo" aria-hidden="true">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M8 5v14l11-7z" />
-            </svg>
-          </span>
-          <span className="brand-name">{t('app.name')}</span>
+          <LogoMark />
+          <Wordmark />
         </a>
 
         <nav className="nav-links" aria-label="Navigation">

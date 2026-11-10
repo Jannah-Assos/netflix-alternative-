@@ -14,6 +14,7 @@ const demo: MediaSource = {
   homepage: 'https://x.test',
   kinds: ['video', 'audio'],
   supportsBrowse: true,
+  supports: { genre: true, lang: true },
   async search(params) {
     return [
       {
@@ -22,6 +23,7 @@ const demo: MediaSource = {
         sourceId: 'a',
         title: `résultat pour « ${params.q} » p${params.page} l${params.limit} ${params.kinds.join('+')}`,
         kind: 'video',
+        year: 1950,
         pageUrl: 'https://x.test/p',
         license: classifyLicense('CC0'),
       },

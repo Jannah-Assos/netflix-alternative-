@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import rateLimit from '@fastify/rate-limit';
 import fastifyStatic from '@fastify/static';
 import Fastify, { type FastifyInstance } from 'fastify';
+import { parseCatalogQuery } from './catalog.js';
 import { buildHome } from './home.js';
 import { HttpError, createHttp, type Http } from './http.js';
 import { pickBest } from './linkPicker.js';
@@ -104,6 +105,7 @@ export function buildApp(deps: AppDeps = {}): FastifyInstance {
           ? (query.sources.split(',').filter((id) => findSource(id, sources)) as SourceId[])
           : undefined;
 
+      const { filters, sort } = parseCatalogQuery(query);
       return scan(
         sources,
         http,
@@ -112,6 +114,8 @@ export function buildApp(deps: AppDeps = {}): FastifyInstance {
           kinds: parseKinds(query.kinds),
           page: clampInt(query.page, 1, 1, 50),
           limit: clampInt(query.limit, 24, 1, 50),
+          ...(Object.keys(filters).length ? { filters } : {}),
+          sort,
         },
         { ...(wanted?.length ? { sources: wanted } : {}), freeOnly: query.freeOnly === '1' },
       );

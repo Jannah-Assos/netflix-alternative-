@@ -1,9 +1,9 @@
 {
-  "name": "open-media-scanner",
+  "name": "openflix",
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Scanner de bases de données libres (Internet Archive, Wikimedia Commons, NASA, PeerTube) qui trouve les meilleurs liens directs.",
+  "description": "Openflix : le cinéma libre de droits, à portée de clic (Internet Archive, Wikimedia Commons, NASA, PeerTube).",
   "workspaces": [
     "server",
     "web"

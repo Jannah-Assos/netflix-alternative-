@@ -23,13 +23,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: docker build -t open-media .
+      - run: docker build -t openflix .
       - name: Démarre l'image et vérifie l'application
         run: |
-          docker run -d --name open-media -p 8787:8787 open-media
+          docker run -d --name openflix -p 8787:8787 openflix
           for i in $(seq 1 30); do curl -fs http://localhost:8787/api/health && break || sleep 1; done
           curl -fs http://localhost:8787/api/health
           curl -fsI http://localhost:8787/ | grep -i content-security-policy
           curl -fsI http://localhost:8787/manifest.webmanifest
           curl -fsI http://localhost:8787/sw.js
-          docker logs open-media
+          docker logs openflix

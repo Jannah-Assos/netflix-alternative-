@@ -4,6 +4,17 @@ import type { MediaKind, SourceId } from '../../server/src/types';
 
 export const KINDS: MediaKind[] = ['video', 'audio', 'software', 'text'];
 
+/** Identifiants des filtres : ils doivent rester identiques à ceux du serveur (vérifié par un test). */
+export const GENRES = ['film', 'tv', 'animation', 'docs', 'scifi', 'comedy', 'noir', 'silent', 'shorts'] as const;
+export const PERIODS = ['before1930', 'y1930', 'y1950', 'y1970', 'y2000'] as const;
+export const SORTS = ['popular', 'recent', 'oldest', 'title'] as const;
+export const CONTENT_LANGS = ['fr', 'en'] as const;
+
+export type Genre = (typeof GENRES)[number];
+export type Period = (typeof PERIODS)[number];
+export type Sort = (typeof SORTS)[number];
+export type ContentLang = (typeof CONTENT_LANGS)[number];
+
 export const SOURCE_NAME: Record<SourceId, string> = {
   'internet-archive': 'Internet Archive',
   'wikimedia-commons': 'Wikimedia Commons',

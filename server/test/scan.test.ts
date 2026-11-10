@@ -22,6 +22,7 @@ function source(id: SourceId, impl: (p: SearchParams) => Promise<MediaItem[]>, e
     homepage: 'https://x.test',
     kinds: ['video'],
     supportsBrowse: true,
+    supports: { genre: true, lang: true },
     search: impl,
     resolve: async () => ({ links: [] }),
     ...extra,

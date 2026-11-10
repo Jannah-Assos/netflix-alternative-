@@ -7,5 +7,6 @@ export default defineConfig({
     port: 5173,
     proxy: { '/api': 'http://127.0.0.1:8787' },
   },
-  build: { outDir: 'dist', sourcemap: false },
+  // Aucune ressource n'est incorporée en data: URI : la politique de sécurité n'autorise que 'self'.
+  build: { outDir: 'dist', sourcemap: false, assetsInlineLimit: 0 },
 });

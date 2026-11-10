@@ -44,7 +44,7 @@ export function detectProxied(env: NodeJS.ProcessEnv = process.env): boolean {
   return env.NODE_USE_ENV_PROXY === '1' && hasProxy;
 }
 
-const DEFAULT_UA = 'OpenMediaScanner/0.1 (+https://github.com/Jannah-Assos/netflix-alternative-)';
+const DEFAULT_UA = 'Openflix/0.1 (+https://github.com/Jannah-Assos/netflix-alternative-)';
 const MAX_REDIRECTS = 4;
 
 /** Adresses non routables publiquement (protection SSRF). */

@@ -93,6 +93,11 @@ export const nasa: MediaSource = {
     url.searchParams.set('media_type', types.join(','));
     url.searchParams.set('page', String(params.page));
     url.searchParams.set('page_size', String(params.limit));
+    const { yearFrom, yearTo } = params.filters ?? {};
+    if (yearFrom !== undefined || yearTo !== undefined) {
+      url.searchParams.set('year_start', String(yearFrom ?? 1900));
+      url.searchParams.set('year_end', String(yearTo ?? 2100));
+    }
     const data = await http.json<NasaSearch>(url.href);
     return (data.collection?.items ?? []).map(toItem).filter((i): i is MediaItem => i !== null);
   },

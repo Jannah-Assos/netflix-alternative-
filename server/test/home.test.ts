@@ -16,7 +16,7 @@ const item = (source: SourceId, n: number): MediaItem => ({
 });
 
 function source(id: SourceId, search: (p: SearchParams) => Promise<MediaItem[]>, supportsBrowse = true): MediaSource {
-  return { id, name: id, homepage: 'https://x.test', kinds: ['video'], supportsBrowse, search, resolve: async () => ({ links: [] }) };
+  return { id, name: id, homepage: 'https://x.test', kinds: ['video'], supportsBrowse, supports: { genre: true, lang: true }, search, resolve: async () => ({ links: [] }) };
 }
 
 describe('buildHome', () => {

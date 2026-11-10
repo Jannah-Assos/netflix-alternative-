@@ -13,7 +13,7 @@ const app = buildApp({
 
 app
   .listen({ port, host })
-  .then((addr) => console.log(`Open Media prêt sur ${addr}`))
+  .then((addr) => console.log(`Openflix prêt sur ${addr}`))
   .catch((err) => {
     console.error(err);
     process.exit(1);

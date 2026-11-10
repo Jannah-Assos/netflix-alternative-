@@ -1,6 +1,6 @@
-# Open Media — une seule image : l'API et l'interface web.
-#   docker build -t open-media .
-#   docker run -p 8787:8787 open-media        → http://localhost:8787
+# Openflix — une seule image : l'API et l'interface web.
+#   docker build -t openflix .
+#   docker run -p 8787:8787 openflix        → http://localhost:8787
 
 FROM node:22-alpine AS build
 WORKDIR /app

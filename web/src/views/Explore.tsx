@@ -7,7 +7,7 @@ import { SearchIcon } from '../components/icons';
 import { ResultCard, SkeletonCard } from '../components/ResultCard';
 import { StatusBar } from '../components/StatusBar';
 import { useI18n } from '../i18n';
-import { KINDS } from '../labels';
+import { CONTENT_LANGS, GENRES, KINDS, PERIODS, SORTS, type ContentLang, type Genre, type Period, type Sort } from '../labels';
 import { SUGGESTIONS } from '../messages';
 
 function readQuery(p: URLSearchParams) {
@@ -19,6 +19,10 @@ function readQuery(p: URLSearchParams) {
     sources: sources?.length ? sources : null,
     // Par défaut : seulement les licences libres déclarées (free=0 pour tout voir).
     freeOnly: p.get('free') !== '0',
+    genre: (GENRES as readonly string[]).includes(p.get('genre') ?? '') ? (p.get('genre') as Genre) : null,
+    period: (PERIODS as readonly string[]).includes(p.get('period') ?? '') ? (p.get('period') as Period) : null,
+    lang: (CONTENT_LANGS as readonly string[]).includes(p.get('lang') ?? '') ? (p.get('lang') as ContentLang) : null,
+    sort: (SORTS as readonly string[]).includes(p.get('sort') ?? '') ? (p.get('sort') as Sort) : ('popular' as Sort),
   };
 }
 
@@ -31,6 +35,10 @@ export function Explore({ query, onInfo }: { query: URLSearchParams; onInfo: (it
   const [kinds, setKinds] = useState<MediaKind[]>(initial.kinds);
   const [enabled, setEnabled] = useState<SourceId[] | null>(initial.sources);
   const [freeOnly, setFreeOnly] = useState(initial.freeOnly);
+  const [genre, setGenre] = useState<Genre | null>(initial.genre);
+  const [period, setPeriod] = useState<Period | null>(initial.period);
+  const [contentLang, setContentLang] = useState<ContentLang | null>(initial.lang);
+  const [sort, setSort] = useState<Sort>(initial.sort);
 
   const [sources, setSources] = useState<SourceInfo[]>([]);
   const [items, setItems] = useState<MediaItem[]>([]);
@@ -67,9 +75,13 @@ export function Explore({ query, onInfo }: { query: URLSearchParams; onInfo: (it
     if (kinds.length !== KINDS.length) p.set('kinds', kinds.join(','));
     if (enabled) p.set('sources', enabled.join(','));
     if (!freeOnly) p.set('free', '0');
+    if (genre) p.set('genre', genre);
+    if (period) p.set('period', period);
+    if (contentLang) p.set('lang', contentLang);
+    if (sort !== 'popular') p.set('sort', sort);
     const qs = p.toString();
     window.history.replaceState(null, '', `#/explore${qs ? `?${qs}` : ''}`);
-  }, [q, kinds, enabled, freeOnly]);
+  }, [q, kinds, enabled, freeOnly, genre, period, contentLang, sort]);
 
   const run = useCallback(
     async (nextPage: number) => {
@@ -79,7 +91,7 @@ export function Explore({ query, onInfo }: { query: URLSearchParams; onInfo: (it
       setLoading(true);
       setError(null);
       try {
-        const res = await search({ q, kinds, sources: enabled, freeOnly, page: nextPage }, ctrl.signal);
+        const res = await search({ q, kinds, sources: enabled, freeOnly, page: nextPage, genre, period, lang: contentLang, sort }, ctrl.signal);
         setItems((prev) => (nextPage === 1 ? res.items : [...prev, ...res.items.filter((i) => !prev.some((p) => p.uid === i.uid))]));
         setStatuses(res.sources);
         setPage(res.page);
@@ -92,7 +104,7 @@ export function Explore({ query, onInfo }: { query: URLSearchParams; onInfo: (it
         if (!ctrl.signal.aborted) setLoading(false);
       }
     },
-    [q, kinds, enabled, freeOnly],
+    [q, kinds, enabled, freeOnly, genre, period, contentLang, sort],
   );
 
   useEffect(() => {
@@ -107,6 +119,17 @@ export function Explore({ query, onInfo }: { query: URLSearchParams; onInfo: (it
   const pick = (s: string) => {
     setInput(s);
     setQ(s);
+  };
+
+  const dirty = genre !== null || period !== null || contentLang !== null || sort !== 'popular' || !freeOnly || kinds.length !== KINDS.length || enabled !== null;
+  const reset = () => {
+    setGenre(null);
+    setPeriod(null);
+    setContentLang(null);
+    setSort('popular');
+    setFreeOnly(true);
+    setKinds([...KINDS]);
+    setEnabled(null);
   };
 
   const firstLoad = loading && items.length === 0;
@@ -148,6 +171,16 @@ export function Explore({ query, onInfo }: { query: URLSearchParams; onInfo: (it
         statuses={statuses}
         freeOnly={freeOnly}
         onFreeOnly={setFreeOnly}
+        genre={genre}
+        onGenre={setGenre}
+        period={period}
+        onPeriod={setPeriod}
+        lang={contentLang}
+        onLang={setContentLang}
+        sort={sort}
+        onSort={setSort}
+        dirty={dirty}
+        onReset={reset}
       />
 
       <StatusBar statuses={statuses} />
@@ -155,7 +188,11 @@ export function Explore({ query, onInfo }: { query: URLSearchParams; onInfo: (it
 
       {!firstLoad && !error && !allFailed && (
         <h1 className="results-title">
-          {q ? t(items.length === 1 ? 'explore.results.one' : 'explore.results.other', { n: items.length, q }) : t('explore.popular')}
+          {q
+            ? t(items.length === 1 ? 'explore.results.one' : 'explore.results.other', { n: items.length, q })
+            : genre || period || contentLang || sort !== 'popular'
+              ? t(items.length === 1 ? 'explore.count.one' : 'explore.count.other', { n: items.length })
+              : t('explore.popular')}
         </h1>
       )}
 
