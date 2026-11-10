@@ -95,7 +95,22 @@ Budget actuel : JavaScript ~83 Ko (gzip), polices ~110 Ko. Pistes : images redim
 ### 4.7 Technique et exploitation
 Tests Playwright en CI ; base SQLite ; journalisation et métriques (requêtes lentes, taux d'échec par source) ; alerte quand une collection Internet Archive change de nom (rangée vide) ; mises à jour de dépendances automatisées ; sauvegarde des préférences utilisateur ; documentation de déploiement (reverse proxy HTTPS, accès restreint).
 
-### 4.8 Du projet perso au produit public
+### 4.8 Les différentes versions (web, installable, ordinateur, Android, télévision)
+
+Une seule application, plusieurs « emballages » :
+
+| Version | Ce que c'est | Magasin / compte | Effort | État |
+|---|---|---|---|---|
+| **Web** | un lien à ouvrir dans le navigateur | aucun (hébergement ~gratuit à quelques € / mois) | S | prête ; reste à la mettre en ligne (`render.yaml`) |
+| **Installable (PWA)** | la même chose, avec une icône sur l'écran d'accueil / le bureau, en plein écran | aucun | — | **déjà construite** (Android, ordinateur ; iPhone via « Sur l'écran d'accueil ») |
+| **Mac (.dmg), Windows (.exe), Linux** | application de bureau (Electron ou Tauri) autour de l'application web | signature développeur recommandée (Apple ≈ 99 $/an) sinon avertissements à l'ouverture | M | à faire après la mise en ligne ; construite automatiquement par GitHub (.dmg sur un Mac virtuel) |
+| **Android (.apk) / Play Store** | application Android (Capacitor) autour de l'application web | compte Google Play (≈ 25 $ une fois) pour le magasin ; l'APK s'installe sans | M | à faire après la mise en ligne |
+| **Android TV** | version télévision (télécommande, grande interface) | compte Google Play | L | après la navigation à la télécommande (priorité 3) |
+| **iPhone / iPad (App Store)** | application iOS autour de l'application web | compte Apple (≈ 99 $/an), revue par Apple (contenus) | L | plus tard ; la PWA couvre l'essentiel d'ici là |
+
+Toutes ces versions **parlent au même serveur en ligne** : mettre le serveur en ligne est donc l'étape qui débloque tout le reste. Les magasins d'applications examinent le contenu et peuvent refuser une application qui donne accès à des œuvres dont les droits sont incertains : c'est une raison de plus de ne montrer que des licences libres déclarées.
+
+### 4.9 Du projet perso au produit public
 À traiter **avant** toute ouverture publique :
 - **Nom et marque** : « Openflix » rappelle « Netflix » ; vérifier la disponibilité et le risque de confusion (INPI/EUIPO) avant de communiquer.
 - **Mentions légales, conditions d'utilisation, politique de confidentialité** (RGPD si comptes), procédure de signalement et de retrait.

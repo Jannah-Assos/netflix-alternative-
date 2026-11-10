@@ -18,6 +18,20 @@ Aucun fichier n'est copié ni hébergé : l'application trouve les contenus chez
 **Langues** : français et anglais, détectées d'après le navigateur, avec un bouton FR / EN. Le catalogue d'accueil s'adapte à la langue.
 **Thèmes** : clair et sombre automatiques. **Mobile** : interface adaptée.
 
+## Aperçu
+
+Captures de l'application avec de vraies données (dossier [`docs/captures`](docs/captures)) : accueil sombre et clair, rangées, Explorer et filtres, fiche d'un titre, lecteur, version mobile.
+
+![Accueil](docs/captures/01-accueil-sombre.png)
+
+## Mettre en ligne (le plus simple, sans rien installer)
+
+1. Créez un compte sur [render.com](https://render.com) (« Sign in with GitHub »).
+2. **New → Blueprint**, choisissez ce dépôt, puis **Apply** : le fichier `render.yaml` fait le reste.
+3. Après quelques minutes, Openflix est disponible sur une adresse `https://openflix-….onrender.com`, ouvrable sur ordinateur, téléphone et télévision.
+
+Sur un téléphone ou un ordinateur, le navigateur propose alors « Installer l'application » : c'est la version installable (PWA), sans magasin d'applications. L'offre gratuite de Render met l'application en veille après un moment sans visite (le premier chargement est alors plus long) : voir leur page de tarifs, qui change.
+
 ## Direction artistique
 
 Identité « salle de projection » : noir d'encre, lumière ambre de projecteur, titres à empattement, licences en « tampons ». Détails, palette et règles dans [`docs/DESIGN.md`](docs/DESIGN.md). La feuille de route proposée est dans [`ROADMAP.md`](ROADMAP.md), les idées en attente dans [`BACKLOG.md`](BACKLOG.md).
