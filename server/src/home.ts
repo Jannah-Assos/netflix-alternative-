@@ -1,4 +1,5 @@
 import type { Http } from './http.js';
+import { PANTHEON_IDS, uniqueByWork } from './rights.js';
 import { scan } from './scan.js';
 import type { MediaSource } from './sources/types.js';
 import type { HomeResult, HomeRow, Lang, SearchFilters, SourceId } from './types.js';
@@ -18,9 +19,13 @@ export interface RowDef {
   q?: string | Record<Lang, string>;
   filters?: SearchFilters;
   limit?: number;
+  /** Garder une seule copie par œuvre connue (sélection éditoriale). */
+  uniqueWorks?: boolean;
 }
 
 export const ROWS: RowDef[] = [
+  // Sélection éditoriale : œuvres libres aussi en France (table de droits, rights.ts).
+  { id: 'pantheon', source: 'internet-archive', filters: { identifiers: PANTHEON_IDS }, uniqueWorks: true },
   { id: 'local-fr', source: 'internet-archive', langs: ['fr'], filters: { languages: ['French', 'fre', 'fra'], collections: ['feature_films'] } },
   { id: 'local-en', source: 'internet-archive', langs: ['en'], filters: { languages: ['English', 'eng'], collections: ['feature_films'], yearTo: 1965 } },
   { id: 'featured', source: 'internet-archive', filters: { collections: ['feature_films'] } },
@@ -55,7 +60,8 @@ export async function buildHome(
         { sources: [def.source], timeoutMs: ROW_TIMEOUT_MS, freeOnly: true },
       );
       if (result.sources.some((s) => !s.ok)) partial = true;
-      return result.items.length > 0 ? { id: def.id, items: result.items } : null;
+      const items = def.uniqueWorks ? uniqueByWork(result.items) : result.items;
+      return items.length > 0 ? { id: def.id, items } : null;
     }),
   );
 

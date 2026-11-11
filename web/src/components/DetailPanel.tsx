@@ -4,7 +4,7 @@ import { resolve } from '../api';
 import { formatDuration, linkText } from '../format';
 import { useI18n } from '../i18n';
 import { useDialog } from '../useDialog';
-import { LicenseBadge, SourceBadge } from './Badges';
+import { LicenseBadge, RightsBadge, RightsNote, SourceBadge } from './Badges';
 import { ListButton } from './ListButton';
 
 type State =
@@ -122,6 +122,7 @@ export function DetailPanel({
           <div className="badges">
             <SourceBadge source={item.source} />
             <LicenseBadge license={license} />
+            {item.rights && <RightsBadge rights={item.rights} />}
             {license.url && (
               <a className="small-link" href={license.url} target="_blank" rel="noopener noreferrer">
                 {t('lic.view')}
@@ -129,6 +130,7 @@ export function DetailPanel({
             )}
           </div>
           {!license.verified && <p className="notice warn">{t('lic.warning')}</p>}
+          {item.rights && <RightsNote rights={item.rights} />}
 
           <div className="panel-actions">
             {watchable && (

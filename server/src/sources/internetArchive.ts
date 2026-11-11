@@ -89,13 +89,17 @@ export function buildQuery(
   for (const c of [orGroup('collection', filters.collections), orGroup('language', filters.languages), orGroup('subject', filters.subjects)]) {
     if (c) clauses.push(c);
   }
+  // Sélection éditoriale : identifiants vérifiés à la main (caractères strictement limités, entre guillemets).
+  const ids = (filters.identifiers ?? []).filter((v) => /^[A-Za-z0-9._-]+$/.test(v));
+  if (ids.length) clauses.push(`identifier:(${ids.map((v) => `"${v}"`).join(' OR ')})`);
   if (filters.licensed) clauses.push('licenseurl:*');
   if (filters.yearFrom !== undefined || filters.yearTo !== undefined) {
     clauses.push(`year:[${Math.trunc(filters.yearFrom ?? 1850)} TO ${Math.trunc(filters.yearTo ?? 2100)}]`);
   }
   clauses.push('-access-restricted-item:true');
   // Liste blanche : seuls les films et l'animation des collections retenues (voir scope.ts).
-  if (scoped) {
+  // Une sélection par identifiant est plus stricte que la liste de collections : elle s'en affranchit.
+  if (scoped && ids.length === 0) {
     clauses.push(`collection:(${SCOPE_COLLECTIONS.join(' OR ')})`);
     clauses.push(`-collection:(${EXCLUDED_COLLECTIONS.join(' OR ')})`);
   }

@@ -774,6 +774,45 @@ button {
   border-style: dashed !important;
 }
 
+/* Statut des droits en France : même langage de tampon que la licence, couleurs distinctes */
+.badge.rights {
+  padding: 3px 7px 2.5px;
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  font-size: 10.5px;
+  font-weight: 750;
+  letter-spacing: 0.07em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.rights-free {
+  color: var(--stamp-pd);
+}
+
+.rights-unclear {
+  color: var(--warn);
+  border-style: dashed !important;
+}
+
+.rights-protected {
+  color: var(--bad);
+}
+
+.notice.rights-note.rights-free {
+  border-color: color-mix(in srgb, var(--stamp-pd) 40%, var(--line));
+}
+
+.notice.rights-note.rights-unclear {
+  border-color: color-mix(in srgb, var(--warn) 45%, var(--line));
+  color: var(--warn);
+}
+
+.notice.rights-note.rights-protected {
+  border-color: color-mix(in srgb, var(--bad) 45%, var(--line));
+  color: var(--bad);
+}
+
 .hero .lic-public-domain {
   color: #86e0b0;
 }

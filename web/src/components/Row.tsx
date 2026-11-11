@@ -3,7 +3,7 @@ import type { MediaItem } from '../../../server/src/types';
 import { formatDuration } from '../format';
 import { useI18n } from '../i18n';
 import type { Progress } from '../storage';
-import { LicenseBadge } from './Badges';
+import { LicenseBadge, RightsBadge } from './Badges';
 import { KindIcon } from './icons';
 import { ListButton } from './ListButton';
 
@@ -52,6 +52,7 @@ export function PosterCard({ item, progress, onInfo, onPlay }: Actions & { item:
         <div className="poster-sub">
           {meta && <span>{meta}</span>}
           <LicenseBadge license={item.license} />
+          {item.rights && <RightsBadge rights={item.rights} />}
           <span className="poster-list">
             <ListButton item={item} />
           </span>

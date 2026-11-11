@@ -27,37 +27,52 @@ Notre public est français : c'est le **droit français** qui compte, pas seulem
 
 Pour les films Blender, la licence vient de l'ayant droit : c'est le cas le plus solide. À vérifier : que la copie d'Internet Archive est bien celle de la fondation.
 
-## Catégorie B : libres aux États-Unis, doute en France → ne pas mettre en avant
+## Catégorie B : libres aux États-Unis, doute en France → signalées, jamais mises en avant
 
 | Titre | Pourquoi le doute |
 |---|---|
 | Nosferatu (1922) | Murnau (1931) OK, mais le scénariste Henrik Galeen est mort en 1949. |
 | Das Cabinet des Dr. Caligari (1920) | Le scénariste Hans Janowitz est mort en 1954. |
-| Le Golem (1920) | Galeen (1949). |
-| Faust (1926) | Le scénariste Hans Kyser est mort en 1960. |
-| Häxan (1922) | Benjamin Christensen est mort en 1959. |
-| Le Cuirassé Potemkine (1925) | La co-scénariste Nina Agadzhanova est morte en 1974 (à vérifier). |
-| The Phantom of the Opera (1925) | Un co-scénariste mort après 1955 (à vérifier). |
+| Le Golem (1920) | Paul Wegener (1948) et Henrik Galeen (1949). |
 | Intolerance (1916) | D. W. Griffith est mort en 1948 : limite, selon les prolongations de guerre. |
+| Le Cuirassé Potemkine (1925) | La co-scénariste Nina Agadzhanova serait morte en 1974 (**date non vérifiée**). |
+| The Phantom of the Opera (1925) | Un co-scénariste serait mort en 1957 (**date non vérifiée**). |
 
-Ces titres sont dans notre catalogue puisque la recherche porte sur Internet Archive. Ils ne sont simplement plus mis en avant dans les suggestions.
+Ces titres restent dans le catalogue (Internet Archive les propose) et portent le tampon « Doute en France ».
 
-## Catégorie C : protégés en France → à exclure du catalogue public français
+## Catégorie C : protégés en France → écartés du catalogue
 
-Charlie Chaplin (mort en 1977), Buster Keaton (1966), Harold Lloyd (1971), Metropolis (Fritz Lang, 1976), Popeye et Betty Boop (Fleischer), Felix le Chat (Otto Messmer, 1983), Disney, tout film sonore tardif (ex. : *La Nuit des morts-vivants*).
+Le serveur écarte ces œuvres (sauf `RIGHTS_FILTER=off`) :
+
+- **Par œuvre** (année de décès du dernier auteur ≥ 1956) : *Häxan* (Christensen, 1959), *Faust* 1926 (scénariste Kyser, 1960), *Metropolis* 1927 (Fritz Lang, 1976).
+- **Par créateur ou personnage**, quelle que soit la copie : Charlie Chaplin (1977), Buster Keaton (1966), Harold Lloyd (1971), Fritz Lang, Fleischer Studios (Popeye, Betty Boop, Gulliver…), Walt Disney, Felix le Chat (Messmer), Harman-Ising (Bosko), Looney Tunes / Merrie Melodies, Tom et Jerry.
 
 ## Ce que montrent les vraies données
 
 La **même œuvre** porte des licences différentes selon qui l'a mise en ligne (ex. : *Le Golem* « domaine public » sur une copie, « CC BY-NC-ND » sur une autre ; *Faust* et *La Grande Attaque du train*, idem). La licence affichée par Internet Archive est donc un signal faible : **un badge « libre » ne garantit pas que l'œuvre est libre en France.**
 
-## Ce que ça implique pour la suite
+## Ce qui est en place
 
-1. **Court terme (fait)** : les suggestions de recherche n'affichent que de la catégorie A.
-2. **Prochaine étape produit** : une table de droits par œuvre (titre, auteurs, décès, statut FR / US, source de vérification) et un affichage « libre en France / libre aux États-Unis seulement ». Le catalogue éditorial sera construit à partir de la catégorie A, puis élargi titre par titre.
-3. **Avant l'ouverture publique** : revue par un juriste (droit d'auteur français, prolongations de guerre, œuvres de collaboration).
-4. **Séries et anime** : la catégorie A contient très peu de séries (*Les Vampires*). Le reste passera par le guide « où regarder légalement », étudié à part.
-5. **Upscale 4K** : seulement sur la catégorie A, jamais sur une licence « sans modification » ou « non commerciale ».
+- **Table de droits** : `server/src/rights.ts`. Elle donne à chaque œuvre connue un statut en France : `free`, `unclear` ou `protected`, calculé à partir de la date de décès des auteurs principaux :
+  - **avant 1946** → libre (marge de sécurité) ;
+  - **1946 à 1955** → doute ;
+  - **1956 ou après** → protégé ;
+  - une date incertaine empêche « libre » comme « protégé » (le tampon indique alors que la date reste à vérifier) ;
+  - une licence Creative Commons donnée par l'ayant droit → libre.
+- **Reconnaissance d'une copie** : par identifiant Internet Archive vérifié, ou par titre et année (±1 an). Sans année, le titre doit être identique. Mieux vaut ne rien dire qu'une erreur.
+- **Affichage** : tampon « Libre en France » / « Doute en France » / « Protégé en France » sur les vignettes et la fiche, avec l'explication.
+- **Rangée « Panthéon »** en tête de l'accueil : une seule copie par œuvre, uniquement des œuvres libres.
+- **Exclusion** des œuvres protégées de l'accueil et de la recherche. `RIGHTS_FILTER=off` les remet, signalées.
 
-## Limite actuelle à connaître
+## Limite essentielle : « sans tampon » ne veut pas dire « libre »
 
-L'accueil et la recherche ne filtrent **pas encore** par statut de droits : ils affichent aussi des titres de catégories B et C. La table de droits (point 2) corrigera ça.
+La table ne connaît qu'une trentaine d'œuvres et quelques créateurs. **Tout le reste est affiché comme avant**, sans tampon de droits, y compris des titres probablement protégés en France (*His Girl Friday*, de Howard Hawks, mort en 1977, par exemple). Il faut donc :
+
+1. **Étendre la table** titre par titre, en commençant par ce qui est le plus regardé.
+2. Avant l'ouverture publique, passer à un mode « **catalogue fermé** » : seules les œuvres de la table (ou d'un lot vérifié) sont visibles, le reste est masqué.
+3. **Faire valider** les règles et les dates par un juriste (droit d'auteur français, prolongations de guerre, œuvres de collaboration).
+
+## Pour la suite
+
+- **Séries et anime** : la catégorie A ne contient presque pas de séries (*Les Vampires*). Le reste passera par le guide « où regarder légalement », étudié à part.
+- **Upscale 4K** : seulement sur la catégorie A, jamais sur une licence « sans modification » ou « non commerciale ».

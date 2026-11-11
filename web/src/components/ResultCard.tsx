@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { MediaItem } from '../../../server/src/types';
 import { formatDuration } from '../format';
 import { useI18n } from '../i18n';
-import { LicenseBadge, SourceBadge } from './Badges';
+import { LicenseBadge, RightsBadge, SourceBadge } from './Badges';
 import { KindIcon } from './icons';
 
 export function ResultCard({ item, onOpen }: { item: MediaItem; onOpen: (item: MediaItem) => void }) {
@@ -27,6 +27,7 @@ export function ResultCard({ item, onOpen }: { item: MediaItem; onOpen: (item: M
         <div className="badges">
           <SourceBadge source={item.source} />
           <LicenseBadge license={item.license} />
+          {item.rights && <RightsBadge rights={item.rights} />}
         </div>
       </div>
     </button>

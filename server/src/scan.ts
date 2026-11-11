@@ -1,5 +1,6 @@
 import { HttpError, type Http } from './http.js';
 import { isFreeLicense } from './licenses.js';
+import { applyRights } from './rights.js';
 import { isFamilySafe, safeSearchEnabled } from './safety.js';
 import type { MediaSource } from './sources/types.js';
 import type { ErrorCode, MediaItem, ScanResult, SearchParams, SortKey, SourceId, SourceStatus } from './types.js';
@@ -95,10 +96,12 @@ export async function scan(
         const licensed = opts.freeOnly ? safe.filter((i) => isFreeLicense(i.license)) : safe;
         // Période : appliquée aussi ici, car toutes les sources ne la gèrent pas dans leur requête.
         const { yearFrom, yearTo } = params.filters ?? {};
-        const items =
+        const inPeriod =
           yearFrom === undefined && yearTo === undefined
             ? licensed
             : licensed.filter((i) => i.year !== undefined && i.year >= (yearFrom ?? -Infinity) && i.year <= (yearTo ?? Infinity));
+        // Droits en France : on signale les œuvres connues et on écarte celles qui sont protégées (voir rights.ts).
+        const items = applyRights(inPeriod);
         statuses.push({ source: source.id, ok: true, count: items.length, tookMs: Date.now() - started });
         lists[selected.indexOf(source)] = items;
       } catch (err) {

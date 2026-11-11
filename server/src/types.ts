@@ -42,6 +42,23 @@ export interface MediaLink {
   playable: boolean;
 }
 
+/**
+ * Statut estimé d'une œuvre en France (voir docs/DROITS-CATALOGUE.md ; ce n'est pas un avis juridique).
+ * free      : auteurs principaux morts avant 1946, ou licence Creative Commons de l'ayant droit.
+ * unclear   : libre aux États-Unis mais doute en France (auteur mort entre 1946 et 1955, ou date non vérifiée).
+ * protected : un auteur principal est mort en 1956 ou après : protégée en France.
+ */
+export type RightsStatus = 'free' | 'unclear' | 'protected';
+
+export interface RightsInfo {
+  fr: RightsStatus;
+  basis: 'cc' | 'authors';
+  /** Année de décès du dernier auteur principal (pour l'explication affichée). */
+  lastDeath?: number;
+  /** Une date de décès n'est pas vérifiée : le statut n'est qu'une première estimation. */
+  uncertain?: boolean;
+}
+
 export interface MediaItem {
   /** `${source}:${sourceId}` */
   uid: string;
@@ -55,6 +72,8 @@ export interface MediaItem {
   thumbnail?: string;
   pageUrl: string;
   license: LicenseInfo;
+  /** Présent seulement si l'œuvre figure dans notre table de droits (server/src/rights.ts). */
+  rights?: RightsInfo;
   popularity?: number;
   durationSec?: number;
 }
@@ -70,6 +89,8 @@ export interface SearchFilters {
   licensed?: boolean;
   /** Langue du contenu en code ISO (PeerTube) ; `languages` porte les libellés équivalents d'Internet Archive. */
   langCode?: Lang;
+  /** Identifiants précis (sélection éditoriale) : contourne la liste blanche de collections. */
+  identifiers?: string[];
 }
 
 export type SortKey = 'popular' | 'recent' | 'oldest' | 'title';
