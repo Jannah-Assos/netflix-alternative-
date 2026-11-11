@@ -45,6 +45,8 @@ Vous avez demandé de rester sur ce dont on est sûr d'avoir assez d'information
 |---|---|---|---|---|---|---|
 | **Films** (≈ 9 100 titres libres) | 91 % | 93 % | 77 % | 78 % | 29/30 | ✅ **dans la V1** |
 | **Animation** (≈ 1 300) | 78 % | 78 % | 56 % | 83 % | 30/30 | ✅ **dans la V1** |
+| **Documentaires de guerre** (WWII Archive, 2 840 films) | 98 % | 100 % | 100 % | — | 100 % | ✅ **dans la V1** (11/11/2026, sur demande prioritaire) |
+| **Actualités d'époque** (Universal, 611 films) | 100 % | 100 % | 100 % | — | 100 % | ✅ **dans la V1** ; sous-titres automatiques sur 80 % |
 | **Séries TV** (≈ 2 500) | **33 %** | **41 %** | **28 %** | **17 %** | 30/30 | ⏸ **hors V1** : fiches trop pauvres et aucune structure saison/épisode |
 | **Anime** (≈ 1 700 déclarés libres) | — | — | — | — | — | ⛔ **exclu** : voir ci-dessous |
 
@@ -57,6 +59,8 @@ Hors périmètre aussi, pour l'instant : musique, livres, logiciels, documentair
 2. lecture réussie **≥ 95 %** ;
 3. **droits vérifiables** (licence fiable, ou liste blanche) ;
 4. une **structure adaptée** (épisodes et saisons pour les séries).
+
+Méthode de mesure et résultats détaillés (Prelinger, Periscope, guerres récentes…) : [`docs/METHODE-CATALOGUE.md`](docs/METHODE-CATALOGUE.md). Commande : `npm run survey -- <collection>`.
 
 Pistes pour les **séries** : enrichir les fiches (Wikidata) et regrouper les épisodes ; pour l'**anime** : une liste blanche manuelle de quelques œuvres réellement libres (premiers dessins animés japonais, films Blender…).
 

@@ -26,6 +26,9 @@ export interface RowDef {
 export const ROWS: RowDef[] = [
   // Sélection éditoriale : œuvres libres aussi en France (table de droits, rights.ts).
   { id: 'pantheon', source: 'internet-archive', filters: { identifiers: PANTHEON_IDS }, uniqueWorks: true },
+  // Documentaires de guerre et actualités d'époque (images parfois difficiles : voir `sensitive`).
+  { id: 'war', source: 'internet-archive', filters: { collections: ['wwIIarchive'] } },
+  { id: 'newsreels', source: 'internet-archive', filters: { collections: ['universal_newsreels'] } },
   { id: 'local-fr', source: 'internet-archive', langs: ['fr'], filters: { languages: ['French', 'fre', 'fra'], collections: ['feature_films'] } },
   { id: 'local-en', source: 'internet-archive', langs: ['en'], filters: { languages: ['English', 'eng'], collections: ['feature_films'], yearTo: 1965 } },
   { id: 'featured', source: 'internet-archive', filters: { collections: ['feature_films'] } },

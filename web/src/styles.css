@@ -1814,3 +1814,29 @@ button.card:hover {
     transition: none !important;
   }
 }
+
+/* Sous-titres : même gabarit que le choix de qualité, un peu plus large pour « Anglais (auto) » */
+.quality.subs select {
+  max-width: 170px;
+}
+
+/* Téléphone : plein écran, sous-titres et qualité tiennent sur la barre ; le titre passe en dessous */
+@media (max-width: 560px) {
+  .watch-bar {
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px 12px 28px;
+  }
+  .watch-title {
+    order: 10;
+    flex-basis: 100%;
+  }
+  .back,
+  .quality select {
+    padding: 7px 12px;
+  }
+  .quality select,
+  .quality.subs select {
+    max-width: 38vw;
+  }
+}

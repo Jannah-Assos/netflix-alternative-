@@ -52,7 +52,7 @@ export type RightsStatus = 'free' | 'unclear' | 'protected';
 
 export interface RightsInfo {
   fr: RightsStatus;
-  basis: 'cc' | 'authors';
+  basis: 'cc' | 'authors' | 'government';
   /** Année de décès du dernier auteur principal (pour l'explication affichée). */
   lastDeath?: number;
   /** Une date de décès n'est pas vérifiée : le statut n'est qu'une première estimation. */
@@ -74,6 +74,10 @@ export interface MediaItem {
   license: LicenseInfo;
   /** Présent seulement si l'œuvre figure dans notre table de droits (server/src/rights.ts). */
   rights?: RightsInfo;
+  /** Langue parlée (code ISO 639-1) quand la source la renseigne. */
+  language?: string;
+  /** Documentaire d'époque pouvant contenir des images de guerre difficiles. */
+  sensitive?: boolean;
   popularity?: number;
   durationSec?: number;
 }
@@ -97,7 +101,7 @@ export type SortKey = 'popular' | 'recent' | 'oldest' | 'title';
 export const SORT_KEYS: readonly SortKey[] = ['popular', 'recent', 'oldest', 'title'];
 
 /** Genres proposés dans Explorer (liste blanche : jamais de valeur libre dans les requêtes vers les sources). */
-export const GENRE_IDS = ['film', 'animation', 'comedy', 'noir', 'scifi', 'silent', 'shorts'] as const;
+export const GENRE_IDS = ['film', 'animation', 'comedy', 'noir', 'scifi', 'silent', 'shorts', 'war', 'newsreels'] as const;
 export type GenreId = (typeof GENRE_IDS)[number];
 
 export const PERIOD_IDS = ['before1930', 'y1930', 'y1950', 'y1970', 'y2000'] as const;
@@ -150,8 +154,18 @@ export interface LinkCheck {
   sizeBytes?: number;
 }
 
+/** Piste de sous-titres trouvée chez la source (fichier .vtt ou .srt). */
+export interface SubtitleTrack {
+  url: string;
+  /** Code ISO 639-1 quand on le connaît (sinon : la langue parlée, non précisée). */
+  lang?: string;
+  /** true : sous-titres générés par reconnaissance vocale, donc imparfaits. */
+  auto: boolean;
+}
+
 export interface SourceResolve {
   links: MediaLink[];
+  subtitles?: SubtitleTrack[];
   license?: LicenseInfo;
   durationSec?: number;
 }

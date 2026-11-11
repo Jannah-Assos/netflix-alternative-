@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import type { MediaItem } from '../../../server/src/types';
-import { formatDuration } from '../format';
+import { formatDuration, languageName } from '../format';
 import { useI18n } from '../i18n';
 import type { Progress } from '../storage';
 import { LicenseBadge, RightsBadge } from './Badges';
@@ -18,7 +18,7 @@ export function PosterCard({ item, progress, onInfo, onPlay }: Actions & { item:
   const { t, lang } = useI18n();
   const [imgOk, setImgOk] = useState(true);
   const pct = progress && progress.duration > 0 ? Math.min(100, (progress.position / progress.duration) * 100) : 0;
-  const meta = [item.year, formatDuration(item.durationSec, lang)].filter(Boolean).join(' · ');
+  const meta = [item.year, formatDuration(item.durationSec, lang), item.language ? languageName(item.language, lang) : undefined].filter(Boolean).join(' · ');
 
   return (
     <div className="poster">

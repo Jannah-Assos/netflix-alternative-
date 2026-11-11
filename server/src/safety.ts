@@ -45,6 +45,22 @@ const EXACT_TERMS = [
   'molester',
   'rape',
   'rapist',
+  // Images de guerre ou de violence explicites (documentaires d'époque) : le titre les annonce souvent (« GRAPHIC »).
+  'graphic',
+  'gore',
+  'gory',
+  'executed',
+  'execution',
+  'executions',
+  'corpse',
+  'corpses',
+  'massacre',
+  'massacres',
+  'torture',
+  'atrocity',
+  'atrocities',
+  'beheading',
+  'beheadings',
 ];
 
 /** Radicaux refusés avec toutes leurs variantes : « pornograph » couvre pornographie, pornography, pornographique… */
@@ -65,6 +81,8 @@ const STEMS = [
   'incest',
   'pedophil',
   'paedophil',
+  'mutilat',
+  'decapitat',
 ];
 
 const WORD = '(?<![\\p{L}\\p{N}])';

@@ -53,3 +53,8 @@ export function home(lang: Lang, signal?: AbortSignal): Promise<HomeResult> {
 export function listSources(signal?: AbortSignal): Promise<SourceInfo[]> {
   return get<SourceInfo[]>('/api/sources', signal);
 }
+
+/** Adresse du relais de sous-titres (même origine que le site, converti en WebVTT). */
+export function subtitleUrl(url: string): string {
+  return `/api/subtitle?url=${encodeURIComponent(url)}`;
+}

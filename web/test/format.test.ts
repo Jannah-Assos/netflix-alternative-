@@ -80,3 +80,12 @@ describe('qualityText', () => {
     expect(linkText(link, tFor('en'), 'en')).toBe('Direct playback · MP4 · small');
   });
 });
+
+describe('languageName', () => {
+  it('donne le nom de la langue dans celle de l’interface', async () => {
+    const { languageName } = await import('../src/format');
+    expect(languageName('en', 'fr')).toBe('Anglais');
+    expect(languageName('fr', 'en')).toBe('French');
+    expect(languageName('zz-unknown-code', 'fr')).toBeTruthy();
+  });
+});

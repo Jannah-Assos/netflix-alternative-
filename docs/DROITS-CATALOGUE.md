@@ -64,6 +64,12 @@ La **même œuvre** porte des licences différentes selon qui l'a mise en ligne 
 - **Rangée « Panthéon »** en tête de l'accueil : une seule copie par œuvre, uniquement des œuvres libres.
 - **Exclusion** des œuvres protégées de l'accueil et de la recherche. `RIGHTS_FILTER=off` les remet, signalées.
 
+## Documentaires de guerre et œuvres du gouvernement américain
+
+Les films de l'armée et de la marine américaines (collection « WWII Archive ») sont des **œuvres du gouvernement fédéral** : sans droit d'auteur aux États-Unis. Leur statut en France dépend d'une règle de comparaison des durées de la convention de Berne, à faire confirmer par un juriste. Ils portent donc le tampon **« Doute en France »** (jamais « Libre »), avec l'explication « œuvre du gouvernement américain ».
+
+Les **films Disney de guerre**, nombreux dans cette collection et déclarés « domaine public » par leurs déposants, sont écartés comme tout Disney (catégorie C). Les actualités Universal n'ont pas encore de statut de droits : elles s'affichent sans tampon.
+
 ## Limite essentielle : « sans tampon » ne veut pas dire « libre »
 
 La table ne connaît qu'une trentaine d'œuvres et quelques créateurs. **Tout le reste est affiché comme avant**, sans tampon de droits, y compris des titres probablement protégés en France (*His Girl Friday*, de Howard Hawks, mort en 1977, par exemple). Il faut donc :

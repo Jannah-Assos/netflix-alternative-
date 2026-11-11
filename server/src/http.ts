@@ -15,6 +15,8 @@ export class HttpError extends Error {
 
 export interface Http {
   json<T>(url: string, opts?: { ttlMs?: number }): Promise<T>;
+  /** Télécharge un petit fichier texte (sous-titres) ; refuse au-delà de `maxBytes`. */
+  text(url: string, opts?: { maxBytes?: number; ttlMs?: number }): Promise<string>;
   head(url: string): Promise<LinkCheck>;
 }
 
@@ -206,6 +208,41 @@ export function createHttp(options: HttpOptions = {}): Http {
         .finally(() => inflight.delete(url));
       inflight.set(url, p);
       return p;
+    },
+
+    async text(url: string, opts?: { maxBytes?: number; ttlMs?: number }): Promise<string> {
+      const key = `text:${url}`;
+      const hit = cache.get(key);
+      if (hit && Date.now() - hit.at < hit.ttl) return hit.value as string;
+      const maxBytes = opts?.maxBytes ?? 1_500_000;
+      const res = await safeFetch(url, { headers: { accept: 'text/*,*/*;q=0.5' } }, timeoutMs);
+      if (!res.ok) {
+        await res.body?.cancel().catch(() => undefined);
+        throw new HttpError(`HTTP ${res.status}`, res.status, 'http');
+      }
+      const declared = Number(res.headers.get('content-length'));
+      if (Number.isFinite(declared) && declared > maxBytes) {
+        await res.body?.cancel().catch(() => undefined);
+        throw new HttpError('File too large', undefined, 'blocked');
+      }
+      // Lecture limitée : un serveur qui ne déclare pas sa taille ne peut pas nous faire lire sans fin.
+      const reader = res.body?.getReader();
+      const chunks: Uint8Array[] = [];
+      let total = 0;
+      while (reader) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        total += value.byteLength;
+        if (total > maxBytes) {
+          await reader.cancel().catch(() => undefined);
+          throw new HttpError('File too large', undefined, 'blocked');
+        }
+        chunks.push(value);
+      }
+      const value = new TextDecoder('utf-8').decode(Buffer.concat(chunks));
+      if (cache.size >= maxEntries) cache.delete(cache.keys().next().value as string);
+      cache.set(key, { at: Date.now(), ttl: opts?.ttlMs ?? cacheTtl, value });
+      return value;
     },
 
     async head(url: string): Promise<LinkCheck> {

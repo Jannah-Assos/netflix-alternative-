@@ -1,15 +1,17 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { MediaItem, MediaLink } from '../../../server/src/types';
-import { resolve } from '../api';
+import type { MediaItem, MediaLink, SubtitleTrack } from '../../../server/src/types';
+import { resolve, subtitleUrl } from '../api';
+import { canFullscreen, toggleFullscreen as toggleFs } from '../fullscreen';
 import { formatClock, qualityText } from '../format';
 import { useI18n } from '../i18n';
-import { clearProgress, getProgress, isResumable, saveProgress } from '../storage';
+import type { MessageKey } from '../messages';
+import { clearProgress, getProgress, getSubsPref, isResumable, saveProgress, setSubsPref } from '../storage';
 import { useDialog } from '../useDialog';
 
 type State =
   | { s: 'loading' }
   | { s: 'error'; msg: string }
-  | { s: 'ready'; playable: MediaLink[]; embed?: MediaLink; download?: MediaLink };
+  | { s: 'ready'; playable: MediaLink[]; subtitles: SubtitleTrack[]; embed?: MediaLink; download?: MediaLink };
 
 const SAVE_EVERY_MS = 5000;
 const IDLE_MS = 3000;
@@ -22,9 +24,23 @@ const isHttps = (u: string): boolean => {
   }
 };
 
+/** « Anglais (auto) », « Français », « Sous-titres (auto) » quand la langue n'est pas précisée. */
+function subtitleLabel(tr: SubtitleTrack, uiLang: string, t: (k: MessageKey) => string): string {
+  let name = '';
+  try {
+    name = tr.lang ? (new Intl.DisplayNames([uiLang], { type: 'language' }).of(tr.lang) ?? '') : '';
+  } catch {
+    name = tr.lang ?? '';
+  }
+  const base = name ? name.charAt(0).toUpperCase() + name.slice(1) : t('watch.subtitles');
+  return tr.auto ? `${base} (${t('watch.subsAuto')})` : base;
+}
+
 export function Watch({ item, onClose }: { item: MediaItem; onClose: () => void }) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const [state, setState] = useState<State>({ s: 'loading' });
+  // Piste de sous-titres choisie (null : aucune). Mémorisée d'un film à l'autre.
+  const [subIdx, setSubIdx] = useState<number | null>(null);
   const [idx, setIdx] = useState(0);
   const [failed, setFailed] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
@@ -64,7 +80,15 @@ export function Watch({ item, onClose }: { item: MediaItem; onClose: () => void 
         const playable = data.links.filter((l) => l.type === 'stream' && l.playable);
         const embed = data.links.find((l) => l.type === 'embed' && isHttps(l.url));
         const download = data.links.find((l) => l.type === 'download');
-        setState({ s: 'ready', playable, ...(embed ? { embed } : {}), ...(download ? { download } : {}) });
+        const subtitles = item.kind === 'video' ? (data.subtitles ?? []) : [];
+        setState({ s: 'ready', playable, subtitles, ...(embed ? { embed } : {}), ...(download ? { download } : {}) });
+        // Si le visiteur avait activé les sous-titres, on reprend : sa langue d'abord, sinon la première piste.
+        if (subtitles.length > 0 && getSubsPref()) {
+          const mine = subtitles.findIndex((x) => x.lang === lang);
+          setSubIdx(mine >= 0 ? mine : 0);
+        } else {
+          setSubIdx(null);
+        }
         if (playable.length > 0) {
           // Rappel des gestes de sortie : on ne doit jamais être bloqué dans le lecteur.
           const resume = startRef.current > 0 ? `${t('watch.resume', { time: formatClock(startRef.current) })} · ` : '';
@@ -127,8 +151,30 @@ export function Watch({ item, onClose }: { item: MediaItem; onClose: () => void 
   }, [current?.url, failed]);
 
   const toggleFullscreen = () => {
-    if (document.fullscreenElement) void document.exitFullscreen();
-    else void rootRef.current?.requestFullscreen?.();
+    toggleFs(document, rootRef.current, mediaRef.current);
+  };
+
+  // Le bouton « plein écran » doit exister aussi sur iPhone (voir fullscreen.ts). On le réévalue quand la vidéo apparaît.
+  const subtitles = state.s === 'ready' ? state.subtitles : [];
+  const showFullscreen =
+    typeof document !== 'undefined' &&
+    item.kind === 'video' &&
+    canFullscreen(document, typeof HTMLVideoElement !== 'undefined' ? HTMLVideoElement.prototype : undefined);
+
+  // Affiche la piste choisie, masque les autres (un seul changement de mode pour tout le monde).
+  const applySubtitles = useCallback(() => {
+    const tracks = mediaRef.current?.textTracks;
+    if (!tracks) return;
+    for (let i = 0; i < tracks.length; i++) {
+      const tr = tracks[i];
+      if (tr) tr.mode = i === subIdx ? 'showing' : 'disabled';
+    }
+  }, [subIdx]);
+  useEffect(applySubtitles, [applySubtitles, current?.url, subtitles.length]);
+  const changeSubtitles = (value: string) => {
+    const next = value === '' ? null : Number(value);
+    setSubIdx(next);
+    setSubsPref(next !== null);
   };
 
   const onKeys = (e: React.KeyboardEvent) => {
@@ -183,7 +229,10 @@ export function Watch({ item, onClose }: { item: MediaItem; onClose: () => void 
     autoPlay: true,
     playsInline: true,
     preload: 'metadata' as const,
-    onLoadedMetadata: onMeta,
+    onLoadedMetadata: (e: React.SyntheticEvent<HTMLMediaElement>) => {
+      onMeta(e);
+      applySubtitles();
+    },
     onTimeUpdate: onTime,
     onPause: (e: React.SyntheticEvent<HTMLMediaElement>) => {
       playing.current = false;
@@ -210,10 +259,23 @@ export function Watch({ item, onClose }: { item: MediaItem; onClose: () => void 
           <span aria-hidden="true">‹</span> {t('watch.back')}
         </button>
         <span className="watch-title">{item.title}</span>
-        {typeof document !== 'undefined' && document.fullscreenEnabled && (
+        {showFullscreen && (
           <button type="button" className="back" onClick={toggleFullscreen} aria-label={t('watch.fullscreen')} title={`${t('watch.fullscreen')} (F)`}>
             ⛶
           </button>
+        )}
+        {subtitles.length > 0 && (
+          <label className="quality subs">
+            <span className="sr-only">{t('watch.subtitles')}</span>
+            <select value={subIdx ?? ''} onChange={(e) => changeSubtitles(e.target.value)}>
+              <option value="">{t('watch.subsOff')}</option>
+              {subtitles.map((tr, i) => (
+                <option key={tr.url} value={i}>
+                  {subtitleLabel(tr, lang, t)}
+                </option>
+              ))}
+            </select>
+          </label>
         )}
         {playable.length > 1 && (
           <label className="quality">
@@ -242,7 +304,13 @@ export function Watch({ item, onClose }: { item: MediaItem; onClose: () => void 
           </div>
         )}
 
-        {state.s === 'ready' && current && !failed && item.kind === 'video' && <video key={current.url} {...mediaProps} />}
+        {state.s === 'ready' && current && !failed && item.kind === 'video' && (
+          <video key={current.url} {...mediaProps}>
+            {subtitles.map((tr, i) => (
+              <track key={tr.url} kind="subtitles" src={subtitleUrl(tr.url)} srcLang={tr.lang ?? lang} label={subtitleLabel(tr, lang, t)} default={i === subIdx} />
+            ))}
+          </video>
+        )}
 
         {state.s === 'ready' && current && !failed && item.kind === 'audio' && (
           <div className="audio-stage">

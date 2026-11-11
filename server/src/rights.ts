@@ -146,6 +146,26 @@ export const PROTECTED_NAMES: { names: string[]; died: number; who: string }[] =
   { names: ['tom and jerry'], died: 2001, who: 'Hanna-Barbera' },
 ];
 
+/**
+ * Œuvres produites par le gouvernement fédéral américain (armée, marine, archives…) : sans droit
+ * d'auteur aux États-Unis. Leur statut en France n'est pas tranché (règle de comparaison des durées
+ * de la convention de Berne) : on les signale « doute », jamais « libre », en attendant le juriste.
+ */
+export const GOVERNMENT_CREATORS = [
+  'united states army',
+  'united states navy',
+  'united states marine corps',
+  'united states army air forces',
+  'united states office of war information',
+  'united states war department',
+  'us army',
+  'us navy',
+  'us army signal corps',
+  'signal corps',
+  'office of war information',
+  'national archives and records administration',
+];
+
 /** Sélection éditoriale de l'accueil : uniquement des œuvres « libres », dont l'identifiant a été vérifié. */
 export const PANTHEON_IDS: string[] = WORKS.filter((w) => frStatus(w) === 'free').flatMap((w) => w.archiveIds ?? []);
 
@@ -204,7 +224,11 @@ export function rightsOf(item: Pick<MediaItem, 'sourceId' | 'title' | 'year' | '
   // Pour les noms, on garde le contenu des parenthèses : « CUKESIM's New Job! ( Charles Chaplin ) ».
   const parts = [normalize(item.title, true), normalize(item.creator ?? '', true)];
   const names = PROTECTED_NAMES.find((p) => p.names.some((n) => parts.some((part) => hasPhrase(part, n))));
-  return names ? { fr: 'protected', basis: 'authors', lastDeath: names.died } : undefined;
+  if (names) return { fr: 'protected', basis: 'authors', lastDeath: names.died };
+  if (parts[1] && GOVERNMENT_CREATORS.some((g) => hasPhrase(parts[1] as string, g))) {
+    return { fr: 'unclear', basis: 'government', uncertain: true };
+  }
+  return undefined;
 }
 
 /** `RIGHTS_FILTER=off` garde les œuvres protégées dans le catalogue (elles restent signalées). */

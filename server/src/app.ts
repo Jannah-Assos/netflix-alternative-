@@ -9,6 +9,7 @@ import { buildHome } from './home.js';
 import { HttpError, createHttp, type Http } from './http.js';
 import { pickBest } from './linkPicker.js';
 import { scan } from './scan.js';
+import { isArchiveDownloadUrl, toVtt } from './subtitles.js';
 import { ENABLED_KINDS } from './scope.js';
 import { enabledSources, findSource, type MediaSource } from './sources/index.js';
 import {
@@ -108,6 +109,16 @@ export function buildApp(deps: AppDeps = {}): FastifyInstance {
   // ne l'appliquerait pas aux routes déjà définies.
   void app.register(async (api) => {
     api.get('/api/health', async () => ({ ok: true }));
+
+    // Relais des sous-titres d'Internet Archive : même origine que le site (pas de souci de CORS dans
+    // le lecteur), converti en WebVTT, limité aux fichiers .vtt/.srt d'archive.org.
+    api.get('/api/subtitle', async (req, reply) => {
+      const url = (req.query as { url?: unknown }).url;
+      if (typeof url !== 'string' || !isArchiveDownloadUrl(url)) return reply.code(400).send({ error: 'Invalid subtitle URL' });
+      const text = await http.text(url, { maxBytes: 1_500_000, ttlMs: 24 * 3_600_000 });
+      void reply.type('text/vtt; charset=utf-8').header('cache-control', 'public, max-age=86400');
+      return toVtt(text);
+    });
 
     api.get('/api/sources', async (): Promise<SourceInfo[]> =>
       sources.map(({ id, name, homepage, kinds, supportsBrowse }) => ({ id, name, homepage, kinds, supportsBrowse })),

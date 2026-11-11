@@ -119,3 +119,12 @@ export function getContinue(): Progress[] {
     .filter(isResumable)
     .sort((a, b) => b.updatedAt - a.updatedAt);
 }
+
+/** Sous-titres : « on » si le visiteur les a activés la dernière fois (ils restent alors activés d'un film à l'autre). */
+const SUBS_KEY = 'oms.subs';
+export function getSubsPref(): boolean {
+  return readRaw(SUBS_KEY) === 'on';
+}
+export function setSubsPref(on: boolean): void {
+  writeRaw(SUBS_KEY, on ? 'on' : 'off');
+}
