@@ -1,0 +1,425 @@
+{
+ "batchcomplete": true,
+ "continue": {
+  "gsroffset": 3,
+  "continue": "gsroffset||"
+ },
+ "query": {
+  "pages": [
+   {
+    "pageid": 7898178,
+    "ns": 6,
+    "title": "File:Big Buck Bunny Trailer 1080p.ogv",
+    "index": 3,
+    "imagerepository": "local",
+    "videoinfo": [
+     {
+      "size": 27873937,
+      "width": 1920,
+      "height": 1080,
+      "duration": 32.996875,
+      "thumburl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/18/Big_Buck_Bunny_Trailer_1080p.ogv/500px--Big_Buck_Bunny_Trailer_1080p.ogv.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo",
+      "thumbwidth": 480,
+      "thumbheight": 270,
+      "responsiveUrls": {
+       "2": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/18/Big_Buck_Bunny_Trailer_1080p.ogv/960px--Big_Buck_Bunny_Trailer_1080p.ogv.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo"
+      },
+      "thumbattribs": [],
+      "url": "https://upload.wikimedia.org/wikipedia/commons/1/18/Big_Buck_Bunny_Trailer_1080p.ogv?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "descriptionurl": "https://commons.wikimedia.org/wiki/File:Big_Buck_Bunny_Trailer_1080p.ogv",
+      "descriptionshorturl": "https://commons.wikimedia.org/w/index.php?curid=7898178",
+      "extmetadata": {
+       "DateTime": {
+        "value": "2009-09-26 08:20:02",
+        "source": "mediawiki-metadata",
+        "hidden": ""
+       },
+       "ObjectName": {
+        "value": "Big Buck Bunny Trailer 1080p",
+        "source": "mediawiki-metadata"
+       },
+       "CommonsMetadataExtension": {
+        "value": 1.2,
+        "source": "extension",
+        "hidden": ""
+       },
+       "Categories": {
+        "value": "Videos created with Blender|Ogv videos|Big Buck Bunny multimedia|Video display resolution 1920 x 1080|Vorbis videos|Theora videos",
+        "source": "commons-categories",
+        "hidden": ""
+       },
+       "Assessments": {
+        "value": "",
+        "source": "commons-categories",
+        "hidden": ""
+       },
+       "ImageDescription": {
+        "value": "Trailer of free <a href=\"https://en.wikipedia.org/wiki/Big_Buck_Bunny\" class=\"extiw\" title=\"en:Big Buck Bunny\">Big Buck Bunny</a> cartoon.",
+        "source": "commons-desc-page"
+       },
+       "DateTimeOriginal": {
+        "value": "2008-03",
+        "source": "commons-desc-page"
+       },
+       "Credit": {
+        "value": "<a rel=\"nofollow\" class=\"external text\" href=\"http://www.bigbuckbunny.org/index.php/trailer-page/\">Big Buck Bunny Trailer page</a>",
+        "source": "commons-desc-page"
+       },
+       "Artist": {
+        "value": "(c) copyright Blender Foundation\\www.bigbuckbunny.org",
+        "source": "commons-desc-page"
+       },
+       "Permission": {
+        "value": "<table style=\"width:100%; clear:both; text-align:center; margin:0.5em auto; background-color:var(--background-color-neutral-subtle, #f8f9fa); border: 2px solid var(--border-color-subtle, #c8ccd1); padding: 0; border-spacing: 8px; color:var(--color-base, #202122);\" dir=\"ltr\" class=\"layouttemplate licensetpl\" lang=\"\">\n<tbody><tr>\n<td><i>This file is from the movie <a href=\"//commons.wikimedia.org/wiki/Big_Buck_Bunny\" title=\"Big Buck Bunny\">Big Buck Bunny</a> or the associated website, which has been licensed under <a href=\"https://en.wikipedia.org/wiki/Creative_Commons\" class=\"extiw\" title=\"w:Creative Commons\">Creative Commons</a> <a rel=\"nofollow\" class=\"external text\" href=\"https://creativecommons.org/licenses/by/3.0/\">Attribution 3.0</a> License</i>. Their website <a rel=\"nofollow\" class=\"external text\" href=\"https://peach.blender.org/about/\">states</a>:\n<div style=\"text-align:left; background:white;\">\n<dl><dd><i>The attribution is either one of the following cases</i>\n<ol><li><i>If you redistribute or screen or broadcast the movie itself: include the entire credits scroll.</i></li>\n<li><i>In all other cases, attribute it as: (c) copyright Blender Foundation | www.bigbuckbunny.org</i></li></ol></dd>\n<dd><i>This is the first time such a large collection of files get launched under ‘the commons’, and therefore still a bit complex to grasp what to credit when exactly. The guidelines above are just meant to ensure that attribution happens in a reasonable way. If in doubt, use the second choice above.</i></dd>\n<dd><i>Excluded from the Creative Commons is:</i>\n<ul><li><i>all logos on this website (including Blender logo, Peach logo, Creative Commons logo) and associated trademarks</i></li></ul></dd></dl>\n</div>\n<div class=\"responsive-license-cc layouttemplate licensetpl\" dir=\"ltr\" lang=\"en\"><div class=\"rlicense-icons\"><span class=\"skin-invert\" typeof=\"mw:File\"><span title=\"w:en:Creative Commons\"><img alt=\"w:en:Creative Commons\" src=\"https://thumb.wikimedia.org/wikipedia/commons/thumb/7/79/CC_some_rights_reserved.svg/120px-CC_some_rights_reserved.svg.png?utm_source=commons.wikimedia.org&amp;utm_campaign=parser&amp;utm_content=thumbnail\" decoding=\"async\" loading=\"lazy\" width=\"90\" height=\"36\" class=\"mw-file-element\" srcset=\"https://thumb.wikimedia.org/wikipedia/commons/thumb/7/79/CC_some_rights_reserved.svg/250px-CC_some_rights_reserved.svg.png?utm_source=commons.wikimedia.org&amp;utm_campaign=parser&amp;utm_content=thumbnail 2x\" data-file-width=\"744\" data-file-height=\"300\"></span></span><br>\n<span class=\"skin-invert\" typeof=\"mw:File\"><span title=\"attribution\"><img alt=\"attribution\" src=\"https://thumb.wikimedia.org/wikipedia/commons/thumb/1/11/Cc-by_new_white.svg/40px-Cc-by_new_white.svg.png?utm_source=commons.wikimedia.org&amp;utm_campaign=parser&amp;utm_content=thumbnail\" decoding=\"async\" loading=\"lazy\" width=\"24\" height=\"24\" class=\"mw-file-element\" srcset=\"https://thumb.wikimedia.org/wikipedia/commons/thumb/1/11/Cc-by_new_white.svg/60px-Cc-by_new_white.svg.png?utm_source=commons.wikimedia.org&amp;utm_campaign=parser&amp;utm_content=thumbnail 2x\" data-file-width=\"64\" data-file-height=\"64\"></span></span></div><div class=\"rlicense-text\"><div class=\"rlicense-declaration\">This file is licensed under the <a href=\"https://en.wikipedia.org/wiki/en:Creative_Commons\" class=\"extiw\" title=\"w:en:Creative Commons\">Creative Commons</a> <a href=\"//creativecommons.org/licenses/by/3.0/deed.en\" class=\"extiw\" title=\"creativecommons:by/3.0/deed.en\">Attribution 3.0 Unported</a> license.</div><div class=\"rlicense-attr\" style=\"font-weight: bold;\">Attribution: <div style=\"display:inline;font-size:larger;\" class=\"licensetpl_attr\">(c) copyright Blender Foundation | www.bigbuckbunny.org</div></div><div class=\"rlicense-desc\" style=\"text-align:start;\" dir=\"ltr\" lang=\"en\">\n<dl><dd>You are free:\n<ul><li><b>to share</b> – to copy, distribute and transmit the work</li>\n<li><b>to remix</b> – to adapt the work</li></ul></dd>\n<dd>Under the following conditions:\n<ul><li><b>attribution</b> – You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.</li></ul></dd></dl>\n</div><span class=\"licensetpl_link\" style=\"display:none;\">https://creativecommons.org/licenses/by/3.0</span><span class=\"licensetpl_short\" style=\"display:none;\">CC BY 3.0 </span><span class=\"licensetpl_long\" style=\"display:none;\">Creative Commons Attribution 3.0 </span><span class=\"licensetpl_link_req\" style=\"display:none;\">true</span><span class=\"licensetpl_attr_req\" style=\"display:none;\">true</span></div></div>\n</td></tr></tbody></table><div style=\"display:table;width:;vertical-align:middle;direction:ltr;float:left;line-height:22px;height:24px;font-size:.96em;margin:0px;padding:2px 4px 2px 6px;color:var(--color-base,#000);background:var(--background-color-neutral-subtle,#F8F9FA);border:1px solid #BAB;border-collapse:separate;border-spacing:0px;;\"><span typeof=\"mw:File\"><a href=\"//commons.wikimedia.org/wiki/File:Blender_logo_no_text.svg\" class=\"mw-file-description\"><img src=\"https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0c/Blender_logo_no_text.svg/40px-Blender_logo_no_text.svg.png?utm_source=commons.wikimedia.org&amp;utm_campaign=parser&amp;utm_content=thumbnail\" decoding=\"async\" loading=\"lazy\" width=\"27\" height=\"22\" class=\"mw-file-element\" srcset=\"https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0c/Blender_logo_no_text.svg/60px-Blender_logo_no_text.svg.png?utm_source=commons.wikimedia.org&amp;utm_campaign=parser&amp;utm_content=thumbnail 2x\" data-file-width=\"512\" data-file-height=\"419\"></a></span> This  video was created with <a href=\"https://en.wikipedia.org/wiki/en:Blender_(software)\" class=\"extiw\" title=\"w:en:Blender (software)\"><span title=\"3D computer graphics software (free and open-source)\">Blender</span></a> by ogg.</div>",
+        "source": "commons-desc-page",
+        "hidden": ""
+       },
+       "LicenseShortName": {
+        "value": "CC BY 3.0",
+        "source": "commons-desc-page",
+        "hidden": ""
+       },
+       "UsageTerms": {
+        "value": "Creative Commons Attribution 3.0",
+        "source": "commons-desc-page"
+       },
+       "AttributionRequired": {
+        "value": "true",
+        "source": "commons-desc-page",
+        "hidden": ""
+       },
+       "Attribution": {
+        "value": "(c) copyright Blender Foundation | www.bigbuckbunny.org",
+        "source": "commons-desc-page",
+        "hidden": ""
+       },
+       "LicenseUrl": {
+        "value": "https://creativecommons.org/licenses/by/3.0",
+        "source": "commons-desc-page"
+       },
+       "Copyrighted": {
+        "value": "True",
+        "source": "commons-desc-page",
+        "hidden": ""
+       },
+       "Restrictions": {
+        "value": "",
+        "source": "commons-desc-page",
+        "hidden": ""
+       },
+       "License": {
+        "value": "cc-by-3.0",
+        "source": "commons-templates",
+        "hidden": ""
+       }
+      },
+      "mime": "application/ogg",
+      "derivatives": [
+       {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/1/18/Big_Buck_Bunny_Trailer_1080p.ogv/Big_Buck_Bunny_Trailer_1080p.ogv.240p.vp9.webm",
+        "type": "video/webm; codecs=\"vp9, opus\"",
+        "transcodekey": "240p.vp9.webm",
+        "width": 426,
+        "height": 240,
+        "bandwidth": 297672
+       },
+       {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/1/18/Big_Buck_Bunny_Trailer_1080p.ogv/Big_Buck_Bunny_Trailer_1080p.ogv.360p.mpeg4.mov",
+        "type": "video/quicktime; codecs=\"mp4v\"",
+        "transcodekey": "360p.mpeg4.mov",
+        "width": 640,
+        "height": 360,
+        "bandwidth": 949048
+       },
+       {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/1/18/Big_Buck_Bunny_Trailer_1080p.ogv/Big_Buck_Bunny_Trailer_1080p.ogv.480p.vp9.webm",
+        "type": "video/webm; codecs=\"vp9, opus\"",
+        "transcodekey": "480p.vp9.webm",
+        "width": 854,
+        "height": 480,
+        "bandwidth": 710704
+       },
+       {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/1/18/Big_Buck_Bunny_Trailer_1080p.ogv/Big_Buck_Bunny_Trailer_1080p.ogv.1080p.vp9.webm",
+        "type": "video/webm; codecs=\"vp9, opus\"",
+        "transcodekey": "1080p.vp9.webm",
+        "width": 1920,
+        "height": 1080,
+        "bandwidth": 2453752
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "pageid": 39831142,
+    "ns": 6,
+    "title": "File:Big Buck Bunny extract.ogv",
+    "index": 2,
+    "imagerepository": "local",
+    "videoinfo": [
+     {
+      "size": 1854041,
+      "width": 320,
+      "height": 240,
+      "duration": 33.28,
+      "thumburl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3b/Big_Buck_Bunny_extract.ogv/250px--Big_Buck_Bunny_extract.ogv.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo",
+      "thumbwidth": 320,
+      "thumbheight": 240,
+      "thumbattribs": [],
+      "url": "https://upload.wikimedia.org/wikipedia/commons/3/3b/Big_Buck_Bunny_extract.ogv?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "descriptionurl": "https://commons.wikimedia.org/wiki/File:Big_Buck_Bunny_extract.ogv",
+      "descriptionshorturl": "https://commons.wikimedia.org/w/index.php?curid=39831142",
+      "extmetadata": {
+       "DateTime": {
+        "value": "2015-05-05 00:08:01",
+        "source": "mediawiki-metadata",
+        "hidden": ""
+       },
+       "ObjectName": {
+        "value": "Big Buck Bunny extract",
+        "source": "mediawiki-metadata"
+       },
+       "CommonsMetadataExtension": {
+        "value": 1.2,
+        "source": "extension",
+        "hidden": ""
+       },
+       "Categories": {
+        "value": "Big Buck Bunny multimedia|Video display resolution 320 x 240|Files uploaded with For the Common Good",
+        "source": "commons-categories",
+        "hidden": ""
+       },
+       "Assessments": {
+        "value": "",
+        "source": "commons-categories",
+        "hidden": ""
+       },
+       "ImageDescription": {
+        "value": "30 second extract from <a href=\"https://en.wikipedia.org/wiki/Big_Buck_Bunny\" class=\"extiw\" title=\"en:Big Buck Bunny\">Big Buck Bunny</a>, a 2008 animated short film that was made using <a href=\"https://en.wikipedia.org/wiki/Blender_(software)\" class=\"extiw\" title=\"en:Blender (software)\">Blender</a>, a free software application, and released under the Creative Commons Attribution 3.0 License",
+        "source": "commons-desc-page"
+       },
+       "DateTimeOriginal": {
+        "value": "2008-03",
+        "source": "commons-desc-page"
+       },
+       "Credit": {
+        "value": "<a rel=\"nofollow\" class=\"external free\" href=\"http://www.bigbuckbunny.org\">http://www.bigbuckbunny.org</a>",
+        "source": "commons-desc-page"
+       },
+       "Artist": {
+        "value": "Blender Foundation / www.bigbuckbunny.org",
+        "source": "commons-desc-page"
+       },
+       "Permission": {
+        "value": "CC 3.0",
+        "source": "commons-desc-page",
+        "hidden": ""
+       },
+       "LicenseShortName": {
+        "value": "CC BY 3.0",
+        "source": "commons-desc-page",
+        "hidden": ""
+       },
+       "UsageTerms": {
+        "value": "Creative Commons Attribution 3.0",
+        "source": "commons-desc-page"
+       },
+       "AttributionRequired": {
+        "value": "true",
+        "source": "commons-desc-page",
+        "hidden": ""
+       },
+       "LicenseUrl": {
+        "value": "https://creativecommons.org/licenses/by/3.0",
+        "source": "commons-desc-page"
+       },
+       "Copyrighted": {
+        "value": "True",
+        "source": "commons-desc-page",
+        "hidden": ""
+       },
+       "Restrictions": {
+        "value": "",
+        "source": "commons-desc-page",
+        "hidden": ""
+       },
+       "License": {
+        "value": "cc-by-3.0",
+        "source": "commons-templates",
+        "hidden": ""
+       }
+      },
+      "mime": "application/ogg",
+      "derivatives": [
+       {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/3/3b/Big_Buck_Bunny_extract.ogv/Big_Buck_Bunny_extract.ogv.240p.vp9.webm",
+        "type": "video/webm; codecs=\"vp9, opus\"",
+        "transcodekey": "240p.vp9.webm",
+        "width": 320,
+        "height": 240,
+        "bandwidth": 235488
+       },
+       {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/3/3b/Big_Buck_Bunny_extract.ogv/Big_Buck_Bunny_extract.ogv.360p.mpeg4.mov",
+        "type": "video/quicktime; codecs=\"mp4v\"",
+        "transcodekey": "360p.mpeg4.mov",
+        "width": 320,
+        "height": 240,
+        "bandwidth": 602624
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "pageid": 40108642,
+    "ns": 6,
+    "title": "File:Big Buck Bunny 4K.webm",
+    "index": 1,
+    "imagerepository": "local",
+    "videoinfo": [
+     {
+      "size": 2964839055,
+      "width": 4000,
+      "height": 2250,
+      "duration": 634.553,
+      "thumburl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c0/Big_Buck_Bunny_4K.webm/500px--Big_Buck_Bunny_4K.webm.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo",
+      "thumbwidth": 480,
+      "thumbheight": 270,
+      "responsiveUrls": {
+       "2": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c0/Big_Buck_Bunny_4K.webm/960px--Big_Buck_Bunny_4K.webm.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo"
+      },
+      "thumbattribs": [],
+      "url": "https://upload.wikimedia.org/wikipedia/commons/c/c0/Big_Buck_Bunny_4K.webm?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "descriptionurl": "https://commons.wikimedia.org/wiki/File:Big_Buck_Bunny_4K.webm",
+      "descriptionshorturl": "https://commons.wikimedia.org/w/index.php?curid=40108642",
+      "extmetadata": {
+       "DateTime": {
+        "value": "2015-05-10 18:23:36",
+        "source": "mediawiki-metadata",
+        "hidden": ""
+       },
+       "ObjectName": {
+        "value": "Big Buck Bunny 4K",
+        "source": "mediawiki-metadata"
+       },
+       "CommonsMetadataExtension": {
+        "value": 1.2,
+        "source": "extension",
+        "hidden": ""
+       },
+       "Categories": {
+        "value": "WebM videos|Anthropomorphic animals|Featured media|Featured pictures by others nominated by Yann Forget|Featured pictures on Wikipedia, English|Media of the day|Big Buck Bunny multimedia|Videos of 2008 from the Netherlands|Video display resolution 4000 x 2250|Blender movies|Videos of short films from 2008|Featured media of animated videos|Featured media uploaded by Matanya|Vorbis videos|VP8 videos",
+        "source": "commons-categories",
+        "hidden": ""
+       },
+       "Assessments": {
+        "value": "featured",
+        "source": "commons-categories",
+        "hidden": ""
+       },
+       "ImageDescription": {
+        "value": "<i><a href=\"//commons.wikimedia.org/wiki/Big_Buck_Bunny\" title=\"Big Buck Bunny\">Big Buck Bunny</a></i> short film by the Blender Foundation.",
+        "source": "commons-desc-page"
+       },
+       "DateTimeOriginal": {
+        "value": "2008-03",
+        "source": "commons-desc-page"
+       },
+       "Credit": {
+        "value": "<a rel=\"nofollow\" class=\"external text\" href=\"http://bbb3d.renderfarming.net/download.html\">Big Buck Bunny</a>",
+        "source": "commons-desc-page"
+       },
+       "Artist": {
+        "value": "Blender Foundation",
+        "source": "commons-desc-page"
+       },
+       "LicenseShortName": {
+        "value": "CC BY 3.0",
+        "source": "commons-desc-page",
+        "hidden": ""
+       },
+       "UsageTerms": {
+        "value": "Creative Commons Attribution 3.0",
+        "source": "commons-desc-page"
+       },
+       "AttributionRequired": {
+        "value": "true",
+        "source": "commons-desc-page",
+        "hidden": ""
+       },
+       "Attribution": {
+        "value": "(c) copyright Blender Foundation | www.bigbuckbunny.org",
+        "source": "commons-desc-page",
+        "hidden": ""
+       },
+       "LicenseUrl": {
+        "value": "https://creativecommons.org/licenses/by/3.0",
+        "source": "commons-desc-page"
+       },
+       "Copyrighted": {
+        "value": "True",
+        "source": "commons-desc-page",
+        "hidden": ""
+       },
+       "Restrictions": {
+        "value": "",
+        "source": "commons-desc-page",
+        "hidden": ""
+       },
+       "License": {
+        "value": "cc-by-3.0",
+        "source": "commons-templates",
+        "hidden": ""
+       }
+      },
+      "mime": "video/webm",
+      "derivatives": [
+       {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/c/c0/Big_Buck_Bunny_4K.webm/Big_Buck_Bunny_4K.webm.3x1080p.vp9.mpd",
+        "type": "application/dash+xml",
+        "transcodekey": "3x1080p.vp9.mpd",
+        "width": 1920,
+        "height": 1080,
+        "bandwidth": -1
+       },
+       {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/c/c0/Big_Buck_Bunny_4K.webm/Big_Buck_Bunny_4K.webm.240p.vp9.webm",
+        "type": "video/webm; codecs=\"vp9, opus\"",
+        "transcodekey": "240p.vp9.webm",
+        "width": 426,
+        "height": 240,
+        "bandwidth": 383864
+       },
+       {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/c/c0/Big_Buck_Bunny_4K.webm/Big_Buck_Bunny_4K.webm.360p.mpeg4.mov",
+        "type": "video/quicktime; codecs=\"mp4v\"",
+        "transcodekey": "360p.mpeg4.mov",
+        "width": 640,
+        "height": 360,
+        "bandwidth": 1636936
+       },
+       {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/c/c0/Big_Buck_Bunny_4K.webm/Big_Buck_Bunny_4K.webm.480p.vp9.webm",
+        "type": "video/webm; codecs=\"vp9, opus\"",
+        "transcodekey": "480p.vp9.webm",
+        "width": 854,
+        "height": 480,
+        "bandwidth": 1218440
+       },
+       {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/c/c0/Big_Buck_Bunny_4K.webm/Big_Buck_Bunny_4K.webm.1080p.vp9.webm",
+        "type": "video/webm; codecs=\"vp9, opus\"",
+        "transcodekey": "1080p.vp9.webm",
+        "width": 1920,
+        "height": 1080,
+        "bandwidth": 3788064
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ }
+}

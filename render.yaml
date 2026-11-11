@@ -1,0 +1,15 @@
+# Mise en ligne d'Openflix sur Render, sans rien installer :
+#   Render → New → Blueprint → choisir ce dépôt → Apply.
+# L'application est alors disponible sur une adresse https://openflix-XXXX.onrender.com
+services:
+  - type: web
+    name: openflix
+    runtime: docker
+    plan: free
+    branch: main
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      # Derrière le proxy de Render : lit l'adresse réelle du visiteur (limitation de débit par IP)
+      - key: TRUST_PROXY
+        value: "1"

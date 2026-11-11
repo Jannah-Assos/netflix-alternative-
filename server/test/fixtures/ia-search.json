@@ -1,0 +1,83 @@
+{
+ "responseHeader": {
+  "status": 0,
+  "QTime": 374,
+  "params": {
+   "query": "(text:nosferatu OR text:nosferatu OR text__reviews:nosferatu) AND mediatype:movies AND -access-restricted-item:true",
+   "qin": "(nosferatu) AND mediatype:(movies) AND -access-restricted-item:true",
+   "fields": "identifier,title,description,mediatype,year,date,downloads,licenseurl,creator,subject",
+   "wt": "json",
+   "sort": "downloads desc",
+   "rows": 4,
+   "start": 0
+  }
+ },
+ "response": {
+  "numFound": 668,
+  "start": 0,
+  "docs": [
+   {
+    "creator": "Rudolf Meinert and Erich Pommer",
+    "date": "1919-01-01T00:00:00Z",
+    "description": "The Cabinet of Dr. Caligari is the first modern Horror Film and it influence a number of contemporary productions. A real classic! PLOT: A man named Francis relates a story about his best friend Alan and his fiancée Jane. Alan takes him to a fair where they meet Dr. Caligari, who exhibits a somnambu",
+    "downloads": 533335,
+    "identifier": "DasKabinettdesDoktorCaligariTheCabinetofDrCaligari",
+    "licenseurl": "http://creativecommons.org/licenses/publicdomain/",
+    "mediatype": "movies",
+    "subject": [
+     "Silent",
+     "Fantasy",
+     "Horror",
+     "German Expressionism"
+    ],
+    "title": "Das Kabinett des Doktor Caligari ( The Cabinet of Dr. Caligari )",
+    "year": 1919
+   },
+   {
+    "creator": "Enrico Dieckmann & Albin Grau",
+    "date": "1922-01-01T00:00:00Z",
+    "description": "This is the most complete version available (just over 93 minutes) as this movie was demanded by Bram Stokers widow to be destroyed after winning 2 lawsuits in the mid & late 1920's. Tinted scenes and beautiful quality. I have seen the current version here at archive.org and decided to post this one",
+    "downloads": 433638,
+    "identifier": "Nosferatu_most_complete_version_93_mins.",
+    "mediatype": "movies",
+    "subject": [
+     "bram",
+     "stoker",
+     "dracula",
+     "orlek",
+     "Fantasy",
+     "Horror",
+     "Thriller",
+     "Nosferatu"
+    ],
+    "title": "Nosferatu, eine Symphonie des Grauens (A Symphony of Horror)",
+    "year": 1922
+   },
+   {
+    "date": "1922-01-01T00:00:00Z",
+    "description": "NOTE: THIS FILM IS SEPARATED INTO FOUR FILES Nosferatu, up elsewhere on archive.org, this is the highest resolution version up so far, a direct DVD rip, '.vob' files renamed '.mpg', no reformatting has taken place. This version is the Alpha Video (ALP 3151D) rip. For information on specific DVD vers",
+    "downloads": 257607,
+    "identifier": "Nosferatu_DVD_quality",
+    "licenseurl": "http://creativecommons.org/licenses/publicdomain/",
+    "mediatype": "movies",
+    "subject": "nosferatu vampire vampires murnau",
+    "title": "Nosferatu_DVD_quality",
+    "year": 1922
+   },
+   {
+    "creator": "Adolph Zukor",
+    "date": "1920-01-01T00:00:00Z",
+    "description": "John Barrymore stars in the renowned silent adaptation of the Robert Louis Stevenson classic about a Victorian scientist who turns himself into a murderous abomination.",
+    "downloads": 181551,
+    "identifier": "DrJekyllandMrHyde",
+    "mediatype": "movies",
+    "subject": [
+     "John Barrymore monster Victorian horror",
+     "pdmovies"
+    ],
+    "title": "Dr. Jekyll and Mr. Hyde",
+    "year": 1920
+   }
+  ]
+ }
+}

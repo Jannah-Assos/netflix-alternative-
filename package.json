@@ -1,0 +1,26 @@
+{
+  "name": "openflix",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Openflix : le cinéma libre de droits, à portée de clic (Internet Archive, Wikimedia Commons, NASA, PeerTube).",
+  "workspaces": [
+    "server",
+    "web"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "concurrently -n api,web -c blue,magenta \"npm run dev -w server\" \"npm run dev -w web\"",
+    "build": "npm run build -w web",
+    "start": "npm run start -w server",
+    "typecheck": "npm run typecheck -w server && npm run typecheck -w web",
+    "test": "npm run test -w server && npm run test -w web",
+    "scan": "npm run --silent scan -w server --",
+    "smoke": "npm run smoke -w server"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.5"
+  }
+}
