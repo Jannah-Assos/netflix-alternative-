@@ -38,7 +38,7 @@ Identité « salle de projection » : noir d'encre, lumière ambre de projecteur
 
 ## Catalogue : films et animation
 
-La V1 est volontairement limitée aux **films et à l'animation**, depuis une **liste blanche de collections** d'Internet Archive (longs métrages, film noir, sci-fi et horreur, comédies, courts métrages, films muets, animation). Les séries (fiches trop pauvres) et l'anime (licences déclarées non fiables) sont exclus pour l'instant ; les critères pour ajouter une catégorie sont dans [`PLAN-V1.md`](PLAN-V1.md). Ce qu'on héberge (ni vidéo, ni catalogue) est expliqué dans [`docs/HEBERGEMENT.md`](docs/HEBERGEMENT.md).
+La V1 est volontairement limitée aux **films et à l'animation**, depuis une **liste blanche de collections** d'Internet Archive (longs métrages, film noir, sci-fi et horreur, comédies, courts métrages, films muets, animation). Les séries (fiches trop pauvres) et l'anime (licences déclarées non fiables) sont exclus pour l'instant ; les critères pour ajouter une catégorie sont dans [`PLAN-V1.md`](PLAN-V1.md). Ce qu'on héberge (ni vidéo, ni catalogue) est expliqué dans [`docs/HEBERGEMENT.md`](docs/HEBERGEMENT.md). Le statut des droits par œuvre (libre en France ou seulement aux États-Unis) est en cours de cadrage : [`docs/DROITS-CATALOGUE.md`](docs/DROITS-CATALOGUE.md).
 
 ## Sources
 

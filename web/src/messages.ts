@@ -309,9 +309,12 @@ const en: Record<MessageKey, string> = {
 export const messages: Record<Lang, Record<MessageKey, string>> = { fr, en };
 
 export const SUGGESTIONS: Record<Lang, string[]> = {
-  // Chaque suggestion a été vérifiée sur le catalogue réel (elle renvoie de vrais résultats).
-  fr: ['Nosferatu', 'Charlie Chaplin', 'Méliès', 'Buster Keaton', 'Popeye', 'Big Buck Bunny'],
-  en: ['Nosferatu', 'Charlie Chaplin', 'Buster Keaton', 'Popeye', 'Big Buck Bunny', 'Méliès'],
+  // Chaque suggestion renvoie de vrais résultats sur le catalogue réel ET ne met en avant que des
+  // œuvres de la « catégorie A » de docs/DROITS-CATALOGUE.md (auteurs morts depuis très longtemps,
+  // donc libres aussi en France, ou licence Creative Commons de l'ayant droit).
+  // Lis ce document avant d'ajouter un titre.
+  fr: ['Méliès', 'Les Vampires', 'Fantasmagorie', 'Sunrise', 'Big Buck Bunny', 'Sintel'],
+  en: ['Méliès', 'Les Vampires', 'Fantasmagorie', 'Sunrise', 'Big Buck Bunny', 'Sintel'],
 };
 
 export function interpolate(template: string, vars?: Record<string, string | number>): string {

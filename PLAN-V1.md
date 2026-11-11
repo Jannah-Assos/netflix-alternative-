@@ -184,7 +184,7 @@ Détail et mesures dans `docs/STRATEGIE-PRODUIT.md` §1.
 | Mentions légales, conditions d'utilisation, politique de confidentialité | **Vous** + relecture juridique conseillée ; moi je rédige le brouillon technique | M |
 | **Procédure de signalement / retrait** (formulaire + adresse dédiée) et son traitement | Moi (formulaire), **vous** (traitement) | S |
 | **Attribution Creative Commons** correcte sur chaque fiche (auteur, source, licence, lien) | Moi | S |
-| **Droits par territoire** : « domaine public aux États-Unis » ≠ « domaine public en France/UE » ; libellé prudent, sceau **« droits vérifiés »** sur une première sélection (règles de vérification à fixer avec un juriste) | **Vous** + juriste, moi l'outillage | M |
+| **Droits par territoire** : « domaine public aux États-Unis » ≠ « domaine public en France/UE » ; libellé prudent, sceau **« droits vérifiés »** sur une première sélection (règles de vérification à fixer avec un juriste). Base de travail : [`docs/DROITS-CATALOGUE.md`](docs/DROITS-CATALOGUE.md) (catégories A/B/C) | **Vous** + juriste, moi l'outillage | M |
 | Lecture des conditions d'usage de chaque source (Internet Archive, Wikimedia, NASA, PeerTube) et mise en conformité | Moi, validation **vous** | S |
 | Mesure d'audience respectueuse (sans cookies), formulaire de retour utilisateur | Moi | S |
 
