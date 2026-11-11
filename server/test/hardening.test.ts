@@ -101,3 +101,25 @@ describe('limitation de débit', () => {
     for (let i = 0; i < 30; i++) expect((await app.inject('/api/health')).statusCode).toBe(200);
   });
 });
+
+describe('référencement par les moteurs de recherche', () => {
+  const build = (indexable?: boolean) =>
+    buildApp({ http: fakeHttp({}), sources: [demo], staticDir: null, ...(indexable === undefined ? {} : { indexable }) });
+
+  it('par défaut : site hors des moteurs de recherche (en-tête et robots.txt)', async () => {
+    const app = build();
+    const home = await app.inject({ url: '/api/health' });
+    expect(home.headers['x-robots-tag']).toBe('noindex, nofollow');
+    const robots = await app.inject({ url: '/robots.txt' });
+    expect(robots.statusCode).toBe(200);
+    expect(robots.headers['content-type']).toContain('text/plain');
+    expect(robots.body).toContain('Disallow: /');
+  });
+
+  it('à l’ouverture publique : référencement autorisé', async () => {
+    const app = build(true);
+    const res = await app.inject({ url: '/api/health' });
+    expect(res.headers['x-robots-tag']).toBeUndefined();
+    expect((await app.inject({ url: '/robots.txt' })).body).toContain('Allow: /');
+  });
+});

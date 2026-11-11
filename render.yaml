@@ -13,3 +13,5 @@ services:
       # Derrière le proxy de Render : lit l'adresse réelle du visiteur (limitation de débit par IP)
       - key: TRUST_PROXY
         value: "1"
+      # Le site reste hors des moteurs de recherche tant que OPENFLIX_INDEXABLE n'est pas à 1
+      # (à ajouter le jour de l'ouverture publique, après la revue juridique des droits).

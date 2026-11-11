@@ -101,6 +101,7 @@ docker run -d -p 8787:8787 --name openflix openflix     # http://localhost:8787
 | `TRUST_PROXY` | non | `1` derrière un reverse proxy (lit `X-Forwarded-For` pour l'IP réelle) |
 | `SAFE_SEARCH` | `on` | filtre « grand public » (voir ci-dessous) ; `off` pour le désactiver |
 | `RIGHTS_FILTER` | `on` | écarte les œuvres protégées en France (table de droits, `docs/DROITS-CATALOGUE.md`) ; `off` les garde en les signalant |
+| `OPENFLIX_INDEXABLE` | *(absent)* | `1` autorise les moteurs de recherche ; par défaut le site est hors de Google (en-tête `noindex` et `robots.txt`), à lever à l'ouverture publique |
 | `OPENFLIX_SOURCES` | `internet-archive` | sources actives, séparées par des virgules (`internet-archive`, `wikimedia-commons`, `nasa`, `peertube`) |
 
 L'outil n'a **pas d'authentification** : pour l'ouvrir hors de votre réseau, placez-le derrière un reverse proxy HTTPS avec accès restreint (la PWA et le service worker exigent HTTPS, sauf sur `localhost`).
@@ -141,7 +142,7 @@ web/      React + Vite : accueil, lecture, explorer, ma liste, traductions FR/EN
 ```
 
 ```bash
-npm test             # 231 tests (serveur + interface), dont des tests sur de vraies réponses d'API
+npm test             # 233 tests (serveur + interface), dont des tests sur de vraies réponses d'API
 npm run typecheck
 ```
 

@@ -30,6 +30,11 @@ export interface AppDeps {
   rateLimitMax?: number;
   /** Derrière un reverse proxy : fait confiance à X-Forwarded-For pour l'adresse IP du client. */
   trustProxy?: boolean;
+  /**
+   * Autorise les moteurs de recherche à référencer le site (défaut : non, tant que `OPENFLIX_INDEXABLE=1`
+   * n'est pas défini). Avant l'ouverture publique, on garde le site hors de Google.
+   */
+  indexable?: boolean;
 }
 
 /**
@@ -73,6 +78,7 @@ export function buildApp(deps: AppDeps = {}): FastifyInstance {
   const http = deps.http ?? createHttp();
   const sources = deps.sources ?? enabledSources();
   const limit = deps.rateLimitMax ?? 120;
+  const indexable = deps.indexable ?? process.env.OPENFLIX_INDEXABLE === '1';
   const app = Fastify({ logger: false, trustProxy: deps.trustProxy ?? false });
   const homeCache = new Map<Lang, { at: number; ttl: number; value: HomeResult }>();
 
@@ -81,6 +87,12 @@ export function buildApp(deps: AppDeps = {}): FastifyInstance {
     reply.header('x-content-type-options', 'nosniff');
     reply.header('referrer-policy', 'no-referrer');
     reply.header('permissions-policy', 'camera=(), microphone=(), geolocation=()');
+    if (!indexable) reply.header('x-robots-tag', 'noindex, nofollow');
+  });
+
+  app.get('/robots.txt', async (_req, reply) => {
+    void reply.type('text/plain; charset=utf-8');
+    return indexable ? 'User-agent: *\nAllow: /\n' : 'User-agent: *\nDisallow: /\n';
   });
 
   if (limit > 0) {
