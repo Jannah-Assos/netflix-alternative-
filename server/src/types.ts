@@ -43,19 +43,21 @@ export interface MediaLink {
 }
 
 /**
- * Statut estimé d'une œuvre en France (voir docs/DROITS-CATALOGUE.md ; ce n'est pas un avis juridique).
- * free      : auteurs principaux morts avant 1946, ou licence Creative Commons de l'ayant droit.
- * unclear   : libre aux États-Unis mais doute en France (auteur mort entre 1946 et 1955, ou date non vérifiée).
- * protected : un auteur principal est mort en 1956 ou après : protégée en France.
+ * Statut ESTIMÉ d'une œuvre en France (règles dans rights.ts et docs/DROITS-CATALOGUE.md ; pas un avis juridique).
+ * free      : licence Creative Commons de l'ayant droit, ou tous les auteurs morts depuis plus de 80 ans.
+ * likely    : probablement libre. Soit tous les auteurs sont morts depuis plus de 70 ans, soit c'est une œuvre
+ *             américaine tombée dans le domaine public aux États-Unis dont les auteurs ne sont pas européens.
+ * unclear   : données manquantes ou cas non tranché (œuvres du gouvernement américain).
+ * protected : encore protégée en France.
  */
-export type RightsStatus = 'free' | 'unclear' | 'protected';
+export type RightsStatus = 'free' | 'likely' | 'unclear' | 'protected';
 
 export interface RightsInfo {
   fr: RightsStatus;
-  basis: 'cc' | 'authors';
+  basis: 'cc' | 'authors' | 'us-term' | 'government';
   /** Année de décès du dernier auteur principal (pour l'explication affichée). */
   lastDeath?: number;
-  /** Une date de décès n'est pas vérifiée : le statut n'est qu'une première estimation. */
+  /** Une donnée n'est pas vérifiée : le statut n'est qu'une première estimation. */
   uncertain?: boolean;
 }
 
@@ -74,6 +76,15 @@ export interface MediaItem {
   license: LicenseInfo;
   /** Présent seulement si l'œuvre figure dans notre table de droits (server/src/rights.ts). */
   rights?: RightsInfo;
+  /** Œuvre du catalogue : identifiant de sa page (/film/<slug>) et phrase « pourquoi le voir ». */
+  slug?: string;
+  why?: string;
+  /** Série : nombre d'épisodes. */
+  episodes?: number;
+  /** Langue parlée (code ISO 639-1) quand la source la renseigne. */
+  language?: string;
+  /** Documentaire d'époque pouvant contenir des images de guerre difficiles. */
+  sensitive?: boolean;
   popularity?: number;
   durationSec?: number;
 }
@@ -97,7 +108,7 @@ export type SortKey = 'popular' | 'recent' | 'oldest' | 'title';
 export const SORT_KEYS: readonly SortKey[] = ['popular', 'recent', 'oldest', 'title'];
 
 /** Genres proposés dans Explorer (liste blanche : jamais de valeur libre dans les requêtes vers les sources). */
-export const GENRE_IDS = ['film', 'animation', 'comedy', 'noir', 'scifi', 'silent', 'shorts'] as const;
+export const GENRE_IDS = ['film', 'animation', 'comedy', 'noir', 'scifi', 'silent', 'shorts', 'war', 'newsreels'] as const;
 export type GenreId = (typeof GENRE_IDS)[number];
 
 export const PERIOD_IDS = ['before1930', 'y1930', 'y1950', 'y1970', 'y2000'] as const;
@@ -150,8 +161,18 @@ export interface LinkCheck {
   sizeBytes?: number;
 }
 
+/** Piste de sous-titres trouvée chez la source (fichier .vtt ou .srt). */
+export interface SubtitleTrack {
+  url: string;
+  /** Code ISO 639-1 quand on le connaît (sinon : la langue parlée, non précisée). */
+  lang?: string;
+  /** true : sous-titres générés par reconnaissance vocale, donc imparfaits. */
+  auto: boolean;
+}
+
 export interface SourceResolve {
   links: MediaLink[];
+  subtitles?: SubtitleTrack[];
   license?: LicenseInfo;
   durationSec?: number;
 }
@@ -162,14 +183,53 @@ export interface ResolveResult extends SourceResolve {
 }
 
 export interface HomeRow {
-  /** Identifiant de rangée ; le titre est traduit par l'interface (`row.<id>`). */
   id: string;
+  title: string;
+  intro: string;
   items: MediaItem[];
 }
 
 export interface HomeResult {
   lang: Lang;
+  /** La « séance du jour » : change chaque jour, la même pour tout le monde. */
+  featured: MediaItem;
   rows: HomeRow[];
-  /** Au moins une rangée n'a pas pu être chargée. */
-  partial: boolean;
+  /** Nombre d'œuvres du catalogue. */
+  total: number;
+}
+
+export interface WorkAuthor {
+  name: string;
+  died: number | null;
+}
+
+export interface WorkEpisode {
+  n: number;
+  item: MediaItem;
+}
+
+/** Page d'une œuvre du catalogue. */
+export interface WorkDetail {
+  item: MediaItem;
+  directors: string[];
+  country: string;
+  tags: string[];
+  authors: WorkAuthor[];
+  /** Licence Creative Commons accordée par l'ayant droit. */
+  cc?: { holder: string; license: string; nc?: boolean };
+  episodes: WorkEpisode[];
+  shelf?: { id: string; title: string };
+  related: MediaItem[];
+}
+
+export interface CatalogueResult {
+  items: MediaItem[];
+  total: number;
+}
+
+export interface AppConfig {
+  /** L'archive élargie (non vérifiée) est-elle ouverte ? */
+  archive: boolean;
+  /** Adresse de contact pour les signalements, si elle est configurée. */
+  contact?: string;
 }

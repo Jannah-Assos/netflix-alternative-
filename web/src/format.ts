@@ -68,3 +68,13 @@ export function linkText(link: MediaLink, t: T, lang: Lang): string {
   const details = [link.format?.toUpperCase(), qualityText(link, t), formatBytes(link.sizeBytes, lang)].filter(Boolean);
   return [t(link.type === 'stream' ? 'link.stream' : 'link.download'), ...details].join(' · ');
 }
+
+/** « en » → « anglais » / « English », dans la langue de l'interface (le code tel quel si inconnu). */
+export function languageName(code: string, uiLang: string): string {
+  try {
+    const name = new Intl.DisplayNames([uiLang], { type: 'language' }).of(code);
+    return name && name !== code ? name.charAt(0).toUpperCase() + name.slice(1) : code;
+  } catch {
+    return code;
+  }
+}

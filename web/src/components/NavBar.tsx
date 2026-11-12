@@ -4,15 +4,17 @@ import { navigate, type View } from '../hooks';
 import { useI18n } from '../i18n';
 import { LANGS } from '../messages';
 import { SearchIcon } from './icons';
+import { Link } from './Link';
 import { LogoMark, Wordmark } from './Logo';
 
-const LINKS: { view: View; href: string; label: 'nav.home' | 'nav.explore' | 'nav.list' }[] = [
-  { view: 'home', href: '#/', label: 'nav.home' },
-  { view: 'explore', href: '#/explore', label: 'nav.explore' },
-  { view: 'list', href: '#/list', label: 'nav.list' },
+const LINKS: { view: View; href: string; label: 'nav.home' | 'nav.catalogue' | 'nav.archive' | 'nav.list' }[] = [
+  { view: 'home', href: '/', label: 'nav.home' },
+  { view: 'catalogue', href: '/catalogue', label: 'nav.catalogue' },
+  { view: 'archive', href: '/archive', label: 'nav.archive' },
+  { view: 'list', href: '/liste', label: 'nav.list' },
 ];
 
-export function NavBar({ view }: { view: View }) {
+export function NavBar({ view, archive }: { view: View; archive: boolean }) {
   const { t, lang, setLang } = useI18n();
   const [q, setQ] = useState('');
   const [solid, setSolid] = useState(false);
@@ -27,22 +29,22 @@ export function NavBar({ view }: { view: View }) {
   const submit = (e: FormEvent) => {
     e.preventDefault();
     const text = q.trim();
-    if (text) navigate('explore', { q: text });
+    if (text) navigate(`/catalogue?q=${encodeURIComponent(text)}`);
   };
 
   return (
     <header className={`nav ${solid ? 'solid' : ''}`}>
       <div className="nav-inner">
-        <a className="brand" href="#/" aria-label={t('app.name')}>
+        <Link className="brand" to="/" aria-label={t('app.name')}>
           <LogoMark />
           <Wordmark />
-        </a>
+        </Link>
 
         <nav className="nav-links" aria-label="Navigation">
-          {LINKS.map((l) => (
-            <a key={l.view} href={l.href} aria-current={view === l.view ? 'page' : undefined}>
+          {LINKS.filter((l) => archive || l.view !== 'archive').map((l) => (
+            <Link key={l.view} to={l.href} aria-current={view === l.view ? 'page' : undefined}>
               {t(l.label)}
-            </a>
+            </Link>
           ))}
         </nav>
 

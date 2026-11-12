@@ -11,5 +11,5 @@ export interface MediaSource extends SourceInfo {
   supports?: SourceSupport;
   search(params: SearchParams, http: Http): Promise<MediaItem[]>;
   /** Trouve les meilleurs liens directs d'un item (appel réseau supplémentaire possible). */
-  resolve(sourceId: string, kind: MediaKind, http: Http): Promise<SourceResolve>;
+  resolve(sourceId: string, kind: MediaKind, http: Http, file?: string): Promise<SourceResolve>;
 }

@@ -11,6 +11,11 @@ import type { MediaKind, SourceId } from './types.js';
  * - Anime : EXCLU. Dans la collection « anime » d'Internet Archive, 45 des 60 titres les plus vus se
  *   déclarent en CC0 ou « domaine public » alors que ce sont Pokémon, Digimon, Beastars… La licence
  *   déclarée n'y est pas fiable.
+ * - Documentaires de guerre et actualités : INCLUS (mesures du 11/11/2026). « WWII Archive » : 2 840 films,
+ *   99 % avec licence déclarée, année 98 %, durée 100 %, lisibles en MP4 ; actualités Universal : 611 films,
+ *   année et durée 100 %. Écartés : Periscope Film (aucune année, licence « non commerciale, sans
+ *   modification »), et les collections de guerres récentes (Irak, Ukraine : vidéos probablement
+ *   protégées et très sensibles).
  * - Musique, livres, logiciels, images : hors périmètre.
  *
  * Une liste blanche de collections est plus sûre qu'une liste noire : un titre qui n'est dans aucune
@@ -27,6 +32,9 @@ export const SCOPE_COLLECTIONS = [
   'short_films',
   'animationandcartoons',
   'classic_cartoons',
+  // Documentaires de guerre et actualités d'époque
+  'wwIIarchive',
+  'universal_newsreels',
 ] as const;
 
 /** Exclues même si un titre est aussi classé dans une collection retenue. */

@@ -18,7 +18,9 @@
     "typecheck": "npm run typecheck -w server && npm run typecheck -w web",
     "test": "npm run test -w server && npm run test -w web",
     "scan": "npm run --silent scan -w server --",
-    "smoke": "npm run smoke -w server"
+    "smoke": "npm run smoke -w server",
+    "survey": "npm run --silent survey -w server --",
+    "verify-catalogue": "npm run --silent verify-catalogue -w server"
   },
   "devDependencies": {
     "concurrently": "^9.2.5"

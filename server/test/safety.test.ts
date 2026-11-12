@@ -124,3 +124,16 @@ describe('scan : toutes les sources passent le filtre', () => {
     expect(r.items).toHaveLength(3 + 0 + 1 - 1 + 1 - 1 + 1 - 1 + 1); // 4 résultats bruts
   });
 });
+
+describe('images de guerre explicites', () => {
+  it('écarte les titres qui annoncent des images violentes', () => {
+    for (const title of ['Mussolini Is Executed GRAPHIC', 'The Execution of Mary Stuart', 'Graphic content: massacre footage', 'Mutilated soldiers']) {
+      expect(isFamilySafe({ title }), title).toBe(false);
+    }
+  });
+  it('garde les documentaires de guerre ordinaires', () => {
+    for (const title of ['DZ Normandy', 'The Last Bomb', 'Eve of Battle', 'Why We Fight: Prelude to War']) {
+      expect(isFamilySafe({ title }), title).toBe(true);
+    }
+  });
+});

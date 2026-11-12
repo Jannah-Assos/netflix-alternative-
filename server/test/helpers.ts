@@ -14,6 +14,14 @@ export function fakeHttp(routes: Record<string, unknown>, head: LinkCheck = { al
       if (value instanceof Error) throw value;
       return value as T;
     },
+    async text(url: string): Promise<string> {
+      calls.push(`TEXT ${url}`);
+      const key = Object.keys(routes).find((k) => url.includes(k));
+      if (key === undefined) throw new Error(`URL non prévue dans le test : ${url}`);
+      const value = routes[key];
+      if (value instanceof Error) throw value;
+      return String(value);
+    },
     async head(url: string): Promise<LinkCheck> {
       calls.push(`HEAD ${url}`);
       return head;

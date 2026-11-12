@@ -9,6 +9,8 @@ export const GENRES: Record<GenreId, SearchFilters> = {
   noir: { collections: ['Film_Noir'] },
   silent: { collections: ['silent_films'] },
   shorts: { collections: ['short_films'] },
+  war: { collections: ['wwIIarchive'] },
+  newsreels: { collections: ['universal_newsreels'] },
 };
 
 export const PERIODS: Record<PeriodId, { from?: number; to?: number }> = {

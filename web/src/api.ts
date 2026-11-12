@@ -1,6 +1,9 @@
 import type { ContentLang, Genre, Period, Sort } from './labels';
 import type {
+  AppConfig,
+  CatalogueResult,
   HomeResult,
+  WorkDetail,
   Lang,
   MediaKind,
   ResolveResult,
@@ -52,4 +55,24 @@ export function home(lang: Lang, signal?: AbortSignal): Promise<HomeResult> {
 
 export function listSources(signal?: AbortSignal): Promise<SourceInfo[]> {
   return get<SourceInfo[]>('/api/sources', signal);
+}
+
+/** Adresse du relais de sous-titres (même origine que le site, converti en WebVTT). */
+export function subtitleUrl(url: string): string {
+  return `/api/subtitle?url=${encodeURIComponent(url)}`;
+}
+
+export function work(slug: string, lang: Lang, signal?: AbortSignal): Promise<WorkDetail> {
+  return get<WorkDetail>(`/api/work/${encodeURIComponent(slug)}?lang=${lang}`, signal);
+}
+
+export function catalogue(q: string, tag: string | null, lang: Lang, signal?: AbortSignal): Promise<CatalogueResult> {
+  const p = new URLSearchParams({ lang });
+  if (q) p.set('q', q);
+  if (tag) p.set('tag', tag);
+  return get<CatalogueResult>(`/api/catalogue?${p}`, signal);
+}
+
+export function config(signal?: AbortSignal): Promise<AppConfig> {
+  return get<AppConfig>('/api/config', signal);
 }

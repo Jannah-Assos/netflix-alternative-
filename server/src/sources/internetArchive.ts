@@ -3,10 +3,21 @@ import { rankCandidates, type Candidate } from '../linkPicker.js';
 import type { MediaItem, MediaKind, MediaLink, SearchFilters, SearchParams, SortKey, SourceResolve } from '../types.js';
 import { BLOCKED_COLLECTIONS, isFamilySafe, safeSearchEnabled } from '../safety.js';
 import { EXCLUDED_COLLECTIONS, SCOPE_COLLECTIONS } from '../scope.js';
+import { languageCode, pickSubtitles } from '../subtitles.js';
 import { num, parseDuration, str, stripHtml, truncate, yearOf } from '../util.js';
 import type { MediaSource } from './types.js';
 
 const BASE = 'https://archive.org';
+
+/** Collections dont les films montrent souvent des images de guerre : l'interface prévient le visiteur. */
+const SENSITIVE_COLLECTIONS = ['wwIIarchive', 'universal_newsreels'];
+
+/**
+ * Langue de collections dont la fiche ne la renseigne presque jamais (5 % mesuré). Les actualités
+ * Universal sont toutes commentées en anglais : vérifié sur leurs sous-titres automatiques.
+ */
+const COLLECTION_LANGUAGE: Record<string, string> = { universal_newsreels: 'en' };
+const collectionLanguage = (collections: string[]): string | undefined => collections.map((c) => COLLECTION_LANGUAGE[c]).find(Boolean);
 
 /** Valeurs de `sort[]` d'advancedsearch (vérifiées sur la vraie API). */
 const SORT: Record<SortKey, string> = {
@@ -42,6 +53,8 @@ interface IaDoc {
   licenseurl?: unknown;
   creator?: unknown;
   subject?: unknown;
+  language?: unknown;
+  collection?: unknown;
 }
 
 interface IaFile {
@@ -57,7 +70,7 @@ interface IaFile {
 interface IaMetadata {
   is_dark?: boolean;
   files?: IaFile[];
-  metadata?: { mediatype?: unknown; licenseurl?: unknown; collection?: unknown };
+  metadata?: { mediatype?: unknown; licenseurl?: unknown; collection?: unknown; language?: unknown };
 }
 
 function sanitizeQuery(q: string): string {
@@ -122,6 +135,9 @@ export function toItem(doc: IaDoc, safe = safeSearchEnabled()): MediaItem | null
   const year = yearOf(doc.year ?? doc.date);
   const downloads = num(doc.downloads);
   const description = truncate(stripHtml(str(doc.description)), 400);
+  const collections = (Array.isArray(doc.collection) ? doc.collection : [doc.collection]).filter((c): c is string => typeof c === 'string');
+  const language = languageCode(doc.language) ?? collectionLanguage(collections);
+  const sensitive = collections.some((c) => SENSITIVE_COLLECTIONS.includes(c));
   return {
     uid: `internet-archive:${id}`,
     source: 'internet-archive',
@@ -134,6 +150,8 @@ export function toItem(doc: IaDoc, safe = safeSearchEnabled()): MediaItem | null
     thumbnail: `${BASE}/services/img/${encodeURIComponent(id)}`,
     pageUrl: `${BASE}/details/${encodeURIComponent(id)}`,
     license: classifyLicense(null, str(doc.licenseurl)),
+    ...(language ? { language } : {}),
+    ...(sensitive ? { sensitive: true } : {}),
     ...(downloads !== undefined ? { popularity: downloads } : {}),
   };
 }
@@ -161,6 +179,8 @@ export function filesToCandidates(id: string, files: IaFile[]): Candidate[] {
     });
 }
 
+const metaCollections = (raw: unknown): string[] => (Array.isArray(raw) ? raw : [raw]).filter((c): c is string => typeof c === 'string');
+
 export const internetArchive: MediaSource = {
   id: 'internet-archive',
   name: 'Internet Archive',
@@ -172,7 +192,7 @@ export const internetArchive: MediaSource = {
   async search(params: SearchParams, http) {
     const url = new URL(`${BASE}/advancedsearch.php`);
     url.searchParams.set('q', buildQuery(params.q, params.kinds, params.filters));
-    for (const f of ['identifier', 'title', 'description', 'mediatype', 'year', 'date', 'downloads', 'licenseurl', 'creator', 'subject']) {
+    for (const f of ['identifier', 'title', 'description', 'mediatype', 'year', 'date', 'downloads', 'licenseurl', 'creator', 'subject', 'language', 'collection']) {
       url.searchParams.append('fl[]', f);
     }
     url.searchParams.append('sort[]', SORT[params.sort ?? 'popular']);
@@ -184,12 +204,14 @@ export const internetArchive: MediaSource = {
     return (data.response?.docs ?? []).map((d) => toItem(d)).filter((i): i is MediaItem => i !== null);
   },
 
-  async resolve(id, kind, http): Promise<SourceResolve> {
+  async resolve(id, kind, http, file): Promise<SourceResolve> {
     const meta = await http.json<IaMetadata>(`${BASE}/metadata/${encodeURIComponent(id)}`);
     if (meta.is_dark) return { links: [] };
 
     const metaKind = MEDIATYPE_TO_KIND[str(meta.metadata?.mediatype) ?? ''] ?? kind;
-    const ranked = rankCandidates(filesToCandidates(id, meta.files ?? []), metaKind);
+    // Un épisode précis (toute la série dans le même document) : on ne garde que ce fichier.
+    const files = file ? (meta.files ?? []).filter((f) => f.name === file) : (meta.files ?? []);
+    const ranked = rankCandidates(filesToCandidates(id, files), metaKind);
     const links: MediaLink[] = [...ranked];
 
     if (metaKind === 'video' || metaKind === 'audio' || metaKind === 'software') {
@@ -209,8 +231,10 @@ export const internetArchive: MediaSource = {
 
     const licenseUrl = str(meta.metadata?.licenseurl);
     const duration = ranked.find((l) => l.durationSec)?.durationSec;
+    const subtitles = metaKind === 'video' ? pickSubtitles(meta.files ?? [], (name) => downloadUrl(id, name), languageCode(meta.metadata?.language) ?? collectionLanguage(metaCollections(meta.metadata?.collection))) : [];
     return {
       links,
+      ...(subtitles.length ? { subtitles } : {}),
       ...(licenseUrl ? { license: classifyLicense(null, licenseUrl) } : {}),
       ...(duration ? { durationSec: duration } : {}),
     };

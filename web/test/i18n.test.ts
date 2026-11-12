@@ -22,11 +22,14 @@ describe('traductions', () => {
     }
   });
 
-  it('chaque rangée de l’accueil du serveur a un titre dans les deux langues', async () => {
-    const { ROWS } = await import('../../server/src/home');
-    for (const row of ROWS) {
-      expect(messages.fr, row.id).toHaveProperty(`row.${row.id}`);
-      expect(messages.en, row.id).toHaveProperty(`row.${row.id}`);
+  it('chaque genre du catalogue du serveur a un libellé dans les deux langues', async () => {
+    const { WORKS } = await import('../../server/src/works');
+    const { TAGS } = await import('../src/views/Catalogue');
+    const used = new Set(WORKS.flatMap((w) => w.tags));
+    for (const tag of used) {
+      expect(messages.fr, tag).toHaveProperty(`tag.${tag}`);
+      expect(messages.en, tag).toHaveProperty(`tag.${tag}`);
+      expect(TAGS as readonly string[], tag).toContain(tag);
     }
   });
 

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { MediaItem } from '../../../server/src/types';
-import { formatDuration } from '../format';
+import { formatDuration, languageName } from '../format';
 import { useI18n } from '../i18n';
 import { LicenseBadge, RightsBadge, SourceBadge } from './Badges';
 import { KindIcon } from './icons';
@@ -8,7 +8,7 @@ import { KindIcon } from './icons';
 export function ResultCard({ item, onOpen }: { item: MediaItem; onOpen: (item: MediaItem) => void }) {
   const { t, lang } = useI18n();
   const [imgOk, setImgOk] = useState(true);
-  const meta = [item.year, item.creator, formatDuration(item.durationSec, lang)].filter(Boolean).join(' · ');
+  const meta = [item.year, item.creator, formatDuration(item.durationSec, lang), item.language ? languageName(item.language, lang) : undefined].filter(Boolean).join(' · ');
 
   return (
     <button type="button" className="card" onClick={() => onOpen(item)}>
@@ -25,9 +25,8 @@ export function ResultCard({ item, onOpen }: { item: MediaItem; onOpen: (item: M
         <h3 title={item.title}>{item.title}</h3>
         {meta && <p className="meta">{meta}</p>}
         <div className="badges">
-          <SourceBadge source={item.source} />
-          <LicenseBadge license={item.license} />
-          {item.rights && <RightsBadge rights={item.rights} />}
+          {!item.slug && <SourceBadge source={item.source} />}
+          {item.rights ? <RightsBadge rights={item.rights} /> : <LicenseBadge license={item.license} />}
         </div>
       </div>
     </button>

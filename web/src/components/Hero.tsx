@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { MediaItem } from '../../../server/src/types';
 import { formatDuration } from '../format';
 import { useI18n } from '../i18n';
-import { LicenseBadge, SourceBadge } from './Badges';
+import { LicenseBadge, RightsBadge } from './Badges';
 import { ListButton } from './ListButton';
 
 /** Choisit un titre « à l'affiche » : de préférence avec image et description. */
@@ -32,11 +32,10 @@ export function Hero({ item, onInfo, onPlay }: { item: MediaItem; onInfo: (i: Me
         <p className="eyebrow">{t('hero.featured')}</p>
         <h1>{item.title}</h1>
         <div className="badges">
-          <SourceBadge source={item.source} />
-          <LicenseBadge license={item.license} />
+          {item.rights ? <RightsBadge rights={item.rights} /> : <LicenseBadge license={item.license} />}
           {meta && <span className="hero-meta">{meta}</span>}
         </div>
-        {item.description && <p className="hero-desc">{item.description}</p>}
+        {(item.why ?? item.description) && <p className="hero-desc">{item.why ?? item.description}</p>}
         <div className="hero-actions">
           <button type="button" className="btn light" onClick={() => onPlay(item)}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">

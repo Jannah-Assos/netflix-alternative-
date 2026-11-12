@@ -1,3 +1,4 @@
+import { Link } from '../components/Link';
 import { ResultCard } from '../components/ResultCard';
 import { useMyList } from '../hooks';
 import { useI18n } from '../i18n';
@@ -15,9 +16,9 @@ export function MyList({ onInfo }: Pick<Actions, 'onInfo'>) {
           <p>{t('list.empty')}</p>
           <p className="meta">{t('list.emptyHint')}</p>
           <div className="empty-actions">
-            <a className="btn primary" href="#/">
-              {t('nav.home')}
-            </a>
+            <Link className="btn primary" to="/catalogue">
+              {t('nav.catalogue')}
+            </Link>
           </div>
         </div>
       ) : (

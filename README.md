@@ -1,10 +1,13 @@
 # Openflix
 
-**Une alternative gratuite à Netflix** bâtie sur des sources en ligne libres (Internet Archive, Wikimedia Commons, NASA, PeerTube), en **français et en anglais**, avec un outil de scan qui trouve le **meilleur lien direct** de chaque contenu.
+**Le cinéma libre, vérifié.** Une cinémathèque en ligne, gratuite, sans publicité et sans compte : 74 films, séries et dessins animés choisis un par un, chacun avec la raison de le voir et **la preuve qu'il est libre en France**.
 
-> A free, Netflix-style streaming front-end built on free online sources, in **French and English**, with a scanner that finds the **best direct link** for each title. (English summary at the bottom.)
+- **Vraiment libre** : pour chaque œuvre, les auteurs, leurs dates de décès et le pays d'origine sont enregistrés, et le statut des droits est *calculé* (voir [`docs/DROITS-CATALOGUE.md`](docs/DROITS-CATALOGUE.md)). La page du film montre le raisonnement.
+- **Choisi, pas empilé** : des parcours (« Les rois du rire », « Frissons et ombres », « Séries d'époque »…) et une « séance du jour », la même pour tout le monde.
+- **Partageable** : chaque film a sa page (`/film/nosferatu`) qui s'affiche avec un aperçu dans les messageries.
+- **Aucune vidéo hébergée** : les films sont diffusés par Internet Archive ; Openflix choisit, vérifie et conduit au bon fichier.
 
-Aucun fichier n'est copié ni hébergé : l'application trouve les contenus chez leurs sources, choisit le bon fichier, vérifie que le lien répond et affiche la licence.
+Le catalogue est dans [`server/src/works.ts`](server/src/works.ts). `npm run verify-catalogue` contrôle en conditions réelles que chaque film et chaque épisode est lisible. Une page « Archive » permet en plus de chercher dans Internet Archive, hors catalogue et sans garantie (`OPENFLIX_ARCHIVE=off` la ferme).
 
 ## Ce que fait l'application
 
@@ -38,7 +41,7 @@ Identité « salle de projection » : noir d'encre, lumière ambre de projecteur
 
 ## Catalogue : films et animation
 
-La V1 est volontairement limitée aux **films et à l'animation**, depuis une **liste blanche de collections** d'Internet Archive (longs métrages, film noir, sci-fi et horreur, comédies, courts métrages, films muets, animation). Les séries (fiches trop pauvres) et l'anime (licences déclarées non fiables) sont exclus pour l'instant ; les critères pour ajouter une catégorie sont dans [`PLAN-V1.md`](PLAN-V1.md). Ce qu'on héberge (ni vidéo, ni catalogue) est expliqué dans [`docs/HEBERGEMENT.md`](docs/HEBERGEMENT.md). Le statut des droits par œuvre (libre en France ou seulement aux États-Unis) est en cours de cadrage : [`docs/DROITS-CATALOGUE.md`](docs/DROITS-CATALOGUE.md).
+La V1 est volontairement limitée aux **films et à l'animation**, depuis une **liste blanche de collections** d'Internet Archive (longs métrages, film noir, sci-fi et horreur, comédies, courts métrages, films muets, animation). Les séries (fiches trop pauvres) et l'anime (licences déclarées non fiables) sont exclus pour l'instant ; les critères pour ajouter une catégorie sont dans [`PLAN-V1.md`](PLAN-V1.md). Ce qu'on héberge (ni vidéo, ni catalogue) est expliqué dans [`docs/HEBERGEMENT.md`](docs/HEBERGEMENT.md). Les collections sont choisies par mesure, avec une méthode écrite : [`docs/METHODE-CATALOGUE.md`](docs/METHODE-CATALOGUE.md) (`npm run survey -- <collection>`). Les sous-titres automatiques d'Internet Archive sont proposés dans le lecteur. Le statut des droits par œuvre (libre en France ou seulement aux États-Unis) est en cours de cadrage : [`docs/DROITS-CATALOGUE.md`](docs/DROITS-CATALOGUE.md).
 
 ## Sources
 
@@ -101,6 +104,9 @@ docker run -d -p 8787:8787 --name openflix openflix     # http://localhost:8787
 | `TRUST_PROXY` | non | `1` derrière un reverse proxy (lit `X-Forwarded-For` pour l'IP réelle) |
 | `SAFE_SEARCH` | `on` | filtre « grand public » (voir ci-dessous) ; `off` pour le désactiver |
 | `RIGHTS_FILTER` | `on` | écarte les œuvres protégées en France (table de droits, `docs/DROITS-CATALOGUE.md`) ; `off` les garde en les signalant |
+| `OPENFLIX_INDEXABLE` | *(absent)* | `1` autorise les moteurs de recherche ; par défaut le site est hors de Google (en-tête `noindex` et `robots.txt`), à lever à l'ouverture publique |
+| `OPENFLIX_ARCHIVE` | `on` | `off` ferme l'archive élargie (non vérifiée) : seul le catalogue reste visible |
+| `OPENFLIX_CONTACT` | *(absent)* | adresse affichée sur la page « À propos » pour les signalements |
 | `OPENFLIX_SOURCES` | `internet-archive` | sources actives, séparées par des virgules (`internet-archive`, `wikimedia-commons`, `nasa`, `peertube`) |
 
 L'outil n'a **pas d'authentification** : pour l'ouvrir hors de votre réseau, placez-le derrière un reverse proxy HTTPS avec accès restreint (la PWA et le service worker exigent HTTPS, sauf sur `localhost`).
@@ -141,7 +147,7 @@ web/      React + Vite : accueil, lecture, explorer, ma liste, traductions FR/EN
 ```
 
 ```bash
-npm test             # 231 tests (serveur + interface), dont des tests sur de vraies réponses d'API
+npm test             # 297 tests (serveur + interface), dont des tests sur de vraies réponses d'API
 npm run typecheck
 ```
 

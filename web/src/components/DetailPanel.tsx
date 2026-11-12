@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { LinkCheck, MediaItem, MediaLink, ResolveResult } from '../../../server/src/types';
 import { resolve } from '../api';
-import { formatDuration, linkText } from '../format';
+import { formatDuration, languageName, linkText } from '../format';
 import { useI18n } from '../i18n';
 import { useDialog } from '../useDialog';
 import { LicenseBadge, RightsBadge, RightsNote, SourceBadge } from './Badges';
@@ -101,7 +101,7 @@ export function DetailPanel({
   const direct = data?.links.filter((l) => l.type === 'stream' || l.type === 'download') ?? [];
   const others = data?.links.filter((l) => l.type === 'embed' || l.type === 'page') ?? [];
   const watchable = item.kind === 'video' || item.kind === 'audio';
-  const meta = [t(`kind1.${item.kind}`), item.year, item.creator, formatDuration(data?.durationSec ?? item.durationSec, lang)]
+  const meta = [t(`kind1.${item.kind}`), item.year, item.creator, formatDuration(data?.durationSec ?? item.durationSec, lang), item.language ? languageName(item.language, lang) : undefined]
     .filter(Boolean)
     .join(' · ');
 
@@ -131,6 +131,15 @@ export function DetailPanel({
           </div>
           {!license.verified && <p className="notice warn">{t('lic.warning')}</p>}
           {item.rights && <RightsNote rights={item.rights} />}
+          {item.sensitive && <p className="notice warn">{t('detail.sensitive')}</p>}
+          {data?.subtitles && data.subtitles.length > 0 && (
+            <p className="meta">
+              {t('watch.subtitles')} :{' '}
+              {data.subtitles
+                .map((tr) => [tr.lang ? languageName(tr.lang, lang) : undefined, tr.auto ? t('watch.subsAuto') : undefined].filter(Boolean).join(' · ') || t('watch.subtitles'))
+                .join(', ')}
+            </p>
+          )}
 
           <div className="panel-actions">
             {watchable && (
