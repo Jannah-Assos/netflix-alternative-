@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 import { buildApp } from '../src/app.js';
 import { GENRES } from '../src/catalog.js';
 import { classifyLicense } from '../src/licenses.js';
-import { ROWS } from '../src/home.js';
 import { ENABLED_KINDS, EXCLUDED_COLLECTIONS, SCOPE_COLLECTIONS, enabledSourceIds } from '../src/scope.js';
 import { buildQuery } from '../src/sources/internetArchive.js';
 import { enabledSources } from '../src/sources/index.js';
@@ -32,13 +31,6 @@ describe('périmètre du catalogue : films et animation', () => {
     }
     expect(Object.keys(GENRES)).not.toContain('tv');
     expect(Object.keys(GENRES)).not.toContain('docs');
-  });
-
-  it('chaque rangée de l’accueil reste dans le périmètre (Internet Archive, collections retenues, aucune NASA ni PeerTube)', () => {
-    for (const r of ROWS) {
-      expect(r.source, r.id).toBe('internet-archive');
-      for (const c of r.filters?.collections ?? []) expect(SCOPE_COLLECTIONS, `${r.id} → ${c}`).toContain(c as never);
-    }
   });
 
   it('seule la vidéo est proposée', () => {

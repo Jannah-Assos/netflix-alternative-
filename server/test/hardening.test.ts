@@ -123,3 +123,22 @@ describe('référencement par les moteurs de recherche', () => {
     expect((await app.inject({ url: '/robots.txt' })).body).toContain('Allow: /');
   });
 });
+
+describe('pages et fichiers de l’application', () => {
+  it('un fichier manquant renvoie 404, pas la page d’accueil', async () => {
+    const app = buildApp({ http: fakeHttp({}), sources: [demo], staticDir: siteDir() });
+    expect((await app.inject('/assets/ancienne-version-xyz.js')).statusCode).toBe(404);
+    expect((await app.inject('/inconnu.css')).statusCode).toBe(404);
+    expect((await app.inject('/catalogue')).statusCode).toBe(200);
+  });
+
+  it('/film/<œuvre> sert la page avec l’aperçu de partage ; une œuvre inconnue sert la page normale', async () => {
+    const app = buildApp({ http: fakeHttp({}), sources: [demo], staticDir: siteDir() });
+    const known = await app.inject('/film/nosferatu');
+    expect(known.statusCode).toBe(200);
+    expect(known.headers['content-type']).toContain('text/html');
+    const unknown = await app.inject('/film/inconnu');
+    expect(unknown.statusCode).toBe(200);
+    expect(unknown.body).not.toContain('og:title');
+  });
+});

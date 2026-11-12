@@ -25,9 +25,8 @@ export function ResultCard({ item, onOpen }: { item: MediaItem; onOpen: (item: M
         <h3 title={item.title}>{item.title}</h3>
         {meta && <p className="meta">{meta}</p>}
         <div className="badges">
-          <SourceBadge source={item.source} />
-          <LicenseBadge license={item.license} />
-          {item.rights && <RightsBadge rights={item.rights} />}
+          {!item.slug && <SourceBadge source={item.source} />}
+          {item.rights ? <RightsBadge rights={item.rights} /> : <LicenseBadge license={item.license} />}
         </div>
       </div>
     </button>

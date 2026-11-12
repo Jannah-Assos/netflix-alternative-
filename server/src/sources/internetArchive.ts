@@ -204,12 +204,14 @@ export const internetArchive: MediaSource = {
     return (data.response?.docs ?? []).map((d) => toItem(d)).filter((i): i is MediaItem => i !== null);
   },
 
-  async resolve(id, kind, http): Promise<SourceResolve> {
+  async resolve(id, kind, http, file): Promise<SourceResolve> {
     const meta = await http.json<IaMetadata>(`${BASE}/metadata/${encodeURIComponent(id)}`);
     if (meta.is_dark) return { links: [] };
 
     const metaKind = MEDIATYPE_TO_KIND[str(meta.metadata?.mediatype) ?? ''] ?? kind;
-    const ranked = rankCandidates(filesToCandidates(id, meta.files ?? []), metaKind);
+    // Un épisode précis (toute la série dans le même document) : on ne garde que ce fichier.
+    const files = file ? (meta.files ?? []).filter((f) => f.name === file) : (meta.files ?? []);
+    const ranked = rankCandidates(filesToCandidates(id, files), metaKind);
     const links: MediaLink[] = [...ranked];
 
     if (metaKind === 'video' || metaKind === 'audio' || metaKind === 'software') {

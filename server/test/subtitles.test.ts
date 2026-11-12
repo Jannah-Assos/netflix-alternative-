@@ -194,3 +194,11 @@ describe('langue par défaut des actualités Universal', () => {
     expect(r.subtitles?.[0]).toMatchObject({ lang: 'en', auto: true });
   });
 });
+
+describe('Internet Archive : épisode précis dans un document', () => {
+  it('resolve(…, fichier) ne garde que ce fichier, même au-delà des 8 premiers liens', async () => {
+    const files = Array.from({ length: 12 }, (_, i) => ({ name: `Ep ${i + 1}.mp4`, format: 'h.264', size: '1000000', source: 'derivative' }));
+    const r = await internetArchive.resolve('serie', 'video', fakeHttp({ '/metadata/serie': { metadata: { mediatype: 'movies' }, files } }), 'Ep 11.mp4');
+    expect(r.links.filter((l) => l.type === 'stream').map((l) => l.url)).toEqual([downloadUrl('serie', 'Ep 11.mp4')]);
+  });
+});

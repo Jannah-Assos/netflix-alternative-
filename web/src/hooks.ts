@@ -18,34 +18,69 @@ export function useContinue(): Progress[] {
   return useMemo(() => getContinue(), [v]);
 }
 
-export type View = 'home' | 'explore' | 'list';
+export type View = 'home' | 'film' | 'catalogue' | 'archive' | 'list' | 'about';
 
 export interface Route {
   view: View;
+  /** Identifiant de l'œuvre pour /film/<slug>. */
+  slug?: string;
   query: URLSearchParams;
-  /** Change à chaque navigation (pas quand l'écran Explorer met à jour son propre état). */
+  /** Change à chaque navigation (pas quand un écran met à jour ses propres paramètres). */
   key: string;
 }
 
-export function parseHash(hash: string): Route {
-  const raw = hash.replace(/^#/, '');
-  const [path = '', qs = ''] = raw.split('?');
-  const seg = path.replace(/^\/+/, '').split('/')[0];
-  const view: View = seg === 'explore' ? 'explore' : seg === 'list' ? 'list' : 'home';
-  return { view, query: new URLSearchParams(qs), key: hash };
+/** De vraies adresses (/film/nosferatu) : elles se partagent et s'affichent avec un aperçu. */
+export function parsePath(pathname: string, search = ''): Route {
+  const [first = '', second = ''] = pathname.replace(/^\/+|\/+$/g, '').split('/');
+  const query = new URLSearchParams(search);
+  const key = `${pathname}${search}`;
+  if (first === 'film' && /^[a-z0-9-]{1,80}$/.test(second)) return { view: 'film', slug: second, query, key };
+  if (first === 'catalogue') return { view: 'catalogue', query, key };
+  if (first === 'archive') return { view: 'archive', query, key };
+  if (first === 'liste') return { view: 'list', query, key };
+  if (first === 'a-propos') return { view: 'about', query, key };
+  return { view: 'home', query, key };
+}
+
+/** Anciennes adresses « #/explore?q=… » (liens déjà partagés, raccourcis installés). */
+export function legacyHashToPath(hash: string): string | null {
+  if (!hash.startsWith('#/')) return null;
+  const [path = '', qs = ''] = hash.slice(2).split('?');
+  const seg = path.split('/')[0];
+  const target = seg === 'explore' ? '/archive' : seg === 'list' ? '/liste' : '/';
+  return qs && target === '/archive' ? `${target}?${qs}` : target;
+}
+
+const NAV_EVENT = 'openflix:navigate';
+
+export function navigate(to: string, opts: { replace?: boolean; keepScroll?: boolean } = {}): void {
+  const current = `${window.location.pathname}${window.location.search}`;
+  if (to !== current) {
+    if (opts.replace) window.history.replaceState(null, '', to);
+    else window.history.pushState(null, '', to);
+  }
+  window.dispatchEvent(new Event(NAV_EVENT));
+  if (!opts.keepScroll) window.scrollTo(0, 0);
 }
 
 export function useRoute(): Route {
-  const [hash, setHash] = useState(() => window.location.hash);
+  const read = () => `${window.location.pathname}\n${window.location.search}`;
+  const [loc, setLoc] = useState(() => {
+    const legacy = legacyHashToPath(window.location.hash);
+    if (legacy) window.history.replaceState(null, '', legacy);
+    return read();
+  });
   useEffect(() => {
-    const on = () => setHash(window.location.hash);
-    window.addEventListener('hashchange', on);
-    return () => window.removeEventListener('hashchange', on);
+    const on = () => setLoc(read());
+    window.addEventListener('popstate', on);
+    window.addEventListener(NAV_EVENT, on);
+    return () => {
+      window.removeEventListener('popstate', on);
+      window.removeEventListener(NAV_EVENT, on);
+    };
   }, []);
-  return useMemo(() => parseHash(hash), [hash]);
-}
-
-export function navigate(view: View, params?: Record<string, string>): void {
-  const qs = params && Object.keys(params).length ? `?${new URLSearchParams(params)}` : '';
-  window.location.hash = view === 'home' ? '#/' : `#/${view}${qs}`;
+  return useMemo(() => {
+    const [pathname = '/', search = ''] = loc.split('\n');
+    return parsePath(pathname, search);
+  }, [loc]);
 }

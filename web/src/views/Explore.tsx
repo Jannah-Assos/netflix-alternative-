@@ -76,7 +76,7 @@ export function Explore({ query, onInfo }: { query: URLSearchParams; onInfo: (it
     if (contentLang) p.set('lang', contentLang);
     if (sort !== 'popular') p.set('sort', sort);
     const qs = p.toString();
-    window.history.replaceState(null, '', `#/explore${qs ? `?${qs}` : ''}`);
+    window.history.replaceState(null, '', `/archive${qs ? `?${qs}` : ''}`);
   }, [q, enabled, freeOnly, genre, period, contentLang, sort]);
 
   const run = useCallback(
@@ -132,6 +132,8 @@ export function Explore({ query, onInfo }: { query: URLSearchParams; onInfo: (it
 
   return (
     <div className="page">
+      <h1 className="page-title">{t('archive.title')}</h1>
+      <p className="notice archive-banner">{t('archive.banner')}</p>
       <form className="search" role="search" onSubmit={submit}>
         <SearchIcon />
         <input
@@ -180,13 +182,13 @@ export function Explore({ query, onInfo }: { query: URLSearchParams; onInfo: (it
       {error && <p className="notice bad">{t('explore.serverError', { error })}</p>}
 
       {!firstLoad && !error && !allFailed && (
-        <h1 className="results-title">
+        <h2 className="results-title">
           {q
             ? t(items.length === 1 ? 'explore.results.one' : 'explore.results.other', { n: items.length, q })
             : genre || period || contentLang || sort !== 'popular'
               ? t(items.length === 1 ? 'explore.count.one' : 'explore.count.other', { n: items.length })
               : t('explore.popular')}
-        </h1>
+        </h2>
       )}
 
       <div className="grid" aria-busy={loading}>

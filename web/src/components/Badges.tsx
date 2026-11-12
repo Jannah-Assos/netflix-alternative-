@@ -22,12 +22,15 @@ export function LicenseBadge({ license }: { license: LicenseInfo }) {
   );
 }
 
-/** Phrase d'explication du statut des droits en France (infobulle et fiche détaillée). */
+/** Phrase d'explication du statut des droits en France (infobulle, fiche, page du film). */
 export function useRightsNote(rights: RightsInfo): string {
   const { t } = useI18n();
+  const year = { year: rights.lastDeath ?? '' };
   if (rights.basis === 'cc') return t('rights.note.cc');
-  if (rights.uncertain) return t('rights.note.unsure');
-  return t(`rights.note.${rights.fr}` as MessageKey, { year: rights.lastDeath ?? '' });
+  if (rights.basis === 'government') return t('rights.note.government');
+  if (rights.basis === 'us-term') return t(rights.fr === 'likely' ? 'rights.note.us' : 'rights.note.usUnsure');
+  if (rights.fr === 'unclear') return t('rights.note.unsure');
+  return t(`rights.note.${rights.fr}` as MessageKey, year);
 }
 
 export function RightsBadge({ rights }: { rights: RightsInfo }) {

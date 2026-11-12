@@ -1,19 +1,20 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { HomeResult, MediaItem } from '../../../server/src/types';
 import { home } from '../api';
-import { Hero, pickHero } from '../components/Hero';
+import { Hero } from '../components/Hero';
+import { Link } from '../components/Link';
 import { Row, SkeletonRow } from '../components/Row';
 import { useContinue, useMyList } from '../hooks';
 import { useI18n } from '../i18n';
-import type { MessageKey } from '../messages';
 
-type State = { status: 'loading' } | { status: 'error'; message: string } | { status: 'done'; data: HomeResult };
+type State = { status: 'loading' } | { status: 'error' } | { status: 'done'; data: HomeResult };
 
 export interface Actions {
   onInfo: (item: MediaItem) => void;
   onPlay: (item: MediaItem) => void;
 }
 
+/** Accueil : la séance du jour, la promesse en trois points, puis les parcours du catalogue. */
 export function Home({ onInfo, onPlay }: Actions) {
   const { t, lang } = useI18n();
   const [state, setState] = useState<State>({ status: 'loading' });
@@ -26,26 +27,41 @@ export function Home({ onInfo, onPlay }: Actions) {
     setState({ status: 'loading' });
     home(lang, ctrl.signal)
       .then((data) => setState({ status: 'done', data }))
-      .catch((err: unknown) => {
-        if (!ctrl.signal.aborted) setState({ status: 'error', message: err instanceof Error ? err.message : String(err) });
+      .catch(() => {
+        if (!ctrl.signal.aborted) setState({ status: 'error' });
       });
     return () => ctrl.abort();
   }, [lang, attempt]);
 
   const retry = useCallback(() => setAttempt((n) => n + 1), []);
   const progress = useMemo(() => new Map(resume.map((p) => [p.item.uid, p])), [resume]);
-
-  const rows = state.status === 'done' ? state.data.rows : [];
-  const hero = useMemo(() => pickHero(rows[0]?.items ?? []), [rows]);
-  // Aucune rangée alors qu'au moins une source a échoué : on explique la panne plutôt que « catalogue vide ».
-  const sourcesDown = state.status === 'done' && state.data.partial && rows.length === 0;
-  const empty = state.status === 'done' && !sourcesDown && rows.length === 0 && resume.length === 0 && list.length === 0;
+  const data = state.status === 'done' ? state.data : undefined;
 
   return (
     <>
-      {hero && <Hero item={hero} onInfo={onInfo} onPlay={onPlay} />}
+      {data && <Hero item={data.featured} onInfo={onInfo} onPlay={onPlay} />}
 
-      <div className={`rows ${hero ? 'with-hero' : ''}`}>
+      <div className={`rows ${data ? 'with-hero' : ''}`}>
+        {data && (
+          <section className="promise" aria-label={t('app.tagline')}>
+            <h2>{t('app.tagline')}</h2>
+            <ul>
+              <li>
+                <strong>{t('uvp.1.t')}</strong>
+                <span>{t('uvp.1.d')}</span>
+              </li>
+              <li>
+                <strong>{t('uvp.2.t')}</strong>
+                <span>{t('uvp.2.d')}</span>
+              </li>
+              <li>
+                <strong>{t('uvp.3.t')}</strong>
+                <span>{t('uvp.3.d', { n: data.total })}</span>
+              </li>
+            </ul>
+          </section>
+        )}
+
         {resume.length > 0 && (
           <Row id="continue" title={t('row.continue')} items={resume.map((p) => p.item)} progress={progress} onInfo={onInfo} onPlay={onPlay} />
         )}
@@ -59,11 +75,17 @@ export function Home({ onInfo, onPlay }: Actions) {
           </>
         )}
 
-        {rows.map((r) => (
-          <Row key={r.id} id={r.id} title={t(`row.${r.id}` as MessageKey)} items={r.items} onInfo={onInfo} onPlay={onPlay} />
-        ))}
+        {data?.rows.map((r) => <Row key={r.id} id={r.id} title={r.title} intro={r.intro} items={r.items} onInfo={onInfo} onPlay={onPlay} />)}
 
-        {(state.status === 'error' || sourcesDown) && (
+        {data && (
+          <div className="more">
+            <Link className="btn ghost" to="/catalogue">
+              {t('home.allCatalogue', { n: data.total })}
+            </Link>
+          </div>
+        )}
+
+        {state.status === 'error' && (
           <div className="empty">
             <p>{t('home.loadError')}</p>
             <p className="meta">{t('home.loadErrorHint')}</p>
@@ -71,23 +93,6 @@ export function Home({ onInfo, onPlay }: Actions) {
               <button type="button" className="btn primary" onClick={retry}>
                 {t('home.retry')}
               </button>
-              <a className="btn ghost" href="#/explore">
-                {t('home.toExplore')}
-              </a>
-            </div>
-          </div>
-        )}
-
-        {empty && (
-          <div className="empty">
-            <p>{t('home.empty')}</p>
-            <div className="empty-actions">
-              <button type="button" className="btn primary" onClick={retry}>
-                {t('home.retry')}
-              </button>
-              <a className="btn ghost" href="#/explore">
-                {t('home.toExplore')}
-              </a>
             </div>
           </div>
         )}

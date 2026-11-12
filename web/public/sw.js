@@ -3,7 +3,7 @@
  * ligne (et s'installe sur téléphone / PC / navigateur de TV).
  * Il ne touche JAMAIS à l'API (/api), ni aux images, vidéos et lecteurs des sources (autres origines).
  */
-const CACHE = 'openflix-shell-v2';
+const CACHE = 'openflix-shell-v3';
 const SHELL = ['/', '/manifest.webmanifest', '/icon.svg'];
 
 self.addEventListener('install', (event) => {

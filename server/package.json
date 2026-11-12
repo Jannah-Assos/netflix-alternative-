@@ -9,6 +9,7 @@
     "scan": "tsx src/cli.ts",
     "smoke": "tsx scripts/smoke.ts",
     "survey": "tsx src/survey.ts",
+    "verify-catalogue": "tsx src/verify.ts",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },

@@ -18,7 +18,9 @@ export function PosterCard({ item, progress, onInfo, onPlay }: Actions & { item:
   const { t, lang } = useI18n();
   const [imgOk, setImgOk] = useState(true);
   const pct = progress && progress.duration > 0 ? Math.min(100, (progress.position / progress.duration) * 100) : 0;
-  const meta = [item.year, formatDuration(item.durationSec, lang), item.language ? languageName(item.language, lang) : undefined].filter(Boolean).join(' · ');
+  const meta = [item.year, item.episodes ? t('film.episodesCount', { n: item.episodes }) : formatDuration(item.durationSec, lang), item.language ? languageName(item.language, lang) : undefined]
+    .filter(Boolean)
+    .join(' · ');
 
   return (
     <div className="poster">
@@ -51,8 +53,7 @@ export function PosterCard({ item, progress, onInfo, onPlay }: Actions & { item:
         </div>
         <div className="poster-sub">
           {meta && <span>{meta}</span>}
-          <LicenseBadge license={item.license} />
-          {item.rights && <RightsBadge rights={item.rights} />}
+          {item.rights ? <RightsBadge rights={item.rights} /> : <LicenseBadge license={item.license} />}
           <span className="poster-list">
             <ListButton item={item} />
           </span>
@@ -65,11 +66,12 @@ export function PosterCard({ item, progress, onInfo, onPlay }: Actions & { item:
 export function Row({
   id,
   title,
+  intro,
   items,
   progress,
   onInfo,
   onPlay,
-}: Actions & { id: string; title: string; items: MediaItem[]; progress?: Map<string, Progress> }) {
+}: Actions & { id: string; title: string; intro?: string; items: MediaItem[]; progress?: Map<string, Progress> }) {
   const { t } = useI18n();
   const scroller = useRef<HTMLDivElement>(null);
   const slide = (dir: -1 | 1) => {
@@ -80,6 +82,7 @@ export function Row({
   return (
     <section className="row" aria-labelledby={`row-${id}`}>
       <h2 id={`row-${id}`}>{title}</h2>
+      {intro && <p className="row-intro">{intro}</p>}
       <div className="row-wrap">
         <button type="button" className="row-arrow left" onClick={() => slide(-1)} aria-label={t('row.prev')}>
           ‹

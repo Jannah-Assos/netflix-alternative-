@@ -104,23 +104,46 @@ describe('API', () => {
     expect(res.json()).toEqual({ error: 'HTTP 503' });
   });
 
-  it('GET /api/home renvoie les rangées de la langue demandée (anglais par défaut)', async () => {
-    const a = buildApp({ http: fakeHttp({}), sources: [demo], staticDir: null });
+  it('GET /api/home sert le catalogue sans appeler aucune source', async () => {
+    const http = fakeHttp({});
+    const a = buildApp({ http, sources: [demo], staticDir: null });
     const fr = (await a.inject('/api/home?lang=fr')).json();
     expect(fr.lang).toBe('fr');
-    expect(fr.rows.map((r: { id: string }) => r.id)).toContain('local-fr');
-    const other = (await a.inject('/api/home?lang=zz')).json();
-    expect(other.lang).toBe('en');
-    expect(other.rows.map((r: { id: string }) => r.id)).toContain('local-en');
+    expect(fr.rows.length).toBeGreaterThan(5);
+    expect(fr.featured.slug).toBeTruthy();
+    expect((await a.inject('/api/home?lang=zz')).json().lang).toBe('en');
+    expect(http.calls).toEqual([]);
   });
 
-  it('GET /api/home met le résultat en cache', async () => {
-    let calls = 0;
-    const counting: MediaSource = { ...demo, search: async (p) => (calls++, demo.search(p, fakeHttp({}))) };
-    const a = buildApp({ http: fakeHttp({}), sources: [counting], staticDir: null });
-    await a.inject('/api/home?lang=en');
-    const after = calls;
-    await a.inject('/api/home?lang=en');
-    expect(calls).toBe(after);
+  it('GET /api/work/:slug renvoie la page d’une œuvre, 404 sinon', async () => {
+    const a = buildApp({ http: fakeHttp({}), sources: [demo], staticDir: null });
+    const ok = await a.inject('/api/work/nosferatu?lang=fr');
+    expect(ok.statusCode).toBe(200);
+    expect(ok.json().item.title).toBe('Nosferatu le vampire');
+    expect((await a.inject('/api/work/inconnu')).statusCode).toBe(404);
+    expect((await a.inject('/api/work/..%2F..%2Fetc')).statusCode).toBe(404);
+  });
+
+  it('GET /api/catalogue cherche dans le catalogue', async () => {
+    const a = buildApp({ http: fakeHttp({}), sources: [demo], staticDir: null });
+    const r = (await a.inject('/api/catalogue?q=keaton&lang=fr')).json();
+    expect(r.total).toBeGreaterThan(3);
+    expect((await a.inject(`/api/catalogue?q=${'x'.repeat(300)}`)).statusCode).toBe(400);
+  });
+
+  it('OPENFLIX_ARCHIVE=off ferme la recherche dans l’archive et le dit dans /api/config', async () => {
+    const closed = buildApp({ http: fakeHttp({}), sources: [demo], staticDir: null, archive: false });
+    expect((await closed.inject('/api/search?q=film')).statusCode).toBe(404);
+    expect((await closed.inject('/api/config')).json()).toEqual({ archive: false });
+    const open = buildApp({ http: fakeHttp({}), sources: [demo], staticDir: null });
+    expect((await open.inject('/api/config')).json().archive).toBe(true);
+  });
+
+  it('GET /api/resolve accepte « identifiant#fichier » et transmet le fichier à la source', async () => {
+    let seen: unknown[] = [];
+    const spy: MediaSource = { ...demo, resolve: async (id, _k, _h, file) => ((seen = [id, file]), { links: [] }) };
+    const a = buildApp({ http: fakeHttp({}), sources: [spy], staticDir: null });
+    await a.inject(`/api/resolve?uid=${encodeURIComponent('internet-archive:serie#Episode 01.mp4')}&check=0`);
+    expect(seen).toEqual(['serie', 'Episode 01.mp4']);
   });
 });

@@ -1840,3 +1840,439 @@ button.card:hover {
     max-width: 38vw;
   }
 }
+
+/* ═════════ Catalogue : promesse, parcours, page d'une œuvre ═════════ */
+
+/* La promesse en trois points, juste sous la séance du jour */
+.promise {
+  margin: 4px 0 34px;
+  padding: 22px 24px;
+  background: var(--bg-raised);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius);
+}
+
+.promise h2 {
+  margin: 0 0 14px;
+  font: 600 clamp(20px, 2.4vw, 26px) / 1.15 var(--font-display);
+  letter-spacing: -0.02em;
+}
+
+.promise ul {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+  gap: 16px 28px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.promise li {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-left: 14px;
+  border-left: 2px solid var(--accent);
+}
+
+.promise strong {
+  font-weight: 650;
+}
+
+.promise span {
+  color: var(--muted);
+  font-size: 14.5px;
+  line-height: 1.45;
+}
+
+.row-intro {
+  margin: -6px 0 12px;
+  color: var(--muted);
+  font-size: 14.5px;
+}
+
+.badge.rights.rights-likely {
+  color: var(--stamp-pd);
+  border-style: dashed;
+}
+
+.archive-banner {
+  border-color: color-mix(in srgb, var(--warn) 45%, var(--line));
+}
+
+.foot p {
+  margin: 0 0 6px;
+}
+
+.foot a {
+  color: var(--accent);
+}
+
+/* Page d'une œuvre */
+.film-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 96px 24px 30px;
+  background: var(--bg-raised);
+}
+
+.film-bg {
+  position: absolute;
+  inset: -40px;
+  width: calc(100% + 80px);
+  height: calc(100% + 80px);
+  object-fit: cover;
+  filter: blur(34px) saturate(0.7);
+  opacity: 0.5;
+}
+
+.film-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgb(13 11 18 / 0.55), var(--bg) 96%);
+}
+
+.film-head {
+  position: relative;
+  display: flex;
+  gap: 28px;
+  align-items: flex-end;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.film-poster {
+  flex: none;
+  width: clamp(120px, 22vw, 260px);
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.film-title {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  color: #f5efe6;
+}
+
+.film-title h1 {
+  margin: 0;
+  font: 600 clamp(30px, 5vw, 54px) / 1.04 var(--font-display);
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.film-meta {
+  margin: 0;
+  color: rgb(245 239 230 / 0.78);
+}
+
+.film-title .rights-free,
+.film-title .rights-likely {
+  color: #86e0b0;
+}
+
+.tag {
+  padding: 3px 9px;
+  border: 1px solid rgb(245 239 230 / 0.28);
+  border-radius: 999px;
+  color: rgb(245 239 230 / 0.86);
+  font-size: 12.5px;
+  text-decoration: none;
+}
+
+.tag:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.film-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.film-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: 36px;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 30px 24px 10px;
+}
+
+.film-body h2 {
+  margin: 0 0 10px;
+  color: var(--muted);
+  font: 650 12.5px / 1.2 var(--font-ui);
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.film-main {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  min-width: 0;
+}
+
+.why {
+  max-width: 62ch;
+  margin: 0;
+  font: 500 clamp(19px, 2.2vw, 24px) / 1.4 var(--font-display);
+  text-wrap: pretty;
+}
+
+.film-side {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+.rights-box {
+  padding: 18px 20px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--stamp-pd);
+  border-radius: var(--radius-sm);
+}
+
+.rights-box p {
+  margin: 0 0 10px;
+  line-height: 1.5;
+}
+
+.rights-box .meta {
+  margin: 12px 0 6px;
+}
+
+.authors {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14.5px;
+}
+
+.authors span {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.episodes {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.episodes button {
+  position: relative;
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  width: 100%;
+  min-height: 52px;
+  padding: 10px 14px;
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  text-align: left;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.episodes button:hover {
+  background: var(--surface-2);
+  border-color: var(--accent);
+}
+
+.ep-n {
+  color: var(--accent);
+  font: 600 20px / 1 var(--font-display);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.ep-title {
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ep-time {
+  color: var(--muted);
+  font-size: 13.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.ep-progress {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: var(--line);
+}
+
+.ep-progress span {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+}
+
+.film-loading {
+  display: grid;
+  min-height: 60vh;
+  place-items: center;
+}
+
+/* À propos */
+.about {
+  max-width: 760px;
+}
+
+.about-lead {
+  margin: 0 0 26px;
+  font: 500 clamp(19px, 2.2vw, 23px) / 1.45 var(--font-display);
+}
+
+.about section {
+  margin-bottom: 26px;
+}
+
+.about h2 {
+  margin: 0 0 8px;
+  font: 600 20px / 1.2 var(--font-display);
+}
+
+.about p,
+.about li {
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.about ul {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-left: 20px;
+}
+
+.about-contact {
+  color: var(--text) !important;
+  font-weight: 600;
+  user-select: all;
+}
+
+@media (max-width: 760px) {
+  .film-hero {
+    padding: 84px 16px 22px;
+  }
+  .film-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .film-poster {
+    width: min(100%, 320px);
+  }
+  .film-body {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 26px;
+    padding: 22px 16px 6px;
+  }
+  .film-actions .btn {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+  .promise {
+    padding: 18px 16px;
+  }
+}
+
+/* ───── Ajustements après revue visuelle (téléphone et ordinateur, thèmes clair et sombre) ───── */
+
+/* La promesse et l'intro des parcours s'alignent sur les titres de rangée */
+.promise {
+  max-width: 1352px;
+  margin: 6px auto 34px;
+  width: calc(100% - 48px);
+}
+
+.row-intro {
+  margin: -6px 24px 12px 40px;
+}
+
+/* L'en-tête d'une œuvre est toujours une « salle obscure », quel que soit le thème :
+   le texte clair y reste lisible. */
+.film-hero {
+  background: #0d0b12;
+}
+
+.film-shade {
+  background: linear-gradient(180deg, rgb(13 11 18 / 0.5), rgb(13 11 18 / 0.92) 70%, #0d0b12);
+}
+
+.film-hero .eyebrow {
+  color: #ffb347;
+}
+
+.film-hero .btn.glass {
+  background: rgb(255 255 255 / 0.14);
+  border-color: rgb(255 255 255 / 0.22);
+  color: #f5efe6;
+}
+
+.film-poster {
+  background: #1b1724;
+}
+
+.film a:not(.btn):not(.tag),
+.about a:not(.btn) {
+  color: var(--accent);
+}
+
+@media (max-width: 760px) {
+  .promise {
+    width: calc(100% - 32px);
+  }
+  .row-intro {
+    margin: -6px 16px 12px;
+  }
+  .film-poster {
+    width: 46%;
+  }
+}
+
+/* Ligne d'infos sous une vignette : tout tient sur une ligne, le tampon se raccourcit au besoin */
+.poster-sub {
+  flex-wrap: nowrap;
+}
+
+.poster-sub > span:first-child {
+  flex: none;
+}
+
+.poster-sub .badge {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.poster-sub .poster-list {
+  flex: none;
+  margin-left: auto;
+}

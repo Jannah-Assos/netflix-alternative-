@@ -2,6 +2,8 @@
 
 *Rédigé le 10/11/2026, mis à jour le même jour (comptes, découverte, sécurité, droits). Complète `ROADMAP.md` (vision et idées) et `docs/STRATEGIE-PRODUIT.md` (algorithme de découverte, comptes, cybersécurité, monétisation) : ici, on tranche, on ordonne et on fixe des critères de réussite vérifiables.*
 
+> **Mise à jour du 12/11/2026 : le principe a changé.** Openflix n'est plus un moteur de recherche sur Internet Archive mais une **cinémathèque vérifiée** : un catalogue fermé de 74 œuvres (`server/src/works.ts`), dont le statut de droits est calculé à partir de données vérifiées, avec une page partageable par film, des séries à épisodes, une recherche maison et un accueil instantané. L'ancienne recherche devient une page « Archive », secondaire et non vérifiée. Cela avance d'un coup les jalons J2 (accueil qui ne dépend plus des sources, recherche à nous), J3 (page par film, épisodes) et J5 (droits). Détail : `README.md` et `docs/DROITS-CATALOGUE.md`.
+
 ## 1. Ce que veut dire « V1 100 % fonctionnelle »
 
 > **Une personne qui ne connaît pas le projet ouvre un lien, trouve un film libre de droits, le regarde sans accroc sur son appareil, et peut recommencer demain. Rien de ce que l'application annonce ne ment ni ne plante.**
